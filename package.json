@@ -1,14 +1,14 @@
 {
   "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
-  "name": "con",
-  "description": "Awesome configuration management",
+  "name": "convict",
+  "description": "Unruly configuration management for nodejs",
   "version": "0.0.1",
   "homepage": "http://github.com/lloyd/con",
   "repository": {
     "type": "git",
     "url": "https://github.com/lloyd/con.git"
   },
-  "main": "lib/config.js",
+  "main": "lib/convict.js",
   "engines": {
     "node": ">=0.4.7"
   },
@@ -17,5 +17,8 @@
     "JSV": "3.5.0"
   },
   "devDependencies": {
+  },
+  "scripts": { 
+    "test": "test/run.js"
   }
 }

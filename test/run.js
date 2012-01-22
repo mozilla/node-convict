@@ -2,9 +2,11 @@
 
 const
 fs = require('fs'),
-path = require('path');
+path = require('path'),
+convict = require('./lib/convict.js');
 
-var files = fs.readdirSync(path.join(__dirname, 'cases'));
+const casesDir = path.join(__dirname, 'cases');
+var files = fs.readdirSync(casesDir);
 
 var tests = {};
 files.forEach(function(f) {
@@ -25,4 +27,27 @@ Object.keys(tests).forEach(function(test) {
   tests[test].config_files.sort();
 });
 
-console.log(tests);
+// time to run!
+var passed = 0;
+Object.keys(tests).forEach(function(name) {
+  var test = tests[name];
+  process.stdout.write(name + " - ");
+  
+  try {
+    var spec = fs.readFileSync(path.join(casesDir, test.spec));
+    spec = eval(spec);
+    
+    // XXX read environment
+
+    // process spec
+    var conf = convict(spec);
+
+    // XXX - par
+
+    passed++;
+    process.stdout.write("ok");
+  } catch(e) {
+    process.stdout.write("fail (" + e + ")");
+  }
+  process.stdout.write("\n");
+});

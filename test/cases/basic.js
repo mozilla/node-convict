@@ -1,4 +1,4 @@
-{
+exports.conf = {
   env: {
     format: 'string ["production", "local"] = "local"',
     env: "NODE_ENV",
@@ -18,4 +18,8 @@
     format: 'string = "/home/browserid/var"',
     doc: "The path the the 'var' directory, where logs and such will go"
   }
-}
+};
+
+exports.env = {
+  MINIFIED: true
+};

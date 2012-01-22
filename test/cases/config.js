@@ -1,4 +1,4 @@
-{
+module.exports = {
   "env": {
       "format": "string ['production', 'local']",
       "env": "NODE_ENV"
@@ -29,4 +29,4 @@
   // Contains po files
   "locale_directory": "locale",
   "express_log_format": "default"
-}
+};

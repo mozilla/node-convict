@@ -3,14 +3,15 @@
 const
 fs = require('fs'),
 path = require('path'),
-convict = require('./lib/convict.js');
+convict = require('../lib/convict.js'),
+cp = require('child_process');
 
 const casesDir = path.join(__dirname, 'cases');
 var files = fs.readdirSync(casesDir);
 
 var tests = {};
 files.forEach(function(f) {
-  var m = /^([a-zA-Z_\-0-9]+)\.conf$/.exec(f);
+  var m = /^([a-zA-Z_\-0-9]+)\.js$/.exec(f);
   if (m) tests[m[1]] = {
     spec: f,
     output: m[1] + ".out",
@@ -29,25 +30,35 @@ Object.keys(tests).forEach(function(test) {
 
 // time to run!
 var passed = 0;
-Object.keys(tests).forEach(function(name) {
+var toRun = Object.keys(tests);
+
+function runOne() {
+  if (!toRun.length) return;
+  var name = toRun.shift();
+
   var test = tests[name];
   process.stdout.write(name + " - ");
+
+  var env = require(path.join(casesDir, test.spec)).env || {};
   
-  try {
-    var spec = fs.readFileSync(path.join(casesDir, test.spec));
-    spec = eval(spec);
-    
-    // XXX read environment
+  var n = cp.fork(path.join(__dirname + '/runner.js'), null, { env: env });
 
-    // process spec
-    var conf = convict(spec);
+  n.on('message', function(m) {
+    if (m.error) {
+      process.stdout.write("fail (" + m.error + ")");
+    } else {
+      // XXX: check that configuration is what we expect
+      // NOTE: there are several object diff implementations to
+      // choose from. whee.
 
-    // XXX - par
+      passed++;
+      process.stdout.write("ok");
+    }
+    process.stdout.write("\n");
+    runOne();
+  });
 
-    passed++;
-    process.stdout.write("ok");
-  } catch(e) {
-    process.stdout.write("fail (" + e + ")");
-  }
-  process.stdout.write("\n");
-});
+  n.send(tests[name]);
+};
+
+runOne();

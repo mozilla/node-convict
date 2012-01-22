@@ -1,0 +1,21 @@
+{
+  "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
+  "name": "con",
+  "description": "Awesome configuration management",
+  "version": "0.0.1",
+  "homepage": "http://github.com/lloyd/con",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lloyd/con.git"
+  },
+  "main": "lib/config.js",
+  "engines": {
+    "node": ">=0.4.7"
+  },
+  "dependencies": {
+    "orderly": "1.0.1",
+    "JSV": "3.5.0"
+  },
+  "devDependencies": {
+  }
+}

@@ -19,7 +19,3 @@ exports.conf = {
     doc: "The path the the 'var' directory, where logs and such will go"
   }
 };
-
-exports.env = {
-  MINIFIED: true
-};

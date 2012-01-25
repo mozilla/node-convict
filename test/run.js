@@ -28,6 +28,14 @@ Object.keys(tests).forEach(function(test) {
   tests[test].config_files.sort();
 });
 
+// NOTE: there are several object diff implementations to
+// choose from which could do a better diff and generate better
+// output
+function diffObjects(a, b) {
+  if (JSON.stringify(a) != JSON.stringify(b)) return "objects are different";
+  return null;
+}
+
 // time to run!
 var passed = 0;
 var toRun = Object.keys(tests);
@@ -44,15 +52,26 @@ function runOne() {
   var n = cp.fork(path.join(__dirname + '/runner.js'), null, { env: env });
 
   n.on('message', function(m) {
-    if (m.error) {
-      process.stdout.write("fail (" + m.error + ")");
-    } else {
-      // XXX: check that configuration is what we expect
-      // NOTE: there are several object diff implementations to
-      // choose from. whee.
+    try {
+      if (!m.error) {
+        // let's read the expected output
+        var expected = JSON.parse(fs.readFileSync(path.join(casesDir, test.output)));
+        var got = m.result;
 
-      passed++;
-      process.stdout.write("ok");
+        console.log("expected", expected);
+        console.log("got", got);
+
+        // check that configuration is what we expect
+        var err = diffObjects(got, expected);
+        if (err) throw err;
+        
+        passed++;
+        process.stdout.write("ok");
+      } else {
+        throw m.error;
+      }
+    } catch(e) {
+      process.stdout.write("fail (" + e + ")");
     }
     process.stdout.write("\n");
     runOne();

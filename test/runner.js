@@ -7,7 +7,7 @@ process.on('message', function(spec) {
     var s = require(path.join(__dirname, 'cases', spec.spec));
     var conf = convict(s.conf);
     // XXX: process config files in order
-    process.send(conf.get());
+    process.send({result: conf.get()});
     process.exit(0);
   } catch(e) {
     process.send({error: e.toString() });

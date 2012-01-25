@@ -34,7 +34,9 @@ Object.keys(tests).forEach(function(test) {
 // output
 function diffObjects(a, b) {
   var diff = obj_diff(a,b)  
-  if (Object.keys(diff).length) return diff;
+  if (Object.keys(diff).length) {
+    return "mismatch: " + JSON.stringify(diff, null, 4);
+  }
   return null;
 }
 
@@ -65,19 +67,18 @@ function runOne() {
         if (err) throw err;
 
         passed++;
-        process.stdout.write("ok");
+        console.log("ok");
       } else {
         var expected = fs.readFileSync(path.join(casesDir, test.output)).toString().trim();
         var got = m.error.trim();
         if (expected.trim() !== got.trim()) throw got;
 
         passed++;
-        process.stdout.write("ok");
+        console.log("ok");
       }
     } catch(e) {
-      process.stdout.write("fail (" + JSON.stringify(e, null, 4) + ")");
+      console.log("fail (", e, ")");
     }
-    process.stdout.write("\n");
     runOne();
   });
 

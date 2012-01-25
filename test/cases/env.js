@@ -4,7 +4,7 @@ exports.conf = {
     env: "IP_ADDRESS"
   },
   port: {
-    format: 'number = 0',
+    format: 'integer = 0',
     env: "PORT"
   }
 };

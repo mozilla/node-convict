@@ -17,6 +17,7 @@
     "JSV": "3.5.0"
   },
   "devDependencies": {
+    "obj_diff": "0.2.0"
   },
   "scripts": { 
     "test": "test/run.js"

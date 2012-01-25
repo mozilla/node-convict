@@ -4,7 +4,8 @@ const
 fs = require('fs'),
 path = require('path'),
 convict = require('../lib/convict.js'),
-cp = require('child_process');
+cp = require('child_process'),
+obj_diff = require('obj_diff').diff;
 
 const casesDir = path.join(__dirname, 'cases');
 var files = fs.readdirSync(casesDir);
@@ -32,7 +33,8 @@ Object.keys(tests).forEach(function(test) {
 // choose from which could do a better diff and generate better
 // output
 function diffObjects(a, b) {
-  if (JSON.stringify(a) != JSON.stringify(b)) return "objects are different";
+  var diff = obj_diff(a,b)  
+  if (Object.keys(diff).length) return diff;
   return null;
 }
 
@@ -59,9 +61,9 @@ function runOne() {
         var got = m.result;
 
         // check that configuration is what we expect
-        var err = diffObjects(got, expected);
+        var err = diffObjects(expected, got);
         if (err) throw err;
-        
+
         passed++;
         process.stdout.write("ok");
       } else {
@@ -73,7 +75,7 @@ function runOne() {
         process.stdout.write("ok");
       }
     } catch(e) {
-      process.stdout.write("fail (" + e + ")");
+      process.stdout.write("fail (" + JSON.stringify(e, null, 4) + ")");
     }
     process.stdout.write("\n");
     runOne();

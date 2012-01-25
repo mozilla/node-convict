@@ -58,9 +58,6 @@ function runOne() {
         var expected = JSON.parse(fs.readFileSync(path.join(casesDir, test.output)));
         var got = m.result;
 
-        console.log("expected", expected);
-        console.log("got", got);
-
         // check that configuration is what we expect
         var err = diffObjects(got, expected);
         if (err) throw err;
@@ -68,7 +65,12 @@ function runOne() {
         passed++;
         process.stdout.write("ok");
       } else {
-        throw m.error;
+        var expected = fs.readFileSync(path.join(casesDir, test.output)).toString().trim();
+        var got = m.error.trim();
+        if (expected.trim() !== got.trim()) throw got;
+
+        passed++;
+        process.stdout.write("ok");
       }
     } catch(e) {
       process.stdout.write("fail (" + e + ")");

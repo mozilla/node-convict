@@ -1,5 +1,5 @@
 const
-convict = require('./lib/convict.js'),
+convict = require('../lib/convict.js'),
 http = require('http');
 
 conf = convict({
@@ -13,7 +13,7 @@ conf = convict({
     env: "PORT",
     doc: "The port to bind."
   }
-});
+}).loadFile('./config.json');
 
 var server = http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});

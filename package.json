@@ -14,12 +14,14 @@
   },
   "dependencies": {
     "orderly": "1.0.1",
-    "JSV": "3.5.0"
+    "JSV": "3.5.0",
+    "cjson": "0.0.6"
   },
   "devDependencies": {
-    "obj_diff": "0.2.0"
+    "obj_diff": "0.2.0",
+    "should": "0.5.1"
   },
-  "scripts": { 
+  "scripts": {
     "test": "test/run.js"
   }
 }

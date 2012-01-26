@@ -11,7 +11,7 @@ conf = convict({
   port: {
     format: 'integer = 0',
     env: "PORT",
-    doc: "The externally visible url of the server"
+    doc: "The port to bind."
   }
 });
 

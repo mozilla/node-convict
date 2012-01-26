@@ -24,7 +24,7 @@ files.forEach(function(f) {
 Object.keys(tests).forEach(function(test) {
   var re = new RegExp('^' + test + '.*\.json$');
   files.forEach(function(f) {
-    if (re.test(f)) tests[test].config_files.push(f);
+    if (re.test(f)) tests[test].config_files.push(path.join(casesDir, f));
   });
   tests[test].config_files.sort();
 });
@@ -33,7 +33,7 @@ Object.keys(tests).forEach(function(test) {
 // choose from which could do a better diff and generate better
 // output
 function diffObjects(a, b) {
-  var diff = obj_diff(a,b)  
+  var diff = obj_diff(a,b);
   if (Object.keys(diff).length) {
     return "mismatch: " + JSON.stringify(diff, null, 4);
   }
@@ -52,7 +52,7 @@ function runOne() {
   process.stdout.write(name + " - ");
 
   var env = require(path.join(casesDir, test.spec)).env || {};
-  
+
   var n = cp.fork(path.join(__dirname + '/runner.js'), null, { env: env });
 
   n.on('message', function(m) {

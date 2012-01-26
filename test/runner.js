@@ -5,8 +5,7 @@ path = require('path');
 process.on('message', function(spec) {
   try {
     var s = require(path.join(__dirname, 'cases', spec.spec));
-    var conf = convict(s.conf);
-    // XXX: process config files in order
+    var conf = convict(s.conf).loadFile(spec.config_files).validate();
     process.send({result: conf.get()});
     process.exit(0);
   } catch(e) {

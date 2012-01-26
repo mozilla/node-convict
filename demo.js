@@ -1,25 +1,24 @@
-var conf = require('./lib/convict.js');
+const
+convict = require('./lib/convict.js'),
+http = require('http');
 
-conf = conf({
-  env: {
-    format: 'string ["production", "local"] = "local"',
-    env: "NODE_ENV",
-    doc: "The environment that we're running in."
+conf = convict({
+  ip: {
+    doc: "The IP Address to bind.",
+    format: 'string = "127.0.0.1"',
+    env: "IP_ADDRESS",
   },
-  URL: {
-    format: 'string = "https://browserid.org"',
-    env: "URL",
-    doc: "The externally visible url of the server",
-  },
-  use_minified_resources: {
-    format: "boolean = false?;",
-    doc: "All resources should be combined and minified",
-    env: "MINIFIED"
-  },
-  var_path: {
-    format: 'string = "/home/browserid/var"',
-    doc: "The path the the 'var' directory, where logs and such will go"
+  port: {
+    format: 'integer = 0',
+    env: "PORT",
+    doc: "The externally visible url of the server"
   }
 });
 
-console.log(conf.toString());
+var server = http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello World\n');
+}).listen(conf.get('port'), conf.get('ip'), function(x) {
+  var addy = server.address();
+  console.log('running on http://' + addy.address + ":" + addy.port);
+});

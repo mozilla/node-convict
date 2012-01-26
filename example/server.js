@@ -13,7 +13,7 @@ conf = convict({
     env: "PORT",
     doc: "The port to bind."
   }
-}).loadFile('./config.json');
+}).loadFile(__dirname + '/config.json');
 
 var server = http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});

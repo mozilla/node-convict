@@ -1,11 +1,12 @@
-#!/usr/bin/env node
-
 const
 fs = require('fs'),
 path = require('path'),
 convict = require('../lib/convict.js'),
 cp = require('child_process'),
-obj_diff = require('obj_diff').diff;
+obj_diff = require('obj_diff').diff,
+mocha = require('mocha');
+
+mocha.Suite('static tests');
 
 const casesDir = path.join(__dirname, 'cases');
 var files = fs.readdirSync(casesDir);
@@ -41,15 +42,10 @@ function diffObjects(a, b) {
 }
 
 // time to run!
-var passed = 0;
 var toRun = Object.keys(tests);
 
-function runOne() {
-  if (!toRun.length) return;
-  var name = toRun.shift();
-
+function run(name, done) {
   var test = tests[name];
-  process.stdout.write(name + " - ");
 
   var env = require(path.join(casesDir, test.spec)).env || {};
 
@@ -65,24 +61,25 @@ function runOne() {
         // check that configuration is what we expect
         var err = diffObjects(expected, got);
         if (err) throw err;
-
-        passed++;
-        console.log("ok");
+        return done();
       } else {
         var expected = fs.readFileSync(path.join(casesDir, test.output)).toString().trim();
         var got = m.error.trim();
         if (expected.trim() !== got.trim()) throw got;
-
-        passed++;
-        console.log("ok");
+        return done();
       }
     } catch(e) {
-      console.log("fail (", e, ")");
+      done(e);
     }
-    runOne();
   });
 
   n.send(tests[name]);
 };
 
-runOne();
+describe('Static tests', function() {
+  toRun.forEach(function(name) {
+    it(name, function(done) {
+      run(name, done);
+    });
+  });
+});

@@ -19,7 +19,8 @@
   },
   "devDependencies": {
     "obj_diff": "0.2.0",
-    "should": "0.5.1"
+    "should": "0.5.1",
+    "mocha": "0.10.2"
   },
   "scripts": {
     "test": "test/run.js"

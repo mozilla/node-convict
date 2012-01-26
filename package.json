@@ -23,6 +23,6 @@
     "mocha": "0.10.2"
   },
   "scripts": {
-    "test": "test/run.js"
+    "test": "mocha -R spec"
   }
 }

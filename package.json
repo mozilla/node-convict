@@ -2,11 +2,11 @@
   "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
   "name": "convict",
   "description": "Unruly configuration management for nodejs",
-  "version": "0.0.3",
-  "homepage": "http://github.com/lloyd/convict",
+  "version": "0.0.4",
+  "homepage": "https://github.com/lloyd/node-convict",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lloyd/convict.git"
+    "url": "https://github.com/lloyd/node-convict.git"
   },
   "main": "lib/convict.js",
   "engines": {

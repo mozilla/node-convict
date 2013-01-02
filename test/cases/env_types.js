@@ -1,14 +1,17 @@
 exports.conf = {
   bool: {
-    format: 'boolean',
+    default: true,
+    format: Boolean,
     env: "BOOL"
   },
   int: {
-    format: 'integer',
+    default: 42,
+    format: 'int',
     env: "INT"
   },
   num: {
-    format: 'number',
+    default: 10.1,
+    format: Number,
     env: 'NUM'
   }
 };

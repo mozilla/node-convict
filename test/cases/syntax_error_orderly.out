@@ -1,4 +1,0 @@
-'foo.bar' has an invalid format: Error: Parse error on line 1:
-string ["foo", "bar"
---------------------^
-Expecting ']', ',', got 'EOF'

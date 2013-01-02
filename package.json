@@ -15,7 +15,9 @@
   "dependencies": {
     "orderly": "1.0.1",
     "JSV": "3.5.0",
-    "cjson": "0.0.6"
+    "cjson": "0.0.6",
+    "validator": "0.4.13",
+    "moment": "1.7.2"
   },
   "devDependencies": {
     "obj_diff": "0.2.0",

@@ -1,3 +1,6 @@
 exports.conf = {
-  arr: "array { any; }*"
+  arr: {
+    default: [],
+    format: Array
+  }
 };

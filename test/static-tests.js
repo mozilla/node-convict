@@ -49,7 +49,7 @@ function run(name, done) {
 
   var env = require(path.join(casesDir, test.spec)).env || {};
 
-  var n = cp.fork(path.join(__dirname + '/runner.js'), null, { env: env });
+  var n = cp.fork(path.join(__dirname + '/runner.js'), [], { env: env });
 
   n.on('message', function(m) {
     try {

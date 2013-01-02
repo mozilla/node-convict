@@ -1,32 +1,40 @@
-module.exports = {
+exports.conf = {
   env: {
-    format: 'string ["production", "local"]',
+    format: ["production", "local"],
+    default: "production",
     env: "NODE_ENV"
   },
   URL: {
-    format: 'string = "https://browserid.org"',
+    format: String,
+    default: "https://browserid.org",
     env: 'URL'
   },
-  use_minified_resources: 'boolean = true',
-  var_path: 'string = "/home/browserid/var"',
+  use_minified_resources: true,
+  var_path: "/home/browserid/var",
   database: {
-    driver: 'string ["json", "mysql"] = "mysql"',
-    user: 'string',
-    create_schema: 'boolean',
-    may_write: 'boolean'
+    driver: {
+      default: "mysql",
+      format: ["json", "mysql"]
+    },
+    user: 'browserid',
+    create_schema: true,
+    may_write: false
   },
   statsd: {
-    enabled: 'boolean'
+    enabled: true
   },
-  bcrypt_work_factor: "integer[6,20] = 12",
-  authentication_duration: 'string = "2 weeks"',
-  certificate_validity: 'string = "1 day"',
-  min_time_between_emails: 'string = "1 minute"',
-  max_compute_duration: 'string = "10 seconds"',
-  disable_primary_support: 'boolean = false',
-  enable_code_version: 'boolean = false',
-  default_lang: 'array { string; }',
-  supported_languages: 'array { string; }',
-  locale_directory: 'string = "locale"',
-  express_log_format: 'string = "default"'
+  bcrypt_work_factor: {
+    default: 12,
+    format: 'int'
+  },
+  authentication_duration: "2 weeks",
+  certificate_validity: "1 day",
+  min_time_between_emails: "1 minute",
+  max_compute_duration: "10 seconds",
+  disable_primary_support: false,
+  enable_code_version: false,
+  default_lang: [ 'en-US' ],
+  supported_languages: [ 'en-US' ],
+  locale_directory: "locale",
+  express_log_format: "default"
 };

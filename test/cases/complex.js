@@ -25,7 +25,7 @@ exports.conf = {
   },
   bcrypt_work_factor: {
     default: 12,
-    format: 'int'
+    format: 'nat'
   },
   authentication_duration: "2 weeks",
   certificate_validity: "1 day",

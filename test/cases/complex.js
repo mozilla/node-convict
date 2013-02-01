@@ -27,10 +27,22 @@ exports.conf = {
     default: 12,
     format: 'nat'
   },
-  authentication_duration: "2 weeks",
-  certificate_validity: "1 day",
-  min_time_between_emails: "1 minute",
-  max_compute_duration: "10 seconds",
+  authentication_duration: {
+    default: "2 weeks",
+    format: "duration"
+  },
+  certificate_validity: {
+    default: "1 day",
+    format: "duration"
+  },
+  min_time_between_emails: {
+    default: "1 minute",
+    format: "duration"
+  },
+  max_compute_duration: {
+    default: "10 seconds",
+    format: "duration"
+  },
   disable_primary_support: false,
   enable_code_version: false,
   default_lang: [ 'en-US' ],

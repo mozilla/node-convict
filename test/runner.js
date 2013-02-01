@@ -10,7 +10,7 @@ process.on('message', function(spec) {
     process.exit(0);
   } catch(e) {
     console.error(e);
-    process.send({error: e.toString() });
+    process.send({error: e.message });
     process.exit(1);
   }
 });

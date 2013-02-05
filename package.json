@@ -13,8 +13,6 @@
     "node": ">=0.4.7"
   },
   "dependencies": {
-    "orderly": "1.0.1",
-    "JSV": "3.5.0",
     "cjson": "0.0.6",
     "validator": "0.4.13",
     "moment": "1.7.2"

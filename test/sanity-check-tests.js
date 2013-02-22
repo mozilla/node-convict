@@ -38,7 +38,7 @@ describe('convict', function() {
     var expected = 2;
     conf.sanityCheck(function (err) {
       (err).should.not.equal(null);
-      if (--expected) done();
+      if (! --expected) done();
     });
   });
 

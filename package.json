@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "obj_diff": "0.2.0",
-    "should": "0.5.1",
+    "should": "1.2.2",
     "mocha": "0.10.2"
   },
   "scripts": {

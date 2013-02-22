@@ -54,6 +54,7 @@ describe('convict formats', function() {
   });
 
   it('should be valid', function() {
+    console.log(conf.schemaToString());
     (function() { conf.validate() }).should.not.throw();
   });
 

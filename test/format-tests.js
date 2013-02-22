@@ -44,8 +44,8 @@ describe('convict formats', function() {
           default: -9
         },
         custom: {
-          format: function (name, val) {
-            convict.check(val, name +': expected alpha characters, got ' + val).isAlpha();
+          format: function (val) {
+            convict.check(val, 'expected alpha characters, got ' + val).isAlpha();
           },
           default: 'abcd'
         }

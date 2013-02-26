@@ -12,7 +12,7 @@ describe('convict formats', function() {
           default: 'foo'
         },
         date: {
-          format: 'date',
+          format: 'timestamp',
           default: 'May 5, 2013'
         },
         duration: {
@@ -58,7 +58,7 @@ describe('convict formats', function() {
   });
 
   describe('predefined formats', function() {
-    it('should handle date', function() {
+    it('should handle timestamp', function() {
       var val = conf.get('foo.date');
       should.equal(val, 1367737200000);
     });

@@ -43,6 +43,10 @@ describe('convict formats', function() {
           format: 'int',
           default: -9
         },
+        any: {
+          format: '*',
+          default: "foo"
+        },
         custom: {
           format: function (val) {
             convict.check(val, 'expected alpha characters, got ' + val).isAlpha();

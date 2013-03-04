@@ -2,7 +2,7 @@ const
 convict = require('../lib/convict.js'),
 http = require('http');
 
-conf = convict({
+var conf = convict({
   ip: {
     doc: "The IP Address to bind.",
     format: "ipaddress",
@@ -16,6 +16,7 @@ conf = convict({
     env: "PORT"
   }
 }).loadFile(__dirname + '/config.json').validate();
+
 
 var server = http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});

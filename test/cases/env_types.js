@@ -13,11 +13,17 @@ exports.conf = {
     default: 10.1,
     format: Number,
     env: 'NUM'
+  },
+  array: {
+    default: ['a', 'b'],
+    format: Array,
+    env: 'ARRAY'
   }
 };
 
 exports.env = {
   BOOL: true,
   INT: 77,
-  NUM: 789.1011
+  NUM: 789.1011,
+  ARRAY: "a,b,c"
 };

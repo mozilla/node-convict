@@ -1,7 +1,5 @@
 # node-convict
 
-Robust and composable configuration for node.js with support for environmental variables, files, and validation.
-
 Convict expands on the standard pattern of configuring node.js applications in a way that is more robust and accessible to collaborators, who may have less interest in digging through imperative code in order to inspect or modify settings. By introducting a configuration schema, convict gives project collaborators more **context** on each setting and enables **validation and early failures** for when configuration goes wrong.
 
 
@@ -10,10 +8,16 @@ Convict expands on the standard pattern of configuring node.js applications in a
 * **Environmental variables**: values can be set from environmental variables
 * **Validation**: configurations are validated against your schema, generating an error report with all errors that are found
 
-Example:
+## Install
+
+    npm install convict
+
+## Example:
+
+
+An example `config.js`:
 
     var convict = require('convict');
-    var http = require('http');
 
     // define a schema
 
@@ -48,6 +52,13 @@ Example:
 
     conf.validate();
 
+    module.exports = conf;
+
+
+### Usage
+
+    var conf = require('./config.js');
+
     var server = http.createServer(function (req, res) {
       res.writeHead(200, {'Content-Type': 'text/plain'});
       res.end('Hello World\n');
@@ -76,7 +87,7 @@ config.js:
 
     config.loadFile(['./prod.json', './config.json']);
 
-You'll notice that each setting in the schema has four possible properties, each aiding in convict's goal of being more robust and collaborator friendly.
+Each setting in the schema has four possible properties, each aiding in convict's goal of being more robust and collaborator friendly.
 
 * **Type information**: the `format` property specifies either a built-in convict format (`ipaddress`, `port`, `int`, etc.), or it can be a function to check a custom format. During validation, if a format check fails it will be added to the error report.
 * **Default values**:  Every setting *must* have a default value.
@@ -120,10 +131,10 @@ Convict will automatically coerce environmental variables from strings to their 
 
 ## API
 
-### `var config = convict(schema)`
+### var config = convict(schema)
 `convict()` takes a schema object and returns a convict configuration object. The configuration object has an API for getting and setting values, described below.
 
-### `config.get(name)`
+### config.get(name)
 Returns the value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
 
     config.get('database.host');
@@ -132,21 +143,21 @@ Returns the value of the `name` property. `name` can use dot notation to referen
 
     config.get('database').host;
 
-### `config.has(name)`
+### config.has(name)
 Returns `true` if the property `name` is defined, or `false` otherwise. E.g.:
 
     if (config.has('some.property')) {
       // do something
     }
 
-### `config.set(name, value)`
+### config.set(name, value)
 Sets the value of `name` to value. `name` can use dot notation to reference nested values, e.g. `"database.port"`. If objects in the chain don't yet exist, they will be initialized to empty objects. E.g.:
 
     config.set('property.that.may.not.exist.yet', 'some value');
     config.get('property.that.may.not.exist.yet');
     // returns "some value"
 
-### `config.load(object)`
+### config.load(object)
 This will load and merge a JavaScript object into `config`. E.g.:
 
     config.load({
@@ -155,7 +166,7 @@ This will load and merge a JavaScript object into `config`. E.g.:
       "port": 80
     });
 
-### `config.loadFile(file or [file1, file2, ...])`
+### config.loadFile(file or [file1, file2, ...])
 This will load and merge one or multiple JSON configuration files into `config`. JSON files are loaded using `cjson`, so they can contain comments. E.g.:
 
     conf.loadFile('./config/' + conf.get('env') + '.json');
@@ -166,6 +177,6 @@ Or, loading multiple files at once:
     conf.loadFile(process.env.CONFIG_FILES.split(','));
 
 
-### `config.validate()`
+### config.validate()
 Validates `config` against the schema used to initialize it. All errors are collected and thrown at once.
 

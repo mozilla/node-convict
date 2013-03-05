@@ -1,7 +1,8 @@
 exports.conf = {
   foo: {
     bar: {
-      format: 'string ["a", "b"]',
+      default: "a",
+      format: ["a", "b"],
       env: "BAR"
     }
   }

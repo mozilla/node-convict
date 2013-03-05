@@ -1,20 +1,29 @@
 exports.conf = {
   bool: {
-    format: 'boolean',
+    default: true,
+    format: Boolean,
     env: "BOOL"
   },
   int: {
-    format: 'integer',
+    default: 42,
+    format: 'int',
     env: "INT"
   },
   num: {
-    format: 'number',
+    default: 10.1,
+    format: Number,
     env: 'NUM'
+  },
+  array: {
+    default: ['a', 'b'],
+    format: Array,
+    env: 'ARRAY'
   }
 };
 
 exports.env = {
   BOOL: true,
   INT: 77,
-  NUM: 789.1011
+  NUM: 789.1011,
+  ARRAY: "a,b,c"
 };

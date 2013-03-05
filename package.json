@@ -2,7 +2,7 @@
   "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
   "name": "convict",
   "description": "Unruly configuration management for nodejs",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "homepage": "https://github.com/lloyd/node-convict",
   "repository": {
     "type": "git",
@@ -13,14 +13,14 @@
     "node": ">=0.4.7"
   },
   "dependencies": {
-    "orderly": "1.0.1",
-    "JSV": "3.5.0",
-    "cjson": "0.0.6"
+    "cjson": "0.2.1",
+    "validator": "0.4.24",
+    "moment": "1.7.2"
   },
   "devDependencies": {
-    "obj_diff": "0.2.0",
-    "should": "0.5.1",
-    "mocha": "0.10.2"
+    "obj_diff": "0.3.0",
+    "should": "1.2.2",
+    "mocha": "1.8.1"
   },
   "scripts": {
     "test": "mocha -R spec"

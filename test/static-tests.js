@@ -3,7 +3,7 @@ fs = require('fs'),
 path = require('path'),
 convict = require('../lib/convict.js'),
 cp = require('child_process'),
-obj_diff = require('obj_diff').diff,
+obj_diff = require('obj_diff'),
 mocha = require('mocha');
 
 mocha.Suite('static tests');
@@ -49,7 +49,7 @@ function run(name, done) {
 
   var env = require(path.join(casesDir, test.spec)).env || {};
 
-  var n = cp.fork(path.join(__dirname + '/runner.js'), null, { env: env });
+  var n = cp.fork(path.join(__dirname + '/runner.js'), [], { env: env });
 
   n.on('message', function(m) {
     try {

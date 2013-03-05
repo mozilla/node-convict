@@ -7,11 +7,11 @@ describe('convict', function() {
   it('should parse a config specification', function() {
     conf = convict({
       foo: {
-        bar: "number = 7",
+        bar: 7,
         baz: {
-          bing: 'string = "foo"',
+          bing: "foo",
           "name with spaces": {
-            name_with_underscores: "boolean = true"
+            name_with_underscores: true
           }
         }
       }
@@ -24,15 +24,16 @@ describe('convict', function() {
 
   describe('.get()', function() {
     it('should find a nested value', function() {
-      (conf.get('foo.bar')).should.equal(7);
+      var val = conf.get('foo.bar');
+      should.equal(val, 7);
     });
 
     it('should handle three levels of nesting', function() {
-      (conf.get('foo.baz.bing')).should.equal('foo');
+      should.equal(conf.get('foo.baz.bing'), 'foo');
     });
 
     it('should handle names with spaces and underscores', function() {
-      (conf.get('foo.baz.name with spaces.name_with_underscores')).should.equal(true);
+      should.equal(conf.get('foo.baz.name with spaces.name_with_underscores'), true);
     });
 
     it("should throw if conf doesn't exist", function() {

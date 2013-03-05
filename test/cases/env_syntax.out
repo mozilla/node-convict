@@ -1,1 +1,1 @@
-foo.bar: Instance is not one of the possible values: ["a","b"]
+foo.bar: must be one of the possible values: ["a","b"]: value was "c"

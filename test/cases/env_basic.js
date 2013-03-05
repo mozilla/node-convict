@@ -1,10 +1,12 @@
 exports.conf = {
   ip: {
-    format: 'string = "127.0.0.1"',
+    default: "127.0.0.1",
+    format: "ipaddress",
     env: "IP_ADDRESS"
   },
   port: {
-    format: 'integer = 0',
+    default: 0,
+    format: "port",
     env: "PORT"
   }
 };

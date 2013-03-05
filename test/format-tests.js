@@ -1,4 +1,5 @@
 const should = require('should');
+const check = require('validator').check;
 
 describe('convict formats', function() {
   const convict = require('../');
@@ -49,7 +50,7 @@ describe('convict formats', function() {
         },
         custom: {
           format: function (val) {
-            convict.check(val, 'expected alpha characters, got ' + val).isAlpha();
+            check(val, 'expected alpha characters, got ' + val).isAlpha();
           },
           default: 'abcd'
         }

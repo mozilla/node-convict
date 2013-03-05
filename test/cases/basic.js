@@ -1,21 +1,25 @@
 exports.conf = {
   env: {
-    format: 'string ["production", "local"] = "local"',
+    format: ["production", "local"],
+    default: "local",
     env: "NODE_ENV",
     doc: "The environment that we're running in."
   },
   URL: {
-    format: 'string = "https://browserid.org"',
+    format: String,
+    default: "https://browserid.org",
     env: "URL",
-    doc: "The externally visible url of the server",
+    doc: "The externally visible url of the server"
   },
   use_minified_resources: {
-    format: "boolean = false;",
+    format: Boolean,
+    default: false,
     doc: "All resources should be combined and minified",
     env: "MINIFIED"
   },
   var_path: {
-    format: 'string = "/home/browserid/var"',
+    format: String,
+    default: "/home/browserid/var",
     doc: "The path the the 'var' directory, where logs and such will go"
   }
 };

@@ -9,7 +9,8 @@ process.on('message', function(spec) {
     process.send({result: conf.get()});
     process.exit(0);
   } catch(e) {
-    process.send({error: e.toString() });
+    console.error(e);
+    process.send({error: e.message });
     process.exit(1);
   }
 });

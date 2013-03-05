@@ -57,6 +57,7 @@ An example `config.js`:
 
 ### Usage
 
+    var http = require('http');
     var conf = require('./config.js');
 
     var server = http.createServer(function (req, res) {
@@ -71,7 +72,7 @@ An example `config.js`:
     });
 
 
-## Schema
+## The Schema
 A configuration module could look like this:
 
 config.js:
@@ -95,9 +96,9 @@ Each setting in the schema has four possible properties, each aiding in convict'
 * **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `conf.toSchemaString()` and have it displayed in the output.
 
 ### Validation
-In order to help detect misconfigurations, convict allows you to define a format for each setting. By defualt, convict checks if the value of the property has the same `typeof` value as the default value specified in the schema. You can define a custom format checking function in the schema by setting the `format` property.
+In order to help detect misconfigurations, convict allows you to define a format for each setting. By defualt, convict checks if the value of the property has the same type (according to `Object.prototype.toString.call`) as the default value specified in the schema. You can define a custom format checking function in the schema by setting the `format` property.
 
-convict provides serveral predefined formats for validation that you can use ([using node-validator](https://github.com/chriso/node-validator#list-of-validation-methods) and moment.js). Most of them are self-explanatory:
+convict provides serveral predefined formats for validation that you can use ([using node-validator](https://github.com/chriso/node-validator#list-of-validation-methods) and [moment.js](http://momentjs.com/)). Most of them are self-explanatory:
 
 * `*` - any value is valid
 * `int`
@@ -106,7 +107,7 @@ convict provides serveral predefined formats for validation that you can use ([u
 * `email`
 * `ipaddress` - IPv4 addresses
 * `duration` - miliseconds or a human readable string (e.g. "5 days")
-* `timestamp` - Unix timestamps or date strings recognized by moment.js
+* `timestamp` - Unix timestamps or date strings recognized by [moment.js](http://momentjs.com/)
 * `nat` - positive integer (natural number)
 
 If `format` is set to one of the built-in JavaScript constructors, `Object`, `Array`, `String`, `Number`, or `Boolean`, validation will use Object.prototype.toString.call to check that the setting is the proper type.
@@ -127,7 +128,7 @@ You can also provide your own format checking function. For example:
 
 ### Coercion
 
-Convict will automatically coerce environmental variables from strings to their proper types when importing them. For instance, values with the format `int`, `nat`, `port`, or `Number` will become numbers after a straight forward `parseInt` or `parseFloat`. `duration` and `timestamp` are also parse and converted into numbers, though they utilize `moment.js` for date parsing.
+Convict will automatically coerce environmental variables from strings to their proper types when importing them. For instance, values with the format `int`, `nat`, `port`, or `Number` will become numbers after a straight forward `parseInt` or `parseFloat`. `duration` and `timestamp` are also parse and converted into numbers, though they utilize [moment.js](http://momentjs.com/) for date parsing.
 
 ## API
 

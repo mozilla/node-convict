@@ -1,3 +1,171 @@
-## What
+# node-convict
 
-convict is a node 
+Robust and composable configuration for node.js with support for environmental variables, files, and validation.
+
+Convict expands on the standard pattern of configuring node.js applications in a way that is more robust and accessible to collaborators, who may have less interest in digging through imperative code in order to inspect or modify settings. By introducting a configuration schema, convict gives project collaborators more **context** on each setting and enables **validation and early failures** for when configuration goes wrong.
+
+
+## Features
+* **Loading and merging**: configurations are loaded from disk or inline and merged. JSON files are loaded with `cjson` so comments are welcome.
+* **Environmental variables**: values can be set from environmental variables
+* **Validation**: configurations are validated against your schema, generating an error report with all errors that are found
+
+Example:
+
+    var convict = require('convict');
+    var http = require('http');
+
+    // define a schema
+
+    var conf = convict({
+      env: {
+        doc: "The applicaton environment.",
+        format: ["production", "development", "test"],
+        default: "development",
+        env: "NODE_ENV"
+      },
+      ip: {
+        doc: "The IP address to bind.",
+        format: "ipaddress",
+        default: "127.0.0.1",
+        env: "IP_ADDRESS",
+      },
+      port: {
+        doc: "The port to bind.",
+        format: "port",
+        default: 0,
+        env: "PORT"
+      }
+    });
+
+
+    // load environment dependent configuration
+
+    var env = conf.get('env');
+    conf.loadFile('./config/' + env + '.json');
+
+    // perform validation
+
+    conf.validate();
+
+    var server = http.createServer(function (req, res) {
+      res.writeHead(200, {'Content-Type': 'text/plain'});
+      res.end('Hello World\n');
+    });
+
+    // consume
+    server.listen(conf.get('port'), conf.get('ip'), function(x) {
+      var addy = server.address();
+      console.log('running on http://' + addy.address + ":" + addy.port);
+    });
+
+
+## Schema
+A configuration module could look like this:
+
+config.js:
+
+    var config = module.exports = convict({
+      env: {
+        doc: "The application environment.",
+        format: ["production", "development", "test"],
+        default: "development",
+        env: "NODE_ENV"
+      }
+    });
+
+    config.loadFile(['./prod.json', './config.json']);
+
+You'll notice that each setting in the schema has four possible properties, each aiding in convict's goal of being more robust and collaborator friendly.
+
+* **Type information**: the `format` property specifies either a built-in convict format (`ipaddress`, `port`, `int`, etc.), or it can be a function to check a custom format. During validation, if a format check fails it will be added to the error report.
+* **Default values**:  Every setting *must* have a default value.
+* **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value.
+* **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `conf.toSchemaString()` and have it displayed in the output.
+
+### Validation
+In order to help detect misconfigurations, convict allows you to define a format for each setting. By defualt, convict checks if the value of the property has the same `typeof` value as the default value specified in the schema. You can define a custom format checking function in the schema by setting the `format` property.
+
+convict provides serveral predefined formats for validation that you can use ([using node-validator](https://github.com/chriso/node-validator#list-of-validation-methods) and moment.js). Most of them are self-explanatory:
+
+* `*` - any value is valid
+* `int`
+* `port`
+* `url`
+* `email`
+* `ipaddress` - IPv4 addresses
+* `duration` - miliseconds or a human readable string (e.g. "5 days")
+* `timestamp` - Unix timestamps or date strings recognized by moment.js
+* `nat` - positive integer (natural number)
+
+If `format` is set to one of the built-in JavaScript constructors, `Object`, `Array`, `String`, `Number`, or `Boolean`, validation will use Object.prototype.toString.call to check that the setting is the proper type.
+
+You can also provide your own format checking function. For example:
+
+    var check = require('validator').check;
+
+    var conf = convict({
+        key: {
+          doc: "API key",
+          format: function (val) {
+            check(val, 'should be a 64 character hex key').regex(/^[a-fA-F0-9]{64}$/);
+          },
+          default: '3cec609c9bc601c047af917a544645c50caf8cd606806b4e0a23312441014deb'
+        }
+      });
+
+### Coercion
+
+Convict will automatically coerce environmental variables from strings to their proper types when importing them. For instance, values with the format `int`, `nat`, `port`, or `Number` will become numbers after a straight forward `parseInt` or `parseFloat`. `duration` and `timestamp` are also parse and converted into numbers, though they utilize `moment.js` for date parsing.
+
+## API
+
+### `var config = convict(schema)`
+`convict()` takes a schema object and returns a convict configuration object. The configuration object has an API for getting and setting values, described below.
+
+### `config.get(name)`
+Returns the value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
+
+    config.get('database.host');
+
+    // or
+
+    config.get('database').host;
+
+### `config.has(name)`
+Returns `true` if the property `name` is defined, or `false` otherwise. E.g.:
+
+    if (config.has('some.property')) {
+      // do something
+    }
+
+### `config.set(name, value)`
+Sets the value of `name` to value. `name` can use dot notation to reference nested values, e.g. `"database.port"`. If objects in the chain don't yet exist, they will be initialized to empty objects. E.g.:
+
+    config.set('property.that.may.not.exist.yet', 'some value');
+    config.get('property.that.may.not.exist.yet');
+    // returns "some value"
+
+### `config.load(object)`
+This will load and merge a JavaScript object into `config`. E.g.:
+
+    config.load({
+      "env": "test",
+      "ip": "127.0.0.1",
+      "port": 80
+    });
+
+### `config.loadFile(file or [file1, file2, ...])`
+This will load and merge one or multiple JSON configuration files into `config`. JSON files are loaded using `cjson`, so they can contain comments. E.g.:
+
+    conf.loadFile('./config/' + conf.get('env') + '.json');
+
+Or, loading multiple files at once:
+
+    // CONFIG_FILES=/path/to/production.json,/path/to/secrets.json,/path/to/sitespecific.json
+    conf.loadFile(process.env.CONFIG_FILES.split(','));
+
+
+### `config.validate()`
+Validates `config` against the schema used to initialize it. All errors are collected and thrown at once.
+

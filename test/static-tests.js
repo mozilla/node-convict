@@ -47,9 +47,12 @@ var toRun = Object.keys(tests);
 function run(name, done) {
   var test = tests[name];
 
-  var env = require(path.join(casesDir, test.spec)).env || {};
+  var kase = require(path.join(casesDir, test.spec));
 
-  var n = cp.fork(path.join(__dirname + '/runner.js'), [], { env: env });
+  var env = kase.env || {};
+  var argv = kase.argv ? kase.argv.split(' ') : [];
+
+  var n = cp.fork(path.join(__dirname + '/runner.js'), argv, { env: env });
 
   n.on('message', function(m) {
     try {

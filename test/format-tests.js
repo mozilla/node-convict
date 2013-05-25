@@ -6,6 +6,24 @@ describe('convict formats', function() {
   var conf;
 
   it('should parse a config specification', function() {
+    convict.addTypes({
+      prime: {
+        validate: function(val) {
+          function isPrime(n) {
+            if (n <= 1) return false; // zero and one are not prime
+            for (var i=2; i*i <= n; i++) {
+              if (n % i == 0) return false;
+            }
+            return true;
+          }
+          if (!isPrime(val)) throw new Error('must be a prime number');
+        },
+        coerce: function(val) {
+          return parseInt(val, 10);
+        }
+      }
+    });
+
     conf = convict({
       foo: {
         enum: {
@@ -53,13 +71,22 @@ describe('convict formats', function() {
             check(val, 'expected alpha characters, got ' + val).isAlpha();
           },
           default: 'abcd'
-        }
+        },
+        primeNumber: {
+          format: 'prime',
+          default: 17
+        },
       }
     });
   });
 
   it('should be valid', function() {
     (function() { conf.validate() }).should.not.throw();
+  });
+
+  it('should be invalid', function() {
+    conf.set('foo.primeNumber', 16);
+    (function() { conf.validate() }).should.throw();
   });
 
   describe('predefined formats', function() {

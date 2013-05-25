@@ -1,0 +1,11 @@
+{
+  "foo": {
+    "bar": 7,
+    "baz": {
+      "bing": "foo",
+      "name with spaces": {
+        "name_with_underscores": true
+      }
+    }
+  }
+}

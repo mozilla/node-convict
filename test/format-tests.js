@@ -6,7 +6,7 @@ describe('convict formats', function() {
   var conf;
 
   it('should parse a config specification', function() {
-    convict.addTypes({
+    convict.addFormats({
       prime: {
         validate: function(val) {
           function isPrime(n) {

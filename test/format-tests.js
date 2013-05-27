@@ -70,6 +70,10 @@ describe('convict formats', function() {
           format: 'int',
           default: -9
         },
+        int2: {
+          format: 'integer',
+          default: 42
+        },
         any: {
           format: '*',
           default: "foo"
@@ -86,6 +90,7 @@ describe('convict formats', function() {
         },
       }
     });
+
   });
 
   it('should be valid', function() {
@@ -106,5 +111,16 @@ describe('convict formats', function() {
     it('should handle duration', function() {
       should.equal(conf.get('foo.duration'), 60 * 5 * 1000);
     });
+  });
+
+  it('should throw with unknown format', function() {
+    (function() {
+      var conf2 = convict({
+        foo: {
+          format: 'unknown',
+          default: 'bar'
+        }
+      });
+    }).should.throw();
   });
 });

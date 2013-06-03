@@ -88,6 +88,10 @@ describe('convict formats', function() {
           format: 'prime',
           default: 17
         },
+        optional: {
+          format: '*',
+          default: undefined
+        }
       }
     });
 
@@ -122,5 +126,10 @@ describe('convict formats', function() {
         }
       });
     }).should.throw();
+  });
+
+  it('should accept undefined as a default', function() {
+    var val = conf.get('foo.optional');
+    should.equal(val, undefined);
   });
 });

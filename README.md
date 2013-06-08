@@ -139,13 +139,18 @@ Convict will automatically coerce environmental variables from strings to their 
 `convict()` takes a schema object and returns a convict configuration object. The configuration object has an API for getting and setting values, described below.
 
 ### config.get(name)
-Returns the value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
+Returns the current value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
 
     config.get('database.host');
 
     // or
 
     config.get('database').host;
+
+### config.default(name)
+Returns the default value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
+
+    config.default('server.port');
 
 ### config.has(name)
 Returns `true` if the property `name` is defined, or `false` otherwise. E.g.:

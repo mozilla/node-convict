@@ -30,4 +30,19 @@ describe('convict schema file', function() {
       (function() { conf.get('foo.no') }).should.throw();
     });
   });
+
+  describe('.default()', function() {
+    // Temporarily modify a property while testing default()
+    before(function() { conf.set('foo.bar', 8); });
+    after(function() { conf.set('foo.bar', 7); });
+
+    it('should report the default value of a property', function() {
+      should.equal(conf.get('foo.bar'), 8); // Modified
+      should.equal(conf.default('foo.bar'), 7);
+    });
+
+    it("should throw if key doesn't exist", function() {
+      (function() { conf.default('foo.no'); }).should.throw();
+    });
+  });
 });

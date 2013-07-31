@@ -6,6 +6,11 @@ describe('convict', function() {
 
   it('should parse a config specification', function() {
     conf = convict({
+      env: {
+        format: ['bar', 'baz', 'foo'],
+        default: 'bar',
+        env: 'NODE_ENV'
+      },
       foo: {
         bar: 7,
         baz: {
@@ -38,6 +43,11 @@ describe('convict', function() {
 
     it("should throw if conf doesn't exist", function() {
       (function() { conf.get('foo.no') }).should.throw();
+    });
+
+    it('should get env', function() {
+      var val = conf.get('env');
+      should.equal(val, 'bar');
     });
   });
 });

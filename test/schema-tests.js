@@ -3,6 +3,14 @@ const should = require('should');
 describe('convict schema file', function() {
   const convict = require('../');
   var conf;
+  var conf2 = convict({
+    foo: {
+      none: {
+        format: String,
+        default: undefined
+      }
+    }
+  });
 
   it('should parse a config specification from a file', function() {
     conf = convict(__dirname + '/schema.json');
@@ -10,6 +18,22 @@ describe('convict schema file', function() {
 
   it('should be valid', function() {
     (function() { conf.validate() }).should.not.throw();
+  });
+
+  it('should be valid again', function() {
+    (function() { conf2.validate() }).should.not.throw();
+  });
+
+  describe('.has()', function() {
+    it('should not have undefined properties', function() {
+      var val = conf.has('foo.bar.madeup');
+      should.equal(val, false);
+    });
+
+    it('should not have properties specified with a default of undefined', function() {
+      var val = conf.has('foo.none');
+      should.equal(val, false);
+    });
   });
 
   describe('.get()', function() {

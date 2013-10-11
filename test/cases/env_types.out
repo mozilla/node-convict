@@ -2,5 +2,6 @@
   "bool": true,
   "int": 77,
   "num": 789.1011,
-  "array": ["a", "b", "c"]
+  "array": ["a", "b", "c"],
+  "object": {"foo": "bar"}
 }

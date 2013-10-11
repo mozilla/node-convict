@@ -18,6 +18,11 @@ exports.conf = {
     default: ['a', 'b'],
     format: Array,
     env: 'ARRAY'
+  },
+  object: {
+    format: Object,
+    default: {},
+    env: 'OBJECT'
   }
 };
 
@@ -25,5 +30,6 @@ exports.env = {
   BOOL: true,
   INT: 77,
   NUM: 789.1011,
-  ARRAY: "a,b,c"
+  ARRAY: "a,b,c",
+  OBJECT: '{"foo": "bar"}'
 };

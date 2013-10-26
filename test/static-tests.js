@@ -55,29 +55,30 @@ function run(name, done) {
   var n = cp.fork(path.join(__dirname + '/runner.js'), argv, { env: env });
 
   n.on('message', function(m) {
+    var expected, got;
     try {
       if (!m.error) {
         // let's read the expected output
-        var expected = JSON.parse(fs.readFileSync(path.join(casesDir, test.output)));
-        var got = m.result;
+        expected = JSON.parse(fs.readFileSync(path.join(casesDir, test.output)));
+        got = m.result;
 
         // check that configuration is what we expect
         var err = diffObjects(expected, got);
         if (err) throw err;
         return done();
       } else {
-        var expected = fs.readFileSync(path.join(casesDir, test.output)).toString().trim();
-        var got = m.error.trim();
+        expected = fs.readFileSync(path.join(casesDir, test.output)).toString().trim();
+        got = m.error.trim();
         if (expected.trim() !== got.trim()) throw got;
         return done();
       }
     } catch(e) {
-      done(e);
+      return done(e);
     }
   });
 
   n.send(tests[name]);
-};
+}
 
 describe('Static tests', function() {
   toRun.forEach(function(name) {

@@ -17,11 +17,11 @@ describe('convict schema file', function() {
   });
 
   it('should be valid', function() {
-    (function() { conf.validate() }).should.not.throw();
+    (function() { conf.validate(); }).should.not.throw();
   });
 
   it('should be valid again', function() {
-    (function() { conf2.validate() }).should.not.throw();
+    (function() { conf2.validate(); }).should.not.throw();
   });
 
   describe('.has()', function() {
@@ -51,7 +51,7 @@ describe('convict schema file', function() {
     });
 
     it("should throw if conf doesn't exist", function() {
-      (function() { conf.get('foo.no') }).should.throw();
+      (function() { conf.get('foo.no'); }).should.throw();
     });
   });
 

@@ -3,10 +3,10 @@
   "name": "convict",
   "description": "Unruly configuration management for nodejs",
   "version": "0.4.1",
-  "homepage": "https://github.com/lloyd/node-convict",
+  "homepage": "https://github.com/mozilla/node-convict",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lloyd/node-convict.git"
+    "url": "https://github.com/mozilla/node-convict.git"
   },
   "main": "lib/convict.js",
   "engines": {

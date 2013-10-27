@@ -23,7 +23,13 @@
     "should": "1.2.2",
     "mocha": "1.8.1"
   },
+    "jshintConfig": {
+        "unused": "vars",
+        "node": true,
+        "esnext": true
+    },
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "mocha -R spec",
+    "lint": "jshint *.json lib/*.js test/*.js || true"
   }
 }

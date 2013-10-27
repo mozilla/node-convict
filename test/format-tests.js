@@ -12,7 +12,7 @@ describe('convict formats', function() {
           function isPrime(n) {
             if (n <= 1) return false; // zero and one are not prime
             for (var i=2; i*i <= n; i++) {
-              if (n % i == 0) return false;
+              if (n % i === 0) return false;
             }
             return true;
           }
@@ -98,12 +98,12 @@ describe('convict formats', function() {
   });
 
   it('should be valid', function() {
-    (function() { conf.validate() }).should.not.throw();
+    (function() { conf.validate(); }).should.not.throw();
   });
 
   it('should be invalid', function() {
     conf.set('foo.primeNumber', 16);
-    (function() { conf.validate() }).should.throw();
+    (function() { conf.validate(); }).should.throw();
   });
 
   describe('predefined formats', function() {
@@ -119,7 +119,7 @@ describe('convict formats', function() {
 
   it('should throw with unknown format', function() {
     (function() {
-      var conf2 = convict({
+      convict({
         foo: {
           format: 'unknown',
           default: 'bar'

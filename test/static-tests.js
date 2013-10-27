@@ -23,7 +23,7 @@ files.forEach(function(f) {
 
 // now find all configuration files for all tests
 Object.keys(tests).forEach(function(test) {
-  var re = new RegExp('^' + test + '.*\.json$');
+  var re = new RegExp('^' + test + '.*\\.json$');
   files.forEach(function(f) {
     if (re.test(f)) tests[test].config_files.push(path.join(casesDir, f));
   });

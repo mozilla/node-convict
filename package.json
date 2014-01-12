@@ -1,4 +1,4 @@
-{
+{ 
   "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
   "name": "convict",
   "description": "Unruly configuration management for nodejs",
@@ -13,7 +13,7 @@
     "node": ">=0.4.7"
   },
   "dependencies": {
-    "cjson": "0.2.1",
+    "cjson": "0.3.0",
     "validator": "1.5.1",
     "moment": "2.3.1",
     "optimist": "0.6.0"

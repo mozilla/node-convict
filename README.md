@@ -1,4 +1,7 @@
-# node-convict
+# node-convict [!['Build status'][travis_image_url]][travis_page_url]
+
+[travis_image_url]: https://api.travis-ci.org/mozilla/node-convict.png
+[travis_page_url]: https://travis-ci.org/mozilla/node-convict
 
 Convict expands on the standard pattern of configuring node.js applications in a way that is more robust and accessible to collaborators, who may have less interest in digging through imperative code in order to inspect or modify settings. By introducting a configuration schema, convict gives project collaborators more **context** on each setting and enables **validation and early failures** for when configuration goes wrong.
 

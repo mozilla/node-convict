@@ -1,8 +1,8 @@
-{ 
+{
   "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
   "name": "convict",
   "description": "Unruly configuration management for nodejs",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "homepage": "https://github.com/mozilla/node-convict",
   "repository": {
     "type": "git",

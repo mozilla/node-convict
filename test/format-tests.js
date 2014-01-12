@@ -109,7 +109,7 @@ describe('convict formats', function() {
   describe('predefined formats', function() {
     it('should handle timestamp', function() {
       var val = conf.get('foo.date');
-      should.equal(val, 1367737200000);
+      should.equal(val, new Date('May 5, 2013').getTime());
     });
 
     it('should handle duration', function() {

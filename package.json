@@ -25,5 +25,10 @@
   },
   "scripts": {
     "test": "mocha -R spec"
+  },
+  "bugs": "https://github.com/mozilla/node-convict/issues",
+  "licenses": {
+    "type": "Apache",
+    "url": "https://raw.github.com/mozilla/node-convict/master/LICENSE"
   }
 }

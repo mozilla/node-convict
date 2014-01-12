@@ -9,6 +9,11 @@ exports.conf = {
     format: 'int',
     env: "INT"
   },
+  nat: {
+    default: 333,
+    format: 'nat',
+    env: "NAT"
+  },
   num: {
     default: 10.1,
     format: Number,
@@ -29,6 +34,7 @@ exports.conf = {
 exports.env = {
   BOOL: true,
   INT: 77,
+  NAT: 666,
   NUM: 789.1011,
   ARRAY: "a,b,c",
   OBJECT: '{"foo": "bar"}'

@@ -1,6 +1,7 @@
 {
   "bool": true,
   "int": 77,
+  "nat": 666,
   "num": 789.1011,
   "array": ["a", "b", "c"],
   "object": {"foo": "bar"}

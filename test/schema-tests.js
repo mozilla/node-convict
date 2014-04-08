@@ -31,7 +31,7 @@ describe('convict schema file', function() {
     });
 
     it('should not have properties specified with a default of undefined', function() {
-      var val = conf.has('foo.none');
+      var val = conf2.has('foo.none');
       should.equal(val, false);
     });
   });

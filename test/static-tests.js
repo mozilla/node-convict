@@ -1,7 +1,6 @@
 const
 fs = require('fs'),
 path = require('path'),
-convict = require('../lib/convict.js'),
 cp = require('child_process'),
 obj_diff = require('obj_diff'),
 mocha = require('mocha');
@@ -23,7 +22,7 @@ files.forEach(function(f) {
 
 // now find all configuration files for all tests
 Object.keys(tests).forEach(function(test) {
-  var re = new RegExp('^' + test + '.*\.json$');
+  var re = new RegExp('^' + test + '.*\\.json$');
   files.forEach(function(f) {
     if (re.test(f)) tests[test].config_files.push(path.join(casesDir, f));
   });
@@ -55,29 +54,31 @@ function run(name, done) {
   var n = cp.fork(path.join(__dirname + '/runner.js'), argv, { env: env });
 
   n.on('message', function(m) {
+    var expected;
+    var got;
     try {
       if (!m.error) {
         // let's read the expected output
-        var expected = JSON.parse(fs.readFileSync(path.join(casesDir, test.output)));
-        var got = m.result;
+        expected = JSON.parse(fs.readFileSync(path.join(casesDir, test.output)));
+        got = m.result;
 
         // check that configuration is what we expect
         var err = diffObjects(expected, got);
         if (err) throw err;
         return done();
       } else {
-        var expected = fs.readFileSync(path.join(casesDir, test.output)).toString().trim();
-        var got = m.error.trim();
+        expected = fs.readFileSync(path.join(casesDir, test.output)).toString().trim();
+        got = m.error.trim();
         if (expected.trim() !== got.trim()) throw got;
         return done();
       }
     } catch(e) {
-      done(e);
+      return done(e);
     }
   });
 
   n.send(tests[name]);
-};
+}
 
 describe('Static tests', function() {
   toRun.forEach(function(name) {

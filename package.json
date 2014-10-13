@@ -23,8 +23,16 @@
     "should": "2.0.1",
     "mocha": "1.13.0"
   },
+  "jshintConfig": {
+    "unused": "vars",
+    "undef": true,
+    "node": true,
+    "esnext": true,
+    "mocha": true
+  },
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "mocha -R spec",
+    "lint": "jshint **/*.json lib/*.js test/*.js"
   },
   "bugs": "https://github.com/mozilla/node-convict/issues",
   "licenses": {

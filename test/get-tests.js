@@ -24,7 +24,7 @@ describe('convict', function() {
   });
 
   it('should be valid', function() {
-    (function() { conf.validate() }).should.not.throw();
+    (function() { conf.validate(); }).should.not.throw();
   });
 
   describe('.get()', function() {
@@ -42,7 +42,7 @@ describe('convict', function() {
     });
 
     it("should throw if conf doesn't exist", function() {
-      (function() { conf.get('foo.no') }).should.throw();
+      (function() { conf.get('foo.no'); }).should.throw();
     });
 
     it('should get env', function() {

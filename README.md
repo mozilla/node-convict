@@ -201,3 +201,9 @@ conf.loadFile(process.env.CONFIG_FILES.split(','));
 ### config.validate()
 Validates `config` against the schema used to initialize it. All errors are collected and thrown at once.
 
+
+## faq
+
+### [How can I define a configuration property as "required" without providing a default value?](https://github.com/mozilla/node-convict/issues/29)
+
+The philosophy was to have production values be the default values. Usually you only want to change defaults for deploy or instance (in aws speak) specific tweaks. However, you can set a default value to `null` and if your format doesn't accept `null` it will throw an error.

@@ -70,3 +70,18 @@ describe('convict schema file', function() {
     });
   });
 });
+
+describe('convict used multiple times on one schema', function() {
+  const convict = require('../');
+  var schema = {
+    publicServerAddress:  {
+      doc: 'The public-facing server address',
+      format: String,
+      default: 'localhost:5000'
+    }
+  };
+  (function() {
+    var conf = convict(schema);
+    var conf2 = convict(schema);
+  }).should.not.throw();
+});

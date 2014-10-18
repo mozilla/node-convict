@@ -19,9 +19,11 @@
     "optimist": "0.6.0"
   },
   "devDependencies": {
+    "istanbul": "^0.3.2",
+    "jshint": "^2.5.6",
+    "mocha": "1.13.0",
     "obj_diff": "0.3.0",
-    "should": "2.0.1",
-    "mocha": "1.13.0"
+    "should": "2.0.1"
   },
   "jshintConfig": {
     "unused": "vars",
@@ -31,8 +33,10 @@
     "mocha": true
   },
   "scripts": {
-    "test": "mocha -R spec",
-    "lint": "jshint **/*.json lib/*.js test/*.js"
+    "lint": "jshint **/*.json **/*.js",
+    "test": "jshint **/*.json **/*.js && mocha --check-leaks -R spec",
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/",
+    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/"
   },
   "bugs": "https://github.com/mozilla/node-convict/issues",
   "licenses": {

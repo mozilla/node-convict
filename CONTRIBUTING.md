@@ -3,10 +3,6 @@ CONTRIBUTING
 
 2-spaces indent
 
-Check your code with JSHint (JSHint >= 2.1.11 necessary):
+Check that your code passes the tests before submitting a PR:
 
-    $ npm run-script lint
-
-And, if necessary, to install JSHint globally into your account:
-
-    $ npm install --prefix ~/ jshint -g
+    $ npm test

@@ -33,8 +33,8 @@
     "mocha": true
   },
   "scripts": {
-    "lint": "jshint **/*.json **/*.js",
-    "test": "jshint **/*.json **/*.js && mocha --check-leaks -R spec",
+    "lint": "jshint *.json lib/*.js test/*.js test/cases/*.js test/cases/*.json",
+    "test": "jshint *.json lib/*.js test/*.js test/cases/*.js test/cases/*.json && mocha --check-leaks -R spec",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/",
     "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/"
   },

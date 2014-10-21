@@ -81,7 +81,7 @@ describe('convict used multiple times on one schema', function() {
     }
   };
   (function() {
-    var conf = convict(schema);
-    var conf2 = convict(schema);
+    convict(schema);
+    convict(schema);
   }).should.not.throw();
 });

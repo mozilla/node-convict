@@ -32,7 +32,7 @@ describe('convict formats', function() {
         },
         date: {
           format: 'timestamp',
-          default: 'May 5, 2013'
+          default: '2013-05-05T00:00:00.000Z'
         },
         duration: {
           format: 'duration',
@@ -109,7 +109,7 @@ describe('convict formats', function() {
   describe('predefined formats', function() {
     it('should handle timestamp', function() {
       var val = conf.get('foo.date');
-      should.equal(val, new Date('May 5, 2013').getTime());
+      should.equal(val, new Date('2013-05-05T00:00:00.000Z').getTime());
     });
 
     it('should handle duration', function() {

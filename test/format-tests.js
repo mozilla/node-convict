@@ -1,4 +1,5 @@
 const should = require('should');
+const moment = require('moment');
 const check = require('validator').check;
 
 describe('convict formats', function() {
@@ -32,7 +33,7 @@ describe('convict formats', function() {
         },
         date: {
           format: 'timestamp',
-          default: '2013-05-05T00:00:00.000Z'
+          default: '2013-05-05'
         },
         duration: {
           format: 'duration',
@@ -109,7 +110,7 @@ describe('convict formats', function() {
   describe('predefined formats', function() {
     it('should handle timestamp', function() {
       var val = conf.get('foo.date');
-      should.equal(val, new Date('2013-05-05T00:00:00.000Z').getTime());
+      should.equal(val, moment('2013-05-05').valueOf());
     });
 
     it('should handle duration', function() {

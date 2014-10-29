@@ -16,7 +16,7 @@
     "cjson": "0.3.0",
     "moment": "2.8.3",
     "optimist": "0.6.1",
-    "validator": "1.5.1"
+    "validator": "2.1.0"
   },
   "devDependencies": {
     "istanbul": "0.3.2",

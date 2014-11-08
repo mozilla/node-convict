@@ -1,6 +1,6 @@
 # node-convict
 
-Convict expands on the standard pattern of configuring node.js applications in a way that is more robust and accessible to collaborators, who may have less interest in digging through imperative code in order to inspect or modify settings. By introducting a configuration schema, convict gives project collaborators more **context** on each setting and enables **validation and early failures** for when configuration goes wrong.
+Convict expands on the standard pattern of configuring node.js applications in a way that is more robust and accessible to collaborators, who may have less interest in digging through imperative code in order to inspect or modify settings. By introducing a configuration schema, convict gives project collaborators more **context** on each setting and enables **validation and early failures** for when configuration goes wrong.
 
 
 ## Features
@@ -11,84 +11,90 @@ Convict expands on the standard pattern of configuring node.js applications in a
 
 ## Install
 
-    npm install convict
+```sh
+npm install convict
+```
 
 ## Example:
 
 
 An example `config.js`:
 
-    var convict = require('convict');
+```js
+var convict = require('convict');
 
-    // define a schema
+// define a schema
 
-    var conf = convict({
-      env: {
-        doc: "The applicaton environment.",
-        format: ["production", "development", "test"],
-        default: "development",
-        env: "NODE_ENV"
-      },
-      ip: {
-        doc: "The IP address to bind.",
-        format: "ipaddress",
-        default: "127.0.0.1",
-        env: "IP_ADDRESS",
-      },
-      port: {
-        doc: "The port to bind.",
-        format: "port",
-        default: 0,
-        env: "PORT"
-      }
-    });
+var conf = convict({
+  env: {
+    doc: "The applicaton environment.",
+    format: ["production", "development", "test"],
+    default: "development",
+    env: "NODE_ENV"
+  },
+  ip: {
+    doc: "The IP address to bind.",
+    format: "ipaddress",
+    default: "127.0.0.1",
+    env: "IP_ADDRESS",
+  },
+  port: {
+    doc: "The port to bind.",
+    format: "port",
+    default: 0,
+    env: "PORT"
+  }
+});
 
 
-    // load environment dependent configuration
+// load environment dependent configuration
 
-    var env = conf.get('env');
-    conf.loadFile('./config/' + env + '.json');
+var env = conf.get('env');
+conf.loadFile('./config/' + env + '.json');
 
-    // perform validation
+// perform validation
 
-    conf.validate();
+conf.validate();
 
-    module.exports = conf;
-
+module.exports = conf;
+```
 
 ### Usage
 
-    var http = require('http');
-    var conf = require('./config.js');
+```js
+var http = require('http');
+var conf = require('./config.js');
 
-    var server = http.createServer(function (req, res) {
-      res.writeHead(200, {'Content-Type': 'text/plain'});
-      res.end('Hello World\n');
-    });
+var server = http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello World\n');
+});
 
-    // consume
-    server.listen(conf.get('port'), conf.get('ip'), function(x) {
-      var addy = server.address();
-      console.log('running on http://' + addy.address + ":" + addy.port);
-    });
-
+// consume
+server.listen(conf.get('port'), conf.get('ip'), function(x) {
+  var addy = server.address();
+  console.log('running on http://' + addy.address + ":" + addy.port);
+});
+```
 
 ## The Schema
 A configuration module could look like this:
 
 config.js:
 
-    var config = module.exports = convict({
-      env: {
-        doc: "The application environment.",
-        format: ["production", "development", "test"],
-        default: "development",
-        env: "NODE_ENV",
-        arg: "node-env",
-      }
-    });
+```js
+var config = module.exports = convict({
+  env: {
+    doc: "The application environment.",
+    format: ["production", "development", "test"],
+    default: "development",
+    env: "NODE_ENV",
+    arg: "node-env",
+  }
+});
 
-    config.loadFile(['./prod.json', './config.json']);
+config.loadFile(['./prod.json', './config.json']);
+```
 
 Each setting in the schema has four possible properties, each aiding in convict's goal of being more robust and collaborator friendly.
 
@@ -99,9 +105,9 @@ Each setting in the schema has four possible properties, each aiding in convict'
 * **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `conf.toSchemaString()` and have it displayed in the output.
 
 ### Validation
-In order to help detect misconfigurations, convict allows you to define a format for each setting. By defualt, convict checks if the value of the property has the same type (according to `Object.prototype.toString.call`) as the default value specified in the schema. You can define a custom format checking function in the schema by setting the `format` property.
+In order to help detect misconfigurations, convict allows you to define a format for each setting. By default, convict checks if the value of the property has the same type (according to `Object.prototype.toString.call`) as the default value specified in the schema. You can define a custom format checking function in the schema by setting the `format` property.
 
-convict provides serveral predefined formats for validation that you can use ([using node-validator](https://github.com/chriso/node-validator#list-of-validation-methods) and [moment.js](http://momentjs.com/)). Most of them are self-explanatory:
+convict provides several predefined formats for validation that you can use ([using node-validator](https://github.com/chriso/node-validator#list-of-validation-methods) and [moment.js](http://momentjs.com/)). Most of them are self-explanatory:
 
 * `*` - any value is valid
 * `int`
@@ -109,7 +115,7 @@ convict provides serveral predefined formats for validation that you can use ([u
 * `url`
 * `email`
 * `ipaddress` - IPv4 addresses
-* `duration` - miliseconds or a human readable string (e.g. "5 days")
+* `duration` - milliseconds or a human readable string (e.g. "5 days")
 * `timestamp` - Unix timestamps or date strings recognized by [moment.js](http://momentjs.com/)
 * `nat` - positive integer (natural number)
 
@@ -117,17 +123,19 @@ If `format` is set to one of the built-in JavaScript constructors, `Object`, `Ar
 
 You can also provide your own format checking function. For example:
 
-    var check = require('validator').check;
+```js
+var check = require('validator').check;
 
-    var conf = convict({
-        key: {
-          doc: "API key",
-          format: function (val) {
-            check(val, 'should be a 64 character hex key').regex(/^[a-fA-F0-9]{64}$/);
-          },
-          default: '3cec609c9bc601c047af917a544645c50caf8cd606806b4e0a23312441014deb'
-        }
-      });
+var conf = convict({
+  key: {
+    doc: "API key",
+    format: function (val) {
+      check(val, 'should be a 64 character hex key').regex(/^[a-fA-F0-9]{64}$/);
+    },
+    default: '3cec609c9bc601c047af917a544645c50caf8cd606806b4e0a23312441014deb'
+  }
+});
+```
 
 ### Coercion
 
@@ -141,11 +149,13 @@ Convict will automatically coerce environmental variables from strings to their 
 ### config.get(name)
 Returns the current value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
 
-    config.get('database.host');
+```js
+config.get('database.host');
 
-    // or
+// or
 
-    config.get('database').host;
+config.get('database').host;
+```
 
 ### config.default(name)
 Returns the default value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
@@ -155,36 +165,45 @@ Returns the default value of the `name` property. `name` can use dot notation to
 ### config.has(name)
 Returns `true` if the property `name` is defined, or `false` otherwise. E.g.:
 
-    if (config.has('some.property')) {
-      // do something
-    }
+```js
+if (config.has('some.property')) {
+  // do something
+}
+```
 
 ### config.set(name, value)
 Sets the value of `name` to value. `name` can use dot notation to reference nested values, e.g. `"database.port"`. If objects in the chain don't yet exist, they will be initialized to empty objects. E.g.:
 
-    config.set('property.that.may.not.exist.yet', 'some value');
-    config.get('property.that.may.not.exist.yet');
-    // returns "some value"
+```js
+config.set('property.that.may.not.exist.yet', 'some value');
+config.get('property.that.may.not.exist.yet');
+// returns "some value"
+```
 
 ### config.load(object)
 This will load and merge a JavaScript object into `config`. E.g.:
 
-    config.load({
-      "env": "test",
-      "ip": "127.0.0.1",
-      "port": 80
-    });
+```js
+config.load({
+  "env": "test",
+  "ip": "127.0.0.1",
+  "port": 80
+});
+```
 
 ### config.loadFile(file or [file1, file2, ...])
 This will load and merge one or multiple JSON configuration files into `config`. JSON files are loaded using `cjson`, so they can contain comments. E.g.:
 
-    conf.loadFile('./config/' + conf.get('env') + '.json');
+```js
+conf.loadFile('./config/' + conf.get('env') + '.json');
+```
 
 Or, loading multiple files at once:
 
-    // CONFIG_FILES=/path/to/production.json,/path/to/secrets.json,/path/to/sitespecific.json
-    conf.loadFile(process.env.CONFIG_FILES.split(','));
-
+```js
+// CONFIG_FILES=/path/to/production.json,/path/to/secrets.json,/path/to/sitespecific.json
+conf.loadFile(process.env.CONFIG_FILES.split(','));
+```
 
 ### config.validate()
 Validates `config` against the schema used to initialize it. All errors are collected and thrown at once.

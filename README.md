@@ -113,7 +113,7 @@ convict provides serveral predefined formats for validation that you can use ([u
 * `port`
 * `url`
 * `email`
-* `ipaddress` - IPv4 addresses
+* `ipaddress` - IPv4 and IPv6 addresses
 * `duration` - miliseconds or a human readable string (e.g. "5 days")
 * `timestamp` - Unix timestamps or date strings recognized by [moment.js](http://momentjs.com/)
 * `nat` - positive integer (natural number)

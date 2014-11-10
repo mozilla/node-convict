@@ -1,6 +1,6 @@
 const should = require('should');
 const moment = require('moment');
-const check = require('validator').check;
+const validator = require('validator');
 
 describe('convict formats', function() {
   const convict = require('../');
@@ -81,7 +81,9 @@ describe('convict formats', function() {
         },
         custom: {
           format: function (val) {
-            check(val, 'expected alpha characters, got ' + val).isAlpha();
+            if (!validator.isAlpha(val)) {
+              throw new Error("expected alpha characters, got " + val);
+            }
           },
           default: 'abcd'
         },

@@ -1,4 +1,4 @@
-const should = require('should');
+require('must');
 
 describe('convict schema file', function() {
   const convict = require('../');
@@ -12,46 +12,46 @@ describe('convict schema file', function() {
     }
   });
 
-  it('should parse a config specification from a file', function() {
+  it('must parse a config specification from a file', function() {
     conf = convict(__dirname + '/schema.json');
   });
 
-  it('should be valid', function() {
-    (function() { conf.validate(); }).should.not.throw();
+  it('must be valid', function() {
+    (function() { conf.validate(); }).must.not.throw();
   });
 
-  it('should be valid again', function() {
-    (function() { conf2.validate(); }).should.not.throw();
+  it('must be valid again', function() {
+    (function() { conf2.validate(); }).must.not.throw();
   });
 
   describe('.has()', function() {
-    it('should not have undefined properties', function() {
+    it('must not have undefined properties', function() {
       var val = conf.has('foo.bar.madeup');
-      should.equal(val, false);
+      val.must.be(false);
     });
 
-    it('should not have properties specified with a default of undefined', function() {
+    it('must not have properties specified with a default of undefined', function() {
       var val = conf2.has('foo.none');
-      should.equal(val, false);
+      val.must.be(false);
     });
   });
 
   describe('.get()', function() {
-    it('should find a nested value', function() {
+    it('must find a nested value', function() {
       var val = conf.get('foo.bar');
-      should.equal(val, 7);
+      val.must.be(7);
     });
 
-    it('should handle three levels of nesting', function() {
-      should.equal(conf.get('foo.baz.bing'), 'foo');
+    it('must handle three levels of nesting', function() {
+      conf.get('foo.baz.bing').must.be('foo');
     });
 
-    it('should handle names with spaces and underscores', function() {
-      should.equal(conf.get('foo.baz.name with spaces.name_with_underscores'), true);
+    it('must handle names with spaces and underscores', function() {
+      conf.get('foo.baz.name with spaces.name_with_underscores').must.be(true);
     });
 
-    it("should throw if conf doesn't exist", function() {
-      (function() { conf.get('foo.no'); }).should.throw();
+    it("must throw if conf doesn't exist", function() {
+      (function() { conf.get('foo.no'); }).must.throw();
     });
   });
 
@@ -60,13 +60,13 @@ describe('convict schema file', function() {
     before(function() { conf.set('foo.bar', 8); });
     after(function() { conf.set('foo.bar', 7); });
 
-    it('should report the default value of a property', function() {
-      should.equal(conf.get('foo.bar'), 8); // Modified
-      should.equal(conf.default('foo.bar'), 7);
+    it('must report the default value of a property', function() {
+      conf.get('foo.bar').must.be(8); // Modified
+      conf.default('foo.bar').must.be(7);
     });
 
-    it("should throw if key doesn't exist", function() {
-      (function() { conf.default('foo.no'); }).should.throw();
+    it("must throw if key doesn't exist", function() {
+      (function() { conf.default('foo.no'); }).must.throw();
     });
   });
 });
@@ -83,5 +83,5 @@ describe('convict used multiple times on one schema', function() {
   (function() {
     convict(schema);
     convict(schema);
-  }).should.not.throw();
+  }).must.not.throw();
 });

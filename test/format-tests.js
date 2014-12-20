@@ -1,4 +1,4 @@
-const should = require('should');
+const expect = require('must');
 const moment = require('moment');
 const validator = require('validator');
 
@@ -6,7 +6,7 @@ describe('convict formats', function() {
   const convict = require('../');
   var conf;
 
-  it('should parse a config specification', function() {
+  it('must parse a config specification', function() {
     convict.addFormats({
       prime: {
         validate: function(val) {
@@ -100,27 +100,27 @@ describe('convict formats', function() {
 
   });
 
-  it('should be valid', function() {
-    (function() { conf.validate(); }).should.not.throw();
+  it('must be valid', function() {
+    (function() { conf.validate(); }).must.not.throw();
   });
 
-  it('should be invalid', function() {
+  it('must be invalid', function() {
     conf.set('foo.primeNumber', 16);
-    (function() { conf.validate(); }).should.throw();
+    (function() { conf.validate(); }).must.throw();
   });
 
   describe('predefined formats', function() {
-    it('should handle timestamp', function() {
+    it('must handle timestamp', function() {
       var val = conf.get('foo.date');
-      should.equal(val, moment('2013-05-05').valueOf());
+      val.must.be(moment('2013-05-05').valueOf());
     });
 
-    it('should handle duration', function() {
-      should.equal(conf.get('foo.duration'), 60 * 5 * 1000);
+    it('must handle duration', function() {
+      conf.get('foo.duration').must.be(60 * 5 * 1000);
     });
   });
 
-  it('should throw with unknown format', function() {
+  it('must throw with unknown format', function() {
     (function() {
       convict({
         foo: {
@@ -128,11 +128,11 @@ describe('convict formats', function() {
           default: 'bar'
         }
       });
-    }).should.throw();
+    }).must.throw();
   });
 
-  it('should accept undefined as a default', function() {
+  it('must accept undefined as a default', function() {
     var val = conf.get('foo.optional');
-    should.equal(val, undefined);
+    expect(val).to.be(undefined);
   });
 });

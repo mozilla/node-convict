@@ -1,10 +1,10 @@
-const should = require('should');
+require('must');
 
 describe('convict', function() {
   const convict = require('../');
   var conf;
 
-  it('should parse a config specification', function() {
+  it('must parse a config specification', function() {
     conf = convict({
       env: {
         format: ['bar', 'baz', 'foo'],
@@ -23,31 +23,31 @@ describe('convict', function() {
     });
   });
 
-  it('should be valid', function() {
-    (function() { conf.validate(); }).should.not.throw();
+  it('must be valid', function() {
+    (function() { conf.validate(); }).must.not.throw();
   });
 
   describe('.get()', function() {
-    it('should find a nested value', function() {
+    it('must find a nested value', function() {
       var val = conf.get('foo.bar');
-      should.equal(val, 7);
+      val.must.be(7);
     });
 
-    it('should handle three levels of nesting', function() {
-      should.equal(conf.get('foo.baz.bing'), 'foo');
+    it('must handle three levels of nesting', function() {
+      conf.get('foo.baz.bing').must.be('foo');
     });
 
-    it('should handle names with spaces and underscores', function() {
-      should.equal(conf.get('foo.baz.name with spaces.name_with_underscores'), true);
+    it('must handle names with spaces and underscores', function() {
+      conf.get('foo.baz.name with spaces.name_with_underscores').must.be(true);
     });
 
-    it("should throw if conf doesn't exist", function() {
-      (function() { conf.get('foo.no'); }).should.throw();
+    it("must throw if conf doesn't exist", function() {
+      (function() { conf.get('foo.no'); }).must.throw();
     });
 
-    it('should get env', function() {
+    it('must get env', function() {
       var val = conf.get('env');
-      should.equal(val, 'bar');
+      val.must.be('bar');
     });
   });
 });

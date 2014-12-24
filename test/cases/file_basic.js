@@ -10,5 +10,15 @@ exports.conf = {
     format: 'port',
     env: "PORT",
     doc: "The port to bind."
+  },
+  session: {
+    doc: "Duration of the session",
+    format: 'duration',
+    default: '2 days'
+  },
+  cache: {
+    doc: "Duration of the cache",
+    format: 'duration',
+    default: '1 hour'
   }
 };

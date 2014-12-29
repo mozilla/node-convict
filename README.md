@@ -208,3 +208,11 @@ Validates `config` against the schema used to initialize it. All errors are coll
 ### [How can I define a configuration property as "required" without providing a default value?](https://github.com/mozilla/node-convict/issues/29)
 
 The philosophy was to have production values be the default values. Usually you only want to change defaults for deploy or instance (in aws speak) specific tweaks. However, you can set a default value to `null` and if your format doesn't accept `null` it will throw an error.
+
+### [How can I use convict in a (browserify-based) browser context?](https://github.com/mozilla/node-convict/issues/47)
+
+Thanks to [browserify](http://browserify.org/), `convict` can be used for web applications too. To do so,
+
+* Ignore the `system` and `file` modules (in Gulp, add `.ignore('system').ignore('file')` to your browserify pipe).
+* Use [`brfs`](https://www.npmjs.com/package/brfs) to ensure the `fs.loadFileSync` schema-loading calls are inlined at build time rather than resolved at runtime (in Gulp, add `.transform(brfs)` to your browserify pipe).
+* To support *"loading configuration from a `http://foo.bar/some.json` URL"*, build a thin wrapper around convict using your favorite http package (e.g. [`superagent`](https://visionmedia.github.io/superagent/)). Typically, in the success callback, call convict's `load()` on the body of the response.

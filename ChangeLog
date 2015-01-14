@@ -1,2 +1,75 @@
-0.4.1 -
+0.6.1 / 2015-01-12
+==================
+
+  * Fix duration check #54
+  * Update dependencies #48
+  * Use js-must a safer test assertion library #49
+
+0.6.0 / 2014-11-14
+==================
+
+  * Update dependencies (including latest validator) #46
+  * Deprecate "ipv4" and "ipv6" formats
+
+0.5.1 / 2014-10-29
+==================
+
+  * Update dependencies
+  * Use fix versions everywhere for safe validation
+  * More readable date for test #43
+
+0.5.0 / 2014-10-15
+==================
+  * Fix npmignore anything that's not needed for production #38
+  * Fix The schema get modified by convict #37
+  * npm ignore things 
+  * JSHint lint + 80 cols formatting #39
+
+0.4.3 / 2014-10-13
+==================
+
+  * Test the correct convict object for the undefined attribute #31
+  * Update moment.js to 2.6.0 #36
+
+0.4.2 / 2014-01-12
+==================
+
+  * Update cjson 0.2.1 —> 0.3.0
+  * Coerce 'nat' formatted values #26
+  * Updat canonical package.json URLs #24
+  * Fix 'should handle timestamp' failing test #21
+  * Update package.json #43
+  * Add license info
+  * Update Dependency #18
+
+0.4.1 / 2013-10-14
+==================
+
   * support JSON formatted objects in env
+
+0.4.0 / 2013-07-31
+==================
+
+0.3.3 / 2013-06-18
+==================
+
+0.3.1 / 2013-06-04
+==================
+
+0.3.0 / 2013-06-03
+==================
+
+0.2.3 / 2013-05-27
+==================
+
+0.2.2 / 2013-05-25
+==================
+
+0.2.1 / 2013-05-25
+==================
+
+0.2.0 / 2013-05-23
+==================
+
+0.1.0 / 2013-03-05
+==================

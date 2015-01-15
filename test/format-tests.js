@@ -37,6 +37,10 @@ describe('convict formats', function() {
         },
         duration: {
           format: 'duration',
+          default: 604800000
+        },
+        duration2: {
+          format: 'duration',
           default: '5 minutes'
         },
         host: {
@@ -115,8 +119,12 @@ describe('convict formats', function() {
       val.must.be(moment('2013-05-05').valueOf());
     });
 
-    it('must handle duration', function() {
-      conf.get('foo.duration').must.be(60 * 5 * 1000);
+    it('must handle duration in milliseconds', function() {
+      conf.get('foo.duration').must.be(604800000);
+    });
+
+    it('must handle duration in a human readable string', function() {
+      conf.get('foo.duration2').must.be(60 * 5 * 1000);
     });
   });
 

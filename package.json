@@ -40,6 +40,12 @@
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/",
     "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/"
   },
+"config": {
+  "blanket": {
+    "pattern": "app",
+    "data-cover-never": "node_modules"
+  }
+},
   "bugs": "https://github.com/mozilla/node-convict/issues",
   "licenses": {
     "type": "Apache",

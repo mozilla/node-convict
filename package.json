@@ -17,7 +17,8 @@
     "depd": "1.0.0",
     "moment": "2.8.4",
     "optimist": "0.6.1",
-    "validator": "3.26.0"
+    "validator": "3.26.0",
+    "varify": "0.1.1"
   },
   "devDependencies": {
     "istanbul": "0.3.5",
@@ -44,5 +45,10 @@
   "licenses": {
     "type": "Apache",
     "url": "https://raw.github.com/mozilla/node-convict/master/LICENSE"
+  },
+  "browserify": {
+    "transform": [
+      "varify"
+    ]
   }
 }

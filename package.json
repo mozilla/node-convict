@@ -26,7 +26,7 @@
     "must": "0.12.0",
     "obj_diff": "0.3.0",
     "should": "4.4.1",
-    "blanket":" 1.1.6"
+    "blanket": "1.1.6"
   },
   "jshintConfig": {
     "unused": "vars",
@@ -42,9 +42,9 @@
     "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/"
   },
   "config": {
-      "blanket": {
-        "pattern": "lib/convict.js"
-      }
+    "blanket": {
+      "pattern": "lib/convict.js"
+    }
   },
   "bugs": "https://github.com/mozilla/node-convict/issues",
   "licenses": {

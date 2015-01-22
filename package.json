@@ -42,13 +42,13 @@
     "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/"
   },
   "config": {
-   "blanket": {
-    "pattern": "lib/convict.js"
-  }
-},
+      "blanket": {
+        "pattern": "lib/convict.js"
+      }
+  },
   "bugs": "https://github.com/mozilla/node-convict/issues",
   "licenses": {
     "type": "Apache",
     "url": "https://raw.github.com/mozilla/node-convict/master/LICENSE"
   }
-}
+

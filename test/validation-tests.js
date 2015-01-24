@@ -18,6 +18,13 @@ describe('configuration files contain properties not declared in the schema', fu
                 doc: 'testing',
                 format: String,
                 default: 'testing'
+            },
+            level2:{
+                level3:{
+                    doc:'testing',
+                    format:String,
+                    default:'testing'
+                }
             }
         }
     });

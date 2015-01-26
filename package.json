@@ -25,7 +25,8 @@
     "mocha": "2.0.1",
     "must": "0.12.0",
     "obj_diff": "0.3.0",
-    "should": "4.4.1"
+    "should": "4.4.1",
+    "blanket": "1.1.6"
   },
   "jshintConfig": {
     "unused": "vars",
@@ -37,8 +38,13 @@
   "scripts": {
     "lint": "jshint *.json lib/*.js test/*.js test/cases/*.js test/cases/*.json",
     "test": "jshint *.json lib/*.js test/*.js test/cases/*.js test/cases/*.json && mocha --check-leaks -R spec",
-    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/",
+    "test-cov": "mocha --require blanket -R html-cov > test/coverage.html",
     "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/"
+  },
+  "config": {
+    "blanket": {
+      "pattern": "lib/convict.js"
+    }
   },
   "bugs": "https://github.com/mozilla/node-convict/issues",
   "licenses": {

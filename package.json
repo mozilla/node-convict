@@ -27,7 +27,8 @@
     "must": "0.12.0",
     "obj_diff": "0.3.0",
     "should": "4.4.1",
-    "blanket": "1.1.6"
+    "blanket": "1.1.6",
+    "mocha-lcov-reporter": "0.0.1"
   },
   "jshintConfig": {
     "unused": "vars",
@@ -40,7 +41,8 @@
     "lint": "jshint *.json lib/*.js test/*.js test/cases/*.js test/cases/*.json",
     "test": "jshint *.json lib/*.js test/*.js test/cases/*.js test/cases/*.json && mocha --check-leaks -R spec",
     "test-cov": "mocha --require blanket -R html-cov > test/coverage.html",
-    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/"
+    "test-travis": "blanket cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/",
+    "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js"
   },
   "config": {
     "blanket": {

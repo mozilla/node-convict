@@ -1,6 +1,6 @@
 # Node-convict
 [![NPM version](http://img.shields.io/npm/v/convict.svg)](https://www.npmjs.org/package/convict)
-[![Build status][travis_img_url]][travis_page_url] [![Dependency Status](https://david-dm.org/mozilla/node-convict.svg)](https://david-dm.org/mozilla/node-convict) [![devDependency Status](https://david-dm.org/mozilla/node-convict/dev-status.svg)](https://david-dm.org/mozilla/node-convict#info=devDependencies) [![Coverage Status](https://img.shields.io/coveralls/mozilla/node-convict.svg)](https://coveralls.io/r/mozilla/node-convict)
+[![Build status][travis_img_url]][travis_page_url] [![Dependency Status](https://david-dm.org/mozilla/node-convict.svg)](https://david-dm.org/mozilla/node-convict) [![devDependency Status](https://david-dm.org/mozilla/node-convict/dev-status.svg)](https://david-dm.org/mozilla/node-convict#info=devDependencies) [![Coverage Status](https://coveralls.io/repos/mozilla/node-convict/badge.svg?branch=master)](https://coveralls.io/r/mozilla/node-convict?branch=master)
 
 [travis_img_url]: https://api.travis-ci.org/mozilla/node-convict.svg
 [travis_page_url]: https://travis-ci.org/mozilla/node-convict

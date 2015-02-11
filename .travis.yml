@@ -1,6 +1,8 @@
 language: node_js
 node_js:
-  - "0.11"
-  - "0.10"
+- '0.10'
+- '0.12'
 script: "npm run-script test-travis"
-after_script: "npm install coveralls@2 && cat ./coverage/lcov.info | coveralls"
+after_success: 
+- npm install coveralls@2
+- npm run coveralls

@@ -15,18 +15,17 @@
   "dependencies": {
     "cjson": "0.3.0",
     "depd": "1.0.0",
-    "moment": "2.8.4",
+    "moment": "2.9.0",
     "optimist": "0.6.1",
-    "validator": "3.26.0",
+    "validator": "3.33.0",
     "varify": "0.1.1"
   },
   "devDependencies": {
-    "istanbul": "0.3.5",
-    "jshint": "2.5.11",
-    "mocha": "2.0.1",
+    "istanbul": "0.3.6",
+    "jshint": "2.6.3",
+    "mocha": "2.1.0",
     "must": "0.12.0",
     "obj_diff": "0.3.0",
-    "should": "4.4.1",
     "blanket": "1.1.6"
   },
   "jshintConfig": {

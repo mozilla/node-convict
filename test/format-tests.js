@@ -25,6 +25,18 @@ describe('convict formats', function() {
       }
     });
 
+    convict.addFormat({
+      name: 'float-percent',
+      validate: function(val) {
+        if (val !== 0 && (!val || val > 1 || val < 0)) {
+          throw new Error('must be a float between 0 and 1, inclusive');
+        }
+      },
+      coerce: function(val) {
+        return parseFloat(val, 10);
+      }
+    });
+
     conf = convict({
       foo: {
         enum: {
@@ -94,6 +106,10 @@ describe('convict formats', function() {
         primeNumber: {
           format: 'prime',
           default: 17
+        },
+        percentNumber: {
+          format: 'float-percent',
+          default: 0.5
         },
         optional: {
           format: '*',

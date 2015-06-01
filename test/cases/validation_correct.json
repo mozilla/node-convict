@@ -1,0 +1,10 @@
+{
+	"foo":"hello",
+	"bar":"hello",
+	"nested":{
+		"level1":"testing",
+		"level2":{
+			"level3":"somevalue"
+		}
+	}
+}

@@ -1,0 +1,8 @@
+{
+	"foo":"hello",
+	"bar":"hello",
+	"nested":{
+		"level1_1":"undeclared"
+	},
+	"undeclared":"this property is not declared in the schema"
+}

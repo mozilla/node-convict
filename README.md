@@ -129,8 +129,10 @@ var check = require('validator').check;
 var conf = convict({
     key: {
       doc: "API key",
-      format: function (val) {
-        check(val, 'should be a 64 character hex key').regex(/^[a-fA-F0-9]{64}$/);
+      format: function check (val) {
+        if (!/^[a-fA-F0-9]{64}$/.test(val)) {
+          throw new Error('must be a 64 character hex key')
+        }
       },
       default: '3cec609c9bc601c047af917a544645c50caf8cd606806b4e0a23312441014deb'
     }

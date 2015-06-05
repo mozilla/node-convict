@@ -123,20 +123,42 @@ convict provides several predefined formats for validation that you can use ([us
 If `format` is set to one of the built-in JavaScript constructors, `Object`, `Array`, `String`, `Number`, or `Boolean`, validation will use Object.prototype.toString.call to check that the setting is the proper type.
 
 You can also provide your own format checking function. For example:
+
 ```javascript
-var check = require('validator').check;
+var conf = convict({
+  key: {
+    doc: "API key",
+    format: function check (val) {
+      if (!/^[a-fA-F0-9]{64}$/.test(val)) {
+        throw new Error('must be a 64 character hex key')
+      }
+    },
+    default: '3cec609c9bc601c047af917a544645c50caf8cd606806b4e0a23312441014deb'
+  }
+});
+```
+
+Or, you can use `convict.addFormat()` to predefine your own validation:
+
+```javascript
+convict.addFormat({
+  name: 'float-percent',
+  validate: function(val) {
+    if (val !== 0 && (!val || val > 1 || val < 0)) {
+      throw new Error('must be a float between 0 and 1, inclusive');
+    }
+  },
+  coerce: function(val) {
+    return parseFloat(val, 10);
+  }
+});
 
 var conf = convict({
-    key: {
-      doc: "API key",
-      format: function check (val) {
-        if (!/^[a-fA-F0-9]{64}$/.test(val)) {
-          throw new Error('must be a 64 character hex key')
-        }
-      },
-      default: '3cec609c9bc601c047af917a544645c50caf8cd606806b4e0a23312441014deb'
-    }
-  });
+  percentNumber: {
+    format: 'float-percent',
+    default: 0.5
+  }
+});
 ```
 
 ### Coercion

@@ -80,6 +80,7 @@ server.listen(conf.get('port'), conf.get('ip'), function(x) {
 ```
 
 ## The Schema
+
 A configuration module could look like this:
 
 config.js:
@@ -104,6 +105,40 @@ Each setting in the schema has four possible properties, each aiding in convict'
 * **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value.
 * **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
 * **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `conf.toSchemaString()` and have it displayed in the output.
+
+Nested configuration settings are also supported:
+
+```javascript
+var config = convict({
+  server: {
+    ip: {
+      doc: "IP address to bind",
+      format: 'ipaddress',
+      default: '0.0.0.0'
+    },
+    port: {
+      doc: "port to bind",
+      format: 'port',
+      default: 8080
+    }
+  },
+  database: {
+    host: {
+      doc: "Database host name/IP",
+      format: String,
+      default: 'testing'
+    },
+    name: {
+      doc: "Database name",
+      format: String,
+      default: 'users'
+    }
+  }
+});
+```
+
+Note: Search for the word "nested" throughout this documentation to find out
+more about nested configuration settings.
 
 ### Validation
 In order to help detect misconfigurations, convict allows you to define a format for each setting. By default, convict checks if the value of the property has the same type (according to `Object.prototype.toString.call`) as the default value specified in the schema. You can define a custom format checking function in the schema by setting the `format` property.

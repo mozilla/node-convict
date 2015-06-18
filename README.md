@@ -224,9 +224,14 @@ Or, loading multiple files at once:
 conf.loadFile(process.env.CONFIG_FILES.split(','));
 ```
 
-### config.validate()
+### config.validate([{strict: true}])
+
 Validates `config` against the schema used to initialize it. All errors are collected and thrown at once.
 
+If the `{strict: true}` option is passed, any properties specified in config
+files that are not declared in the schema will result in errors. This is to
+ensure that the schema and the config files are in sync. By default the strict
+mode is set to false.
 
 ## faq
 

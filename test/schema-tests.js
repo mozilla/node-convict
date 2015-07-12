@@ -24,6 +24,120 @@ describe('convict schema file', function() {
     (function() { conf2.validate(); }).must.not.throw();
   });
 
+  it('must export all its properties as JSON', function() {
+    var res = conf.getProperties();
+    res.must.eql({
+      "foo": {
+        "bar": 7,
+        "baz": {
+          "bing": "foo",
+          "name with spaces": {
+            "name_with_underscores": true
+          }
+        }
+      }
+    });
+  });
+
+  it('must export all its properties as JSON (deprecated method)', function() {
+    var res = conf.root();
+      res.must.eql({
+      "foo": {
+        "bar": 7,
+        "baz": {
+          "bing": "foo",
+          "name with spaces": {
+            "name_with_underscores": true
+          }
+        }
+      }
+    });
+  });
+
+  it('must export all its properties as a string', function() {
+    var res = conf.toString();
+    res.must.eql(JSON.stringify({
+      "foo": {
+        "bar": 7,
+        "baz": {
+          "bing": "foo",
+          "name with spaces": {
+            "name_with_underscores": true
+          }
+        }
+      }
+    }, null, 2));
+  });
+
+  it('must export the schema as JSON', function() {
+    var res = conf.getSchema();
+    res.must.eql({
+      "properties": {
+        "foo": {
+          "properties": {
+            "bar": {},
+            "baz": {
+              "properties": {
+                "bing": {},
+                "name with spaces": {
+                  "properties": {
+                    "name_with_underscores": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+  });
+
+  it('must export the schema as a JSON string', function() {
+    var res = conf.getSchemaString();
+    res.must.eql(JSON.stringify({
+      "properties": {
+        "foo": {
+          "properties": {
+            "bar": {},
+            "baz": {
+              "properties": {
+                "bing": {},
+                "name with spaces": {
+                  "properties": {
+                    "name_with_underscores": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }, null, 2));
+  });
+
+  it('must export the schema as a JSON string (deprecated method)', function() {
+    var res = conf.toSchemaString();
+    res.must.eql(JSON.stringify({
+      "properties": {
+        "foo": {
+          "properties": {
+            "bar": {},
+            "baz": {
+              "properties": {
+                "bing": {},
+                "name with spaces": {
+                  "properties": {
+                    "name_with_underscores": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }, null, 2));
+  });
+
   describe('.has()', function() {
     it('must not have undefined properties', function() {
       var val = conf.has('foo.bar.madeup');

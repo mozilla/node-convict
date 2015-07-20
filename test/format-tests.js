@@ -59,14 +59,6 @@ describe('convict formats', function() {
           format: 'ipaddress',
           default: '127.0.0.1'
         },
-        host2: {
-          format: 'ipv4',
-          default: '127.0.0.1'
-        },
-        host3: {
-          format: 'ipv6',
-          default: '::1'
-        },
         port: {
           format: 'port',
           default: 8080

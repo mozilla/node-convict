@@ -17,12 +17,12 @@
     "depd": "1.0.1",
     "moment": "2.10.3",
     "optimist": "0.6.1",
-    "validator": "3.40.0",
+    "validator": "3.41.2",
     "varify": "0.1.1"
   },
   "devDependencies": {
     "blanket": "1.1.7",
-    "coveralls": "2.11.2",
+    "coveralls": "2.11.3",
     "jshint": "2.8.0",
     "mocha": "2.2.5",
     "mocha-lcov-reporter": "0.0.2",

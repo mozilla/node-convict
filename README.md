@@ -268,6 +268,23 @@ files that are not declared in the schema will result in errors. This is to
 ensure that the schema and the config files are in sync. By default the strict
 mode is set to false.
 
+### config.getProperties()
+
+Exports all the properties (that is the keys and their current values) as JSON.
+
+### config.toString()
+
+Exports all the properties (that is the keys and their current values) as a
+JSON string.
+
+### config.getSchema()
+
+Exports the schema as JSON.
+
+### config.getSchemaString()
+
+Exports the schema as a JSON string.
+
 ## faq
 
 ### [How can I define a configuration property as "required" without providing a default value?](https://github.com/mozilla/node-convict/issues/29)

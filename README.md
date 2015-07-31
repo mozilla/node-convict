@@ -271,10 +271,10 @@ collected and thrown at once.
 
 Options: At the moment `strict` is the only available option.
 
-If the `{strict: true}` option is passed, any properties specified in config
-files that are not declared in the schema will result in errors. This is to
-ensure that the schema and the config files are in sync. By default the strict
-mode is set to false.
+If the `strict` option is passed (that is `{strict: true}` is passed), any
+properties specified in config files that are not declared in the schema will
+result in errors. This is to ensure that the schema and the config files are in
+sync. By default the strict mode is set to false.
 
 ### config.getProperties()
 

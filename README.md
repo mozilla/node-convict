@@ -21,7 +21,7 @@ Convict expands on the standard pattern of configuring node.js applications in a
     checking, type checking, custom checking), generating an error report with
     all errors that are found
 * **Comments allowed**: JSON files are loaded with the `cjson` module, so
-    comments are welcome.
+    comments are welcome
 
 
 ## Install

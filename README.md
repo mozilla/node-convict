@@ -9,10 +9,17 @@ Convict expands on the standard pattern of configuring node.js applications in a
 
 
 ## Features
-* **Loading and merging**: configurations are loaded from disk or inline and merged. JSON files are loaded with `cjson` so comments are welcome.
-* **Environmental variables**: values can be derived from environmental variables
-* **Command-line arguments**: values can also be derived from command-line arguments
-* **Validation**: configurations are validated against your schema, generating an error report with all errors that are found
+
+* **Loading and merging**: configurations are loaded from disk or inline and
+    merged. JSON files are loaded with `cjson` so comments are welcome.
+* **Nested structure**: keys and values can be organized in a tree structure
+* **Environmental variables**: values can be derived from environmental
+    variables
+* **Command-line arguments**: values can also be derived from command-line
+    arguments
+* **Validation**: configurations are validated against your schema (presence
+    checking, type checking, custom checking), generating an error report with
+    all errors that are found
 
 
 ## Install

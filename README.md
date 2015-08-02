@@ -9,10 +9,20 @@ Convict expands on the standard pattern of configuring node.js applications in a
 
 
 ## Features
-* **Loading and merging**: configurations are loaded from disk or inline and merged. JSON files are loaded with `cjson` so comments are welcome.
-* **Environmental variables**: values can be derived from environmental variables
-* **Command-line arguments**: values can also be derived from command-line arguments
-* **Validation**: configurations are validated against your schema, generating an error report with all errors that are found
+
+* **Loading and merging**: configurations are loaded from disk or inline and
+    merged
+* **Nested structure**: keys and values can be organized in a tree structure
+* **Environmental variables**: values can be derived from environmental
+    variables
+* **Command-line arguments**: values can also be derived from command-line
+    arguments
+* **Validation**: configurations are validated against your schema (presence
+    checking, type checking, custom checking), generating an error report with
+    all errors that are found
+* **Comments allowed**: JSON files are loaded with the `cjson` module, so
+    comments are welcome
+
 
 ## Install
 ```bash
@@ -21,13 +31,11 @@ npm install convict
 
 ## Example:
 
-
 An example `config.js`:
 ```javascript
 var convict = require('convict');
 
-// define a schema
-
+// Define a schema
 var conf = convict({
   env: {
     doc: "The applicaton environment.",
@@ -49,15 +57,12 @@ var conf = convict({
   }
 });
 
-
-// load environment dependent configuration
-
+// Load environment dependent configuration
 var env = conf.get('env');
 conf.loadFile('./config/' + env + '.json');
 
-// perform validation
-
-conf.validate();
+// Perform validation
+conf.validate({strict: true});
 
 module.exports = conf;
 ```
@@ -72,7 +77,7 @@ var server = http.createServer(function (req, res) {
   res.end('Hello World\n');
 });
 
-// consume
+// Consume
 server.listen(conf.get('port'), conf.get('ip'), function(x) {
   var addy = server.address();
   console.log('running on http://' + addy.address + ":" + addy.port);
@@ -200,6 +205,7 @@ var conf = convict({
 
 Convict will automatically coerce environmental variables from strings to their proper types when importing them. For instance, values with the format `int`, `nat`, `port`, or `Number` will become numbers after a straight forward `parseInt` or `parseFloat`. `duration` and `timestamp` are also parse and converted into numbers, though they utilize [moment.js](http://momentjs.com/) for date parsing.
 
+
 ## API
 
 ### var config = convict(schema)
@@ -211,7 +217,6 @@ Returns the current value of the `name` property. `name` can use dot notation to
 config.get('database.host');
 
 // or
-
 config.get('database').host;
 ```
 
@@ -225,7 +230,7 @@ config.default('server.port');
 Returns `true` if the property `name` is defined, or `false` otherwise. E.g.:
 ```javascript
 if (config.has('some.property')) {
-  // do something
+  // Do something
 }
 ```
 
@@ -234,7 +239,7 @@ Sets the value of `name` to value. `name` can use dot notation to reference nest
 ```javascript
 config.set('property.that.may.not.exist.yet', 'some value');
 config.get('property.that.may.not.exist.yet');
-// returns "some value"
+// Returns "some value"
 ```
 
 ### config.load(object)
@@ -259,14 +264,17 @@ Or, loading multiple files at once:
 conf.loadFile(process.env.CONFIG_FILES.split(','));
 ```
 
-### config.validate([{strict: true}])
+### config.validate([options])
 
-Validates `config` against the schema used to initialize it. All errors are collected and thrown at once.
+Validates `config` against the schema used to initialize it. All errors are
+collected and thrown at once.
 
-If the `{strict: true}` option is passed, any properties specified in config
-files that are not declared in the schema will result in errors. This is to
-ensure that the schema and the config files are in sync. By default the strict
-mode is set to false.
+Options: At the moment `strict` is the only available option.
+
+If the `strict` option is passed (that is `{strict: true}` is passed), any
+properties specified in config files that are not declared in the schema will
+result in errors. This is to ensure that the schema and the config files are in
+sync. By default the strict mode is set to false.
 
 ### config.getProperties()
 
@@ -285,7 +293,8 @@ Exports the schema as JSON.
 
 Exports the schema as a JSON string.
 
-## faq
+
+## FAQ
 
 ### [How can I define a configuration property as "required" without providing a default value?](https://github.com/mozilla/node-convict/issues/29)
 

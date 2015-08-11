@@ -55,6 +55,10 @@ describe('convict formats', function() {
           format: 'duration',
           default: '5 minutes'
         },
+        duration3: {
+          format: 'duration',
+          default: '12345'
+        },
         host: {
           format: 'ipaddress',
           default: '127.0.0.1'
@@ -133,6 +137,10 @@ describe('convict formats', function() {
 
     it('must handle duration in a human readable string', function() {
       conf.get('foo.duration2').must.be(60 * 5 * 1000);
+    });
+
+    it('must handle duration in milliseconds as a string', function() {
+      conf.get('foo.duration3').must.be(12345);
     });
   });
 

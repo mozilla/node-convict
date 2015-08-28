@@ -38,9 +38,12 @@
   },
   "scripts": {
     "lint": "jshint *.json lib/*.js test/*.js test/cases/*.js test/cases/*.json",
-    "test": "jshint *.json lib/*.js test/*.js test/cases/*.js test/cases/*.json && mocha --check-leaks -R spec",
-    "test-coverage": "jshint *.json lib/*.js test/*.js && mocha --check-leaks --require blanket -R html-cov > test/coverage.html",
-    "test-travis": "jshint *.json lib/*.js test/*.js && mocha --check-leaks --require blanket -R mocha-lcov-reporter | coveralls",
+    "pretest": "npm run lint",
+    "test": "mocha --check-leaks -R spec",
+    "pretest-coverage": "npm run lint",
+    "test-coverage": "mocha --check-leaks --require blanket -R html-cov > test/coverage.html",
+    "pretest-travis": "npm run lint",
+    "test-travis": "mocha --check-leaks --require blanket -R mocha-lcov-reporter | coveralls",
     "clean": "rm -rf test/coverage.html"
   },
   "config": {

@@ -1,0 +1,16 @@
+extends: eslint:recommended
+
+env:
+  es6: true
+  mocha: true
+  node: true
+
+rules:
+  camelcase: 0
+  consistent-return: 0
+  indent: [2, 2]
+  new-cap: 0
+  no-process-exit: 0
+  no-underscore-dangle: 0
+  quotes: [2, single, avoid-escape]
+  strict: 0

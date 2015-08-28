@@ -89,12 +89,12 @@ describe('convict formats', function() {
         },
         any: {
           format: '*',
-          default: "foo"
+          default: 'foo'
         },
         custom: {
           format: function (val) {
             if (!validator.isAlpha(val)) {
-              throw new Error("expected alpha characters, got " + val);
+              throw new Error('expected alpha characters, got ' + val);
             }
           },
           default: 'abcd'

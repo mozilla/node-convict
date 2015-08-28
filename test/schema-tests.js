@@ -27,12 +27,12 @@ describe('convict schema file', function() {
   it('must export all its properties as JSON', function() {
     var res = conf.getProperties();
     res.must.eql({
-      "foo": {
-        "bar": 7,
-        "baz": {
-          "bing": "foo",
-          "name with spaces": {
-            "name_with_underscores": true
+      'foo': {
+        'bar': 7,
+        'baz': {
+          'bing': 'foo',
+          'name with spaces': {
+            'name_with_underscores': true
           }
         }
       }
@@ -41,13 +41,13 @@ describe('convict schema file', function() {
 
   it('must export all its properties as JSON (deprecated method)', function() {
     var res = conf.root();
-      res.must.eql({
-      "foo": {
-        "bar": 7,
-        "baz": {
-          "bing": "foo",
-          "name with spaces": {
-            "name_with_underscores": true
+    res.must.eql({
+      'foo': {
+        'bar': 7,
+        'baz': {
+          'bing': 'foo',
+          'name with spaces': {
+            'name_with_underscores': true
           }
         }
       }
@@ -57,12 +57,12 @@ describe('convict schema file', function() {
   it('must export all its properties as a string', function() {
     var res = conf.toString();
     res.must.eql(JSON.stringify({
-      "foo": {
-        "bar": 7,
-        "baz": {
-          "bing": "foo",
-          "name with spaces": {
-            "name_with_underscores": true
+      'foo': {
+        'bar': 7,
+        'baz': {
+          'bing': 'foo',
+          'name with spaces': {
+            'name_with_underscores': true
           }
         }
       }
@@ -72,16 +72,16 @@ describe('convict schema file', function() {
   it('must export the schema as JSON', function() {
     var res = conf.getSchema();
     res.must.eql({
-      "properties": {
-        "foo": {
-          "properties": {
-            "bar": {},
-            "baz": {
-              "properties": {
-                "bing": {},
-                "name with spaces": {
-                  "properties": {
-                    "name_with_underscores": {}
+      'properties': {
+        'foo': {
+          'properties': {
+            'bar': {},
+            'baz': {
+              'properties': {
+                'bing': {},
+                'name with spaces': {
+                  'properties': {
+                    'name_with_underscores': {}
                   }
                 }
               }
@@ -95,16 +95,16 @@ describe('convict schema file', function() {
   it('must export the schema as a JSON string', function() {
     var res = conf.getSchemaString();
     res.must.eql(JSON.stringify({
-      "properties": {
-        "foo": {
-          "properties": {
-            "bar": {},
-            "baz": {
-              "properties": {
-                "bing": {},
-                "name with spaces": {
-                  "properties": {
-                    "name_with_underscores": {}
+      'properties': {
+        'foo': {
+          'properties': {
+            'bar': {},
+            'baz': {
+              'properties': {
+                'bing': {},
+                'name with spaces': {
+                  'properties': {
+                    'name_with_underscores': {}
                   }
                 }
               }
@@ -118,16 +118,16 @@ describe('convict schema file', function() {
   it('must export the schema as a JSON string (deprecated method)', function() {
     var res = conf.toSchemaString();
     res.must.eql(JSON.stringify({
-      "properties": {
-        "foo": {
-          "properties": {
-            "bar": {},
-            "baz": {
-              "properties": {
-                "bing": {},
-                "name with spaces": {
-                  "properties": {
-                    "name_with_underscores": {}
+      'properties': {
+        'foo': {
+          'properties': {
+            'bar': {},
+            'baz': {
+              'properties': {
+                'bing': {},
+                'name with spaces': {
+                  'properties': {
+                    'name_with_underscores': {}
                   }
                 }
               }
@@ -164,7 +164,7 @@ describe('convict schema file', function() {
       conf.get('foo.baz.name with spaces.name_with_underscores').must.be(true);
     });
 
-    it("must throw if conf doesn't exist", function() {
+    it('must throw if conf doesn\'t exist', function() {
       (function() { conf.get('foo.no'); }).must.throw();
     });
   });
@@ -179,7 +179,7 @@ describe('convict schema file', function() {
       conf.default('foo.bar').must.be(7);
     });
 
-    it("must throw if key doesn't exist", function() {
+    it('must throw if key doesn\'t exist', function() {
       (function() { conf.default('foo.no'); }).must.throw();
     });
   });

@@ -23,21 +23,14 @@
   "devDependencies": {
     "blanket": "1.1.7",
     "coveralls": "2.11.3",
-    "jshint": "2.8.0",
+    "eslint": "1.2.1",
     "mocha": "2.2.5",
     "mocha-lcov-reporter": "0.0.2",
     "must": "0.12.0",
     "obj_diff": "0.3.0"
   },
-  "jshintConfig": {
-    "unused": "vars",
-    "undef": true,
-    "node": true,
-    "esnext": true,
-    "mocha": true
-  },
   "scripts": {
-    "lint": "jshint *.json lib/*.js test/*.js test/cases/*.js test/cases/*.json",
+    "lint": "eslint .",
     "pretest": "npm run lint",
     "test": "mocha --check-leaks -R spec",
     "pretest-coverage": "npm run lint",

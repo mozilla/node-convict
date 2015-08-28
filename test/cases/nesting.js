@@ -1,12 +1,12 @@
 exports.conf = {
   top: {
     middle: {
-      leaf: "foo",
+      leaf: 'foo',
       leaf2: {
-        default: "bar",
-        doc: "a second leaf"
+        default: 'bar',
+        doc: 'a second leaf'
       }
     },
-    internal_leaf: "baz"
+    internal_leaf: 'baz'
   }
 };

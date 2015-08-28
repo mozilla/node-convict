@@ -1,9 +1,9 @@
 exports.conf = {
   foo: {
     bar: {
-      default: "a",
-      format: ["a", "b"],
-      env: "BAR"
+      default: 'a',
+      format: ['a', 'b'],
+      env: 'BAR'
     }
   }
 };

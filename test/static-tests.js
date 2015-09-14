@@ -1,9 +1,8 @@
-const
-fs = require('fs'),
-path = require('path'),
-cp = require('child_process'),
-obj_diff = require('obj_diff'),
-mocha = require('mocha');
+const fs = require('fs'),
+  path = require('path'),
+  cp = require('child_process'),
+  obj_diff = require('obj_diff'),
+  mocha = require('mocha');
 
 mocha.Suite('static tests');
 
@@ -15,7 +14,7 @@ files.forEach(function(f) {
   var m = /^([a-zA-Z_\-0-9]+)\.js$/.exec(f);
   if (m) tests[m[1]] = {
     spec: f,
-    output: m[1] + ".out",
+    output: m[1] + '.out',
     config_files: []
   };
 });
@@ -35,7 +34,7 @@ Object.keys(tests).forEach(function(test) {
 function diffObjects(a, b) {
   var diff = obj_diff(a,b);
   if (Object.keys(diff).length) {
-    return "mismatch: " + JSON.stringify(diff, null, 4);
+    return 'mismatch: ' + JSON.stringify(diff, null, 4);
   }
   return null;
 }

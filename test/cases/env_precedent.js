@@ -1,8 +1,8 @@
 exports.conf = {
   foo: {
-    default: "a",
+    default: 'a',
     format: String,
-    env: "FOO"
+    env: 'FOO'
   }
 };
 

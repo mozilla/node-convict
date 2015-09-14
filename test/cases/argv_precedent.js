@@ -1,14 +1,14 @@
 exports.conf = {
   foo: {
-    default: "a",
+    default: 'a',
     format: String,
-    env: "FOO",
-    arg: "foo",
+    env: 'FOO',
+    arg: 'foo'
   }
 };
 
 exports.env = {
-  FOO: "c"
+  FOO: 'c'
 };
 
-exports.argv = "--foo d";
+exports.argv = '--foo d';

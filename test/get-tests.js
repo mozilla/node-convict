@@ -14,8 +14,8 @@ describe('convict', function() {
       foo: {
         bar: 7,
         baz: {
-          bing: "foo",
-          "name with spaces": {
+          bing: 'foo',
+          'name with spaces': {
             name_with_underscores: true
           }
         }

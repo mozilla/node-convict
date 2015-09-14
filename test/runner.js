@@ -1,6 +1,5 @@
-const
-convict = require('../lib/convict.js'),
-path = require('path');
+const convict = require('../lib/convict.js'),
+  path = require('path');
 
 process.on('message', function(spec) {
   try {
@@ -9,7 +8,7 @@ process.on('message', function(spec) {
     process.send({result: conf.get()});
     process.exit(0);
   } catch(e) {
-    console.error(e);
+    console.error(e); // eslint-disable-line no-console
     process.send({error: e.message });
     process.exit(1);
   }

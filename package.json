@@ -14,17 +14,17 @@
   },
   "dependencies": {
     "cjson": "0.3.1",
-    "depd": "1.0.1",
+    "depd": "1.1.0",
     "moment": "2.10.6",
     "optimist": "0.6.1",
-    "validator": "3.43.0",
+    "validator": "4.0.5",
     "varify": "0.1.1"
   },
   "devDependencies": {
     "blanket": "1.1.7",
-    "coveralls": "2.11.3",
-    "eslint": "1.2.1",
-    "mocha": "2.2.5",
+    "coveralls": "2.11.4",
+    "eslint": "1.4.3",
+    "mocha": "2.3.2",
     "mocha-lcov-reporter": "0.0.2",
     "must": "0.12.0",
     "obj_diff": "0.3.0"

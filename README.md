@@ -304,6 +304,5 @@ The philosophy was to have production values be the default values. Usually you 
 
 Thanks to [browserify](http://browserify.org/), `convict` can be used for web applications too. To do so,
 
-* Ignore the `system` and `file` modules (in Gulp, add `.ignore('system').ignore('file')` to your browserify pipe).
 * Use [`brfs`](https://www.npmjs.com/package/brfs) to ensure the `fs.loadFileSync` schema-loading calls are inlined at build time rather than resolved at runtime (in Gulp, add `.transform(brfs)` to your browserify pipe).
 * To support *"loading configuration from a `http://foo.bar/some.json` URL"*, build a thin wrapper around convict using your favorite http package (e.g. [`superagent`](https://visionmedia.github.io/superagent/)). Typically, in the success callback, call convict's `load()` on the body of the response.

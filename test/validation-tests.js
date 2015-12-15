@@ -61,10 +61,17 @@ describe('configuration files contain properties not declared in the schema', fu
   });
   it('must not break when a failed validation follows an undeclared property', function() {
     (function() {
+      convict.addFormat('foo', function (val) {
+        if (val !== 0) { throw new Error('Validation error'); }
+      });
+      
       var config = convict({
         test2: {
           one: { default: 0 },
-          two: { default: 0 }
+          two: {
+            format: 'foo',
+            default: 0
+          }
         }
       });
       
@@ -73,6 +80,6 @@ describe('configuration files contain properties not declared in the schema', fu
       config.load({'0': true});
       config.load({ test2: { two: 'two' } });
       config.validate();
-    }).must.throw(/should be of type Number/);
+    }).must.throw(/Validation error/);
   });
 });

@@ -205,6 +205,15 @@ var conf = convict({
 
 Convict will automatically coerce environmental variables from strings to their proper types when importing them. For instance, values with the format `int`, `nat`, `port`, or `Number` will become numbers after a straight forward `parseInt` or `parseFloat`. `duration` and `timestamp` are also parse and converted into numbers, though they utilize [moment.js](http://momentjs.com/) for date parsing.
 
+### Precendence order
+
+When merging configuration values from different sources, Convict follows precedence rules. The order, from lowest to highest, is:
+
+1. Default value
+2. File (`config.loadFile()`)
+3. Environment variables
+4. Command line arguments
+5. Set and load calls (`config.set()` and `config.load()`)
 
 ## API
 

@@ -10,6 +10,7 @@ describe('convict formats', function() {
     convict.addFormats({
       prime: {
         validate: function(val) {
+          if (typeof val !== 'number') { throw new TypeError('must be a number'); }
           function isPrime(n) {
             if (n <= 1) return false; // zero and one are not prime
             for (var i=2; i*i <= n; i++) {
@@ -123,6 +124,15 @@ describe('convict formats', function() {
   it('must be invalid', function() {
     conf.set('foo.primeNumber', 16);
     (function() { conf.validate(); }).must.throw();
+  });
+  
+  it('must coerce nested properties on load', function() {
+    conf.load({
+      foo: {
+        primeNumber: '7'
+      }
+    });
+    (function() { conf.validate(); }).must.not.throw();
   });
 
   describe('predefined formats', function() {

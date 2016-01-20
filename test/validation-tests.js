@@ -57,6 +57,29 @@ describe('configuration files contain properties not declared in the schema', fu
       config.validate({
         strict: true
       });
-    }).must.throw();
+    }).must.throw(/not declared/);
+  });
+  it('must not break when a failed validation follows an undeclared property', function() {
+    (function() {
+      convict.addFormat('foo', function (val) {
+        if (val !== 0) { throw new Error('Validation error'); }
+      });
+      
+      var config = convict({
+        test2: {
+          one: { default: 0 },
+          two: {
+            format: 'foo',
+            default: 0
+          }
+        }
+      });
+      
+      // if this key is a number, the error occurs; if it is a string, it does not
+      // i don't know why. the deep nesting is also required.
+      config.load({'0': true});
+      config.load({ test2: { two: 'two' } });
+      config.validate();
+    }).must.throw(/Validation error/);
   });
 });

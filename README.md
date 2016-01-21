@@ -162,7 +162,11 @@ convict provides several predefined formats for validation that you can use ([us
 
 If `format` is set to one of the built-in JavaScript constructors, `Object`, `Array`, `String`, `Number`, or `Boolean`, validation will use Object.prototype.toString.call to check that the setting is the proper type.
 
-You can also provide your own format checking function. For example:
+#### Custom format checking
+
+You can specify a custom format checking method on a property basis.
+
+For example:
 
 ```javascript
 var conf = convict({
@@ -178,7 +182,8 @@ var conf = convict({
 });
 ```
 
-Or, you can use `convict.addFormat()` to predefine your own validation:
+Or, you can use `convict.addFormat()` to register a custom format checking
+method that can be reused for many different properties:
 
 ```javascript
 convict.addFormat({
@@ -194,12 +199,19 @@ convict.addFormat({
 });
 
 var conf = convict({
-  percentNumber: {
+  space_used: {
     format: 'float-percent',
     default: 0.5
+  },
+  success_rate: {
+    format: 'float-percent',
+    default: 60.0
   }
 });
 ```
+
+The `coerce` function is optional.
+
 
 ### Coercion
 

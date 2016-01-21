@@ -116,11 +116,21 @@ describe('convict formats', function() {
 
   });
 
-  it('must be valid', function() {
+  it('validates default schema', function() {
     (function() { conf.validate(); }).must.not.throw();
   });
 
-  it('must be invalid', function() {
+  it('validates non-coerced correct values', function() {
+    conf.set('foo.primeNumber', 7);
+    (function() { conf.validate(); }).must.not.throw();
+  });
+
+  it('validates coerced correct values', function() {
+    conf.set('foo.primeNumber', '11');
+    (function() { conf.validate(); }).must.not.throw();
+  });
+
+  it('successfully fails to validate incorrect values', function() {
     conf.set('foo.primeNumber', 16);
     (function() { conf.validate(); }).must.throw();
   });

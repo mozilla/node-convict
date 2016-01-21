@@ -30,13 +30,13 @@
     "obj_diff": "0.3.0"
   },
   "scripts": {
-    "lint": "eslint .",
-    "pretest": "npm run lint",
     "test": "mocha --check-leaks -R spec",
-    "pretest-coverage": "npm run lint",
+    "posttest": "npm run lint",
     "test-coverage": "mocha --check-leaks --require blanket -R html-cov > test/coverage.html",
-    "pretest-travis": "npm run lint",
+    "posttest-coverage": "npm run lint",
     "test-travis": "mocha --check-leaks --require blanket -R mocha-lcov-reporter | coveralls",
+    "posttest-travis": "npm run lint",
+    "lint": "eslint .",
     "clean": "rm -rf test/coverage.html"
   },
   "config": {

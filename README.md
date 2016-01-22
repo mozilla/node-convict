@@ -212,10 +212,44 @@ var conf = convict({
 
 The `coerce` function is optional.
 
-
 ### Coercion
 
 Convict will automatically coerce environmental variables from strings to their proper types when importing them. For instance, values with the format `int`, `nat`, `port`, or `Number` will become numbers after a straight forward `parseInt` or `parseFloat`. `duration` and `timestamp` are also parse and converted into numbers, though they utilize [moment.js](http://momentjs.com/) for date parsing.
+
+The second argument to `coerce` is the `config` object, this can be used to implement placeholders and other advanced functionality:
+
+```javascript
+convict.addFormat({
+  name: "placeholder",
+  validate: function(val) {
+    /* validate proper path here */
+  },
+  coerce: function(val, config) {
+    return val.replace(/\$\{([\w\.]+)}/g, function(v,m) { return config.get(m); });
+  }
+});
+
+var conf = convict({
+  env: {
+    format: ['production', 'development'],
+    default: 'development',
+    env: 'NODE_ENV',
+    doc: 'The environment that we\'re running in.'
+  },
+  configPath: {
+    format: 'placeholder',
+    default: '/path/to/config',
+    doc: 'Path to configuration files.'
+  },
+  config: {
+    format: 'placeholder',
+    default: '${configPath}/${env}.json',
+    doc: 'Path to configuration file.'
+  }
+});
+
+conf.get('config'); /* "/path/to/config/development.json" */
+```
 
 ### Precendence order
 

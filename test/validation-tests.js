@@ -64,7 +64,7 @@ describe('configuration files contain properties not declared in the schema', fu
       convict.addFormat('foo', function (val) {
         if (val !== 0) { throw new Error('Validation error'); }
       });
-      
+
       var config = convict({
         test2: {
           one: { default: 0 },
@@ -74,7 +74,7 @@ describe('configuration files contain properties not declared in the schema', fu
           }
         }
       });
-      
+
       // if this key is a number, the error occurs; if it is a string, it does not
       // i don't know why. the deep nesting is also required.
       config.load({'0': true});
@@ -82,4 +82,20 @@ describe('configuration files contain properties not declared in the schema', fu
       config.validate();
     }).must.throw(/Validation error/);
   });
+  it('must not break on consecutive overrides', function () {
+    (function() {
+      var config = convict({
+        object: {
+          doc: 'testing',
+          format: Object,
+          default: {}
+        }
+      });
+      config.loadFile([
+        __dirname + '/cases/object_override1.json',
+        __dirname + '/cases/object_override2.json'
+      ]);
+      config.validate();
+    }).must.not.throw();
+  })
 });

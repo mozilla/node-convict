@@ -1,6 +1,8 @@
 const convict = require('../lib/convict.js'),
   path = require('path');
 
+/*eslint no-process-exit: 0*/
+
 process.on('message', function(spec) {
   try {
     var s = require(path.join(__dirname, 'cases', spec.spec));
@@ -15,4 +17,3 @@ process.on('message', function(spec) {
     process.exit(1);
   }
 });
-

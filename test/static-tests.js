@@ -1,3 +1,5 @@
+/*eslint no-sync: 0*/
+
 const fs = require('fs'),
   path = require('path'),
   cp = require('child_process'),

@@ -13,20 +13,20 @@
     "node": ">=0.4.7"
   },
   "dependencies": {
-    "cjson": "0.3.2",
+    "cjson": "0.3.3",
     "depd": "1.1.0",
-    "moment": "2.10.6",
+    "moment": "2.11.1",
     "optimist": "0.6.1",
-    "validator": "4.0.5",
+    "validator": "4.5.2",
     "varify": "0.1.1"
   },
   "devDependencies": {
     "coveralls": "2.11.6",
-    "eslint": "1.4.3",
+    "eslint": "1.10.3",
     "istanbul": "0.4.2",
     "mocha": "2.4.5",
     "mocha-lcov-reporter": "1.0.0",
-    "must": "0.12.0",
+    "must": "0.13.1",
     "obj_diff": "0.3.0"
   },
   "scripts": {

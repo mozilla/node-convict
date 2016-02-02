@@ -70,6 +70,7 @@ module.exports = conf;
 ```
 
 ### Usage
+
 ```javascript
 var http = require('http');
 var conf = require('./config.js');
@@ -148,6 +149,7 @@ Note: Search for the word "nested" throughout this documentation to find out
 more about nested configuration settings.
 
 ### Validation
+
 In order to help detect misconfigurations, convict allows you to define a format for each setting. By default, convict checks if the value of the property has the same type (according to `Object.prototype.toString.call`) as the default value specified in the schema. You can define a custom format checking function in the schema by setting the `format` property.
 
 convict provides several predefined formats for validation that you can use ([using node-validator](https://github.com/chriso/node-validator#list-of-validation-methods) and [moment.js](http://momentjs.com/)). Most of them are self-explanatory:
@@ -263,12 +265,23 @@ When merging configuration values from different sources, Convict follows preced
 4. Command line arguments
 5. Set and load calls (`config.set()` and `config.load()`)
 
+
 ## API
 
 ### var config = convict(schema)
+
 `convict()` takes a schema object and returns a convict configuration object. The configuration object has an API for getting and setting values, described below.
 
+### config.addFormat(format)
+
+Adds a new custom format.
+
+### config.addFormats(format1, format2, ...)
+
+Adds new custom formats.
+
 ### config.get(name)
+
 Returns the current value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
 ```javascript
 config.get('database.host');
@@ -276,22 +289,22 @@ config.get('database.host');
 // or
 config.get('database').host;
 ```
-
 ### config.default(name)
+
 Returns the default value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
 ```javascript
 config.default('server.port');
 ```
-
 ### config.has(name)
+
 Returns `true` if the property `name` is defined, or `false` otherwise. E.g.:
 ```javascript
 if (config.has('some.property')) {
   // Do something
 }
 ```
-
 ### config.set(name, value)
+
 Sets the value of `name` to value. `name` can use dot notation to reference nested values, e.g. `"database.port"`. If objects in the chain don't yet exist, they will be initialized to empty objects. E.g.:
 ```javascript
 config.set('property.that.may.not.exist.yet', 'some value');
@@ -300,6 +313,7 @@ config.get('property.that.may.not.exist.yet');
 ```
 
 ### config.load(object)
+
 This will load and merge a JavaScript object into `config`. E.g.:
 ```javascript
 config.load({
@@ -308,8 +322,8 @@ config.load({
   "port": 80
 });
 ```
-
 ### config.loadFile(file or [file1, file2, ...])
+
 This will load and merge one or multiple JSON configuration files into `config`. JSON files are loaded using `cjson`, so they can contain comments. E.g.:
 ```javascript
 conf.loadFile('./config/' + conf.get('env') + '.json');
@@ -320,7 +334,6 @@ Or, loading multiple files at once:
 // CONFIG_FILES=/path/to/production.json,/path/to/secrets.json,/path/to/sitespecific.json
 conf.loadFile(process.env.CONFIG_FILES.split(','));
 ```
-
 ### config.validate([options])
 
 Validates `config` against the schema used to initialize it. All errors are

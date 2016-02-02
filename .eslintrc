@@ -16,6 +16,7 @@ rules:
   no-unreachable: 2
   no-fallthrough: 2
   default-case: 2
+  no-case-declarations: 2
   consistent-return: 0
 
   # Node.js specifics

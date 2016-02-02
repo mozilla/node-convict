@@ -1,3 +1,4 @@
+const path = require('path');
 require('must');
 
 describe('convict schema file', function() {
@@ -13,7 +14,7 @@ describe('convict schema file', function() {
   });
 
   it('must parse a config specification from a file', function() {
-    conf = convict(__dirname + '/schema.json');
+    conf = convict(path.join(__dirname, 'schema.json'));
   });
 
   it('must be valid', function() {

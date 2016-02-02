@@ -1,10 +1,10 @@
 /*eslint no-sync: 0*/
 
-const fs = require('fs'),
-  path = require('path'),
-  cp = require('child_process'),
-  obj_diff = require('obj_diff'),
-  mocha = require('mocha');
+const fs = require('fs');
+const path = require('path');
+const cp = require('child_process');
+const obj_diff = require('obj_diff');
+const mocha = require('mocha');
 
 mocha.Suite('static tests');
 
@@ -52,7 +52,7 @@ function run(name, done) {
   var env = kase.env || {};
   var argv = kase.argv ? kase.argv.split(' ') : [];
 
-  var n = cp.fork(path.join(__dirname + '/runner.js'), argv, { env: env });
+  var n = cp.fork(path.join(__dirname, 'runner.js'), argv, { env: env });
 
   n.on('message', function(m) {
     var expected;

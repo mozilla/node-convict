@@ -10,15 +10,22 @@ rules:
   # (since it conflicts with the usage of the "const" declaration).
   strict: [2, "never"]
 
+  # JavaScript core
   no-array-constructor: 2
   no-unused-vars: [2, {"args": "none"}]
-  quotes: [2, single, avoid-escape]
+  no-unreachable: 2
   no-fallthrough: 2
   default-case: 2
+  consistent-return: 0
+
+  # Node.js specifics
   no-process-exit: 2
   no-sync: 2
-  consistent-return: 0
+  no-path-concat: 2
+
+  # Presentation
   indent: [2, 2]
+  quotes: [2, single, avoid-escape]
   camelcase: 0
   new-cap: 0
   no-underscore-dangle: 0

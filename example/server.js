@@ -1,5 +1,6 @@
-const convict = require('../lib/convict.js'),
-  http = require('http');
+const path = require('path');
+const http = require('http');
+const convict = require('../lib/convict.js');
 
 var conf = convict({
   ip: {
@@ -14,7 +15,7 @@ var conf = convict({
     default: 0,
     env: 'PORT'
   }
-}).loadFile(__dirname + '/config.json').validate();
+}).loadFile(path.join(__dirname, 'config.json')).validate();
 
 var server = http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});

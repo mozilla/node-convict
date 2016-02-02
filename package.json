@@ -37,6 +37,7 @@
     "test:ci": "istanbul cover _mocha -- --check-leaks test/*-tests.js && cat test/coverage/lcov.info | coveralls",
     "posttest:ci": "npm run lint",
     "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "clean": "rm -rf test/coverage"
   },
   "bugs": "https://github.com/mozilla/node-convict/issues",

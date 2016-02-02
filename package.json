@@ -32,10 +32,10 @@
   "scripts": {
     "test": "mocha --check-leaks -R spec",
     "posttest": "npm run lint",
-    "test-coverage": "istanbul cover _mocha -- --check-leaks test/*-tests.js",
-    "posttest-coverage": "npm run lint",
-    "test-ci": "istanbul cover _mocha -- --check-leaks test/*-tests.js && cat test/coverage/lcov.info | coveralls",
-    "posttest-ci": "npm run lint",
+    "test:coverage": "istanbul cover _mocha -- --check-leaks test/*-tests.js",
+    "posttest:coverage": "npm run lint",
+    "test:ci": "istanbul cover _mocha -- --check-leaks test/*-tests.js && cat test/coverage/lcov.info | coveralls",
+    "posttest:ci": "npm run lint",
     "lint": "eslint .",
     "clean": "rm -rf test/coverage"
   },

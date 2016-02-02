@@ -11,4 +11,4 @@ before_install:
   - npm i npm@2 -g # Update to latest npm 2.x
 
 script:
-  - npm run test-ci
+  - npm run test:ci

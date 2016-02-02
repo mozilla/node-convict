@@ -378,16 +378,6 @@ Thanks to [browserify](http://browserify.org/), `convict` can be used for web ap
 * To support *"loading configuration from a `http://foo.bar/some.json` URL"*, build a thin wrapper around convict using your favorite http package (e.g. [`superagent`](https://visionmedia.github.io/superagent/)). Typically, in the success callback, call convict's `load()` on the body of the response.
 
 
-## Contributions
+## Contributing
 
-Pull Requests and contributions in general are welcome as long as they follow
-the [Node aesthetic].
-
-[Node aesthetic]: http://substack.net/node_aesthetic
-
-Coding style is enforced by ESLint. Running the following command line will help
-you to conform your newly written code:
-
-```bash
-npm run lint:fix
-```
+Read the [Contributing](./CONTRIBUTING.md) doc.

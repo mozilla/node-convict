@@ -1,19 +1,31 @@
 CONTRIBUTING
 ============
 
+Pull Requests and contributions in general are welcome as long as they follow
+the [Node aesthetic].
+
+[Node aesthetic]: http://substack.net/node_aesthetic
+
 Code style
 ----------
 
-2-spaces indent
+Coding style is described through EditorConfig and enforced by ESLint.
+
+Running the following command line will help you to conform your newly written
+code:
+
+```bash
+npm run lint:fix
+```
 
 Dependencies
 ------------
 
-We don't use range versions (`~x.y.z`, `^x.y.z`) for dependencies,
-devDependencies, etc.
+We only use strict versions for all dependencies (`dependencies`,
+`devDependencies`, etc.). We don't use range versions (`~x.y.z`, `^x.y.z`).
 
-We're being conservative here for stability reasons. We're due to look over new
-versions though.
+We're also being conservative here for stability reasons. But we're due to look
+over new versions though.
 
 Test
 ----

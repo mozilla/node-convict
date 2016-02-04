@@ -15,7 +15,7 @@
   "dependencies": {
     "cjson": "0.3.3",
     "depd": "1.1.0",
-    "moment": "2.11.1",
+    "moment": "2.11.2",
     "optimist": "0.6.1",
     "validator": "4.5.2",
     "varify": "0.1.1"

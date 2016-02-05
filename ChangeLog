@@ -1,3 +1,10 @@
+1.1.1 / 2016-02-05
+==================
+
+  * Update dependency to `moment@2.11.2"` to fix
+        https://nodesecurity.io/advisories/moment_regular-expression-denial-of-service
+  * Update dependency `validator@4.6.1"` to stay in sync
+
 1.1.0 / 2016-02-02
 ==================
 

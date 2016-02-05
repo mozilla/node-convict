@@ -38,7 +38,8 @@
     "posttest:ci": "npm run lint",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "clean": "rm -rf test/coverage"
+    "clean": "rm -rf test/coverage",
+    "version": "./changelog_assert_entries $npm_package_version"
   },
   "bugs": "https://github.com/mozilla/node-convict/issues",
   "license": "Apache-2.0",

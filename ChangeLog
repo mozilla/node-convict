@@ -1,3 +1,155 @@
+1.1.0 / 2016-02-02
+==================
+
+  * Fix loading consecutive files could cause an error to be thrown #111
+        (Abdullah Ali @voodooattack)
+  * Coerce values loaded from a file #96 (Jens Olsson @jsol)
+  * Improvement: Pass instance to coerce #109 (Abdullah Ali @voodooattack)
+  * Fix missing return in validate reducer #101 (Kris Reeves @myndzi)
+  * Switch back from Blanket to Istanbul for test coverage (Marc-Aurèle darche @madarche)
+  * Stricter JSLint linting (Marc-Aurèle darche @madarche)
+  * Improve documentation (Olivier Lalonde @olalonde, Marc-Aurèle darche @madarche)
+
+1.0.2 / 2015-12-09
+==================
+
+  * Merge pull request [#97](https://github.com/mozilla/node-convict/issues/97) from yoz/cjson-0.3.2
+    Update cjson dependency to 0.3.2
+  * Remove instructions about 'file' and 'system' from README.md
+  * Update cjson dependency to 0.3.2
+    This removes the transitive dependency on 'jsonlint' (in favor of json-parse-helpfulerror), which avoids its problems with unstated depdendencies on 'file' and 'system'.
+  * Coerce values loaded from a file
+    Previously values were coerced if added through
+    set(), command line arguments or env arguments.
+    Added the schema to the recursive overlay function
+    so that values added through load() and loadFile()
+    are also coerced.
+    Corrected a test to reflect this.
+  * Merge pull request [#95](https://github.com/mozilla/node-convict/issues/95) from madarche/feat-update-dependencies
+    Feat update dependencies
+  * Merge pull request [#94](https://github.com/mozilla/node-convict/issues/94) from madarche/feat-ci-nodejs-4
+    Test against Node.js v4.x.x
+  * Follow @pdehaan's advise: test against "stable"
+  * Update dependencies
+  * Test against Node.js v4.x.x
+    It is stated "4" and not "4.0" to test against minor updates of Node.js.
+    Only the newest 4.x release is supported by upstream so it doesn't make
+    sense to test specifically on 4.0. Node now follows semver so no
+    breaking changes are allowed to land before Node 5.0.0.
+  * Merge pull request [#90](https://github.com/mozilla/node-convict/issues/90) from pdehaan/yo-eslint
+    Switch from JSHint to ESLint
+  * Merge pull request [#91](https://github.com/mozilla/node-convict/issues/91) from pdehaan/yo-travis
+    Update .travis.yml to use sudo:false
+  * Update .travis.yml to use sudo:false
+  * Switch from JSHint to ESLint
+  * Merge pull request [#89](https://github.com/mozilla/node-convict/issues/89) from madarche/feat-factor_scripts_blocks
+    Factor scripts blocks (lint actions)
+  * Factor scripts blocks (lint actions)
+
+1.0.1 / 2015-08-11
+==================
+
+  * Merge pull request [#87](https://github.com/mozilla/node-convict/issues/87) from mozilla/rfk/duration-integer-string
+    Accept integer millisecond durations in string form, e.g. from env vars.
+  * Accept integer millisecond durations in string form, e.g. from env vars.
+
+1.0.0 / 2015-08-01
+==================
+
+  * Merge pull request [#85](https://github.com/mozilla/node-convict/issues/85) from madarche/feat-1.0
+    v1.0.0 and remove old deprecated formats ipv4 and ipv6
+  * Better wording for validate options
+  * Consistency using periods
+  * Improve feature description again
+  * Improved features description
+  * Better config.validate([options]) doc + beautify
+  * Update dependencies
+  * Merge branch 'feat-update-dependencies' into feat-1.0
+  * v1.0.0 Remove old deprecated formats ipv4 and ipv6
+  * 0.8.2
+
+0.8.2 / 2015-07-20
+==================
+
+  * Merge pull request [#84](https://github.com/mozilla/node-convict/issues/84) from madarche/feat-update-deps
+    Update dependencies
+  * Update dependencies
+
+0.8.1 / 2015-07-20
+==================
+
+  * 0.8.1
+  * Merge pull request [#82](https://github.com/mozilla/node-convict/issues/82) from myndzi/fix-license
+    Update package.json 'license' key format
+  * Merge pull request [#83](https://github.com/mozilla/node-convict/issues/83) from madarche/feat-get-properties
+    Document and test properties and schema export
+  * Document and test properties and schema export
+    This modification also renames the previously undocumented and untested
+    following methods:
+    * root→getProperties and
+    * toSchemaString→getSchemaString
+    The renaming was done for clearer intent and consistency in naming. The
+    previous method names are still supported but deprecated.
+  * Update package.json 'license' key format
+  * Merge pull request [#80](https://github.com/mozilla/node-convict/issues/80) from madarche/fix-nested-schema-doc
+    Document nested settings in schema
+  * Merge pull request [#79](https://github.com/mozilla/node-convict/issues/79) from madarche/fix-doc
+    Document new strict validation mode
+  * Document nested settings in schema
+    Fixes [#78](https://github.com/mozilla/node-convict/issues/78)
+  * Document new strict validation mode
+    Fixes [#75](https://github.com/mozilla/node-convict/issues/75)
+  * Merge pull request [#77](https://github.com/mozilla/node-convict/issues/77) from madarche/fix-test_coverage
+    Fix test coverage
+  * Fix test coverage
+    The rationale in this change is to put logic as less as possible in
+    .travis.yml since it's not testable on developers' system.
+  * Merge pull request [#76](https://github.com/mozilla/node-convict/issues/76) from madarche/feat-update_dependencies
+    Update dependencies
+  * Merge pull request [#74](https://github.com/mozilla/node-convict/issues/74) from mmerkes/master
+    Fixes [#73](https://github.com/mozilla/node-convict/issues/73), removes validator.check from README.md and adds valid form…
+  * Update dependencies
+  * Adds convict.addFormat() to validation section of README and tidies up section
+  * Fixes [#73](https://github.com/mozilla/node-convict/issues/73), removes validator.check from README.md and adds valid format checker
+
+0.8.0 / 2015-05-31
+==================
+
+  * Merge pull request [#64](https://github.com/mozilla/node-convict/issues/64) from umar-muneer/master
+    Strict Validation Mode Added
+  * Merge pull request [#72](https://github.com/mozilla/node-convict/issues/72) from pdehaan/patch-2
+    Fix typos in README
+  * Fix typos in README
+
+0.7.0 / 2015-04-29
+==================
+
+  * Merge pull request [#66](https://github.com/mozilla/node-convict/issues/66) from collinwat/add-format-overload
+    addFormat supports object arguments as well as function arguments
+  * Merge pull request [#70](https://github.com/mozilla/node-convict/issues/70) from madarche/fix-update-deps
+    Update dependencies and removed `should` replaced
+  * Merge pull request [#69](https://github.com/mozilla/node-convict/issues/69) from madarche/feat-new-nodejs-0.12
+    Make CI test Node.js 0.12, the new stable
+  * Update dependencies and removed `should` replaced
+    `should` has been replaced by `js-must`.
+  * Make CI test Node.js 0.12, the new stable
+  * Merge pull request [#61](https://github.com/mozilla/node-convict/issues/61) from ronjouch/browserifyTransformVarify
+    Add 'varify' browserify transform to support IE9,10
+  * Add format supports object arguments as well as function arguments
+  * Merge pull request [#62](https://github.com/mozilla/node-convict/issues/62) from madjid04/master
+    Add code coverage with blanket
+  * Strict Validation Mode
+    1. Added a fix for nested validation checks.
+    2. Modified test case schema and config files.
+  * Strict Validation Mode Added
+    1. Added a Strict Validation mode. If set to true, any properties
+    specified in config files that are not declared in the schema will
+    result in errors. This is to ensure that the schema and the config
+    files are in sync. This brings convict further in line with the concept
+    of a “Schema”. By default the strict mode is set to false.
+    2. Added test cases for strict mode
+  * modification of the indentation
+
 0.6.1 / 2015-01-12
 ==================
 
@@ -22,7 +174,7 @@
 ==================
   * Fix npmignore anything that's not needed for production #38
   * Fix The schema get modified by convict #37
-  * npm ignore things 
+  * npm ignore things
   * JSHint lint + 80 cols formatting #39
 
 0.4.3 / 2014-10-13
@@ -70,6 +222,9 @@
 
 0.2.0 / 2013-05-23
 ==================
+
+0.1.1 / 2013-05-19
+===================
 
 0.1.0 / 2013-03-05
 ==================

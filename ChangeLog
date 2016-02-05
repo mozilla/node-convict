@@ -1,11 +1,14 @@
 1.1.0 / 2016-02-02
 ==================
 
+  * Never published on NPM because of a vulnerability in the used version of `moment`
   * Fix loading consecutive files could cause an error to be thrown #111
         (Abdullah Ali @voodooattack)
   * Coerce values loaded from a file #96 (Jens Olsson @jsol)
   * Improvement: Pass instance to coerce #109 (Abdullah Ali @voodooattack)
   * Fix missing return in validate reducer #101 (Kris Reeves @myndzi)
+  * Update dependency `moment`
+  * Update dependency `validator`
   * Switch back from Blanket to Istanbul for test coverage (Marc-Aurèle darche @madarche)
   * Stricter JSLint linting (Marc-Aurèle darche @madarche)
   * Improve documentation (Olivier Lalonde @olalonde, Marc-Aurèle darche @madarche)

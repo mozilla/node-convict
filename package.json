@@ -8,10 +8,22 @@
     "type": "git",
     "url": "https://github.com/mozilla/node-convict.git"
   },
-  "main": "lib/convict.js",
   "engines": {
     "node": ">=0.4.7"
   },
+  "scripts": {
+    "test": "mocha --check-leaks -R spec",
+    "posttest": "npm run lint",
+    "test:coverage": "istanbul cover _mocha -- --check-leaks test/*-tests.js",
+    "posttest:coverage": "npm run lint",
+    "test:ci": "istanbul cover _mocha -- --check-leaks test/*-tests.js && cat test/coverage/lcov.info | coveralls",
+    "posttest:ci": "npm run lint",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "clean": "rm -rf test/coverage",
+    "version": "./changelog_assert_entries $npm_package_version"
+  },
+  "main": "lib/convict.js",
   "dependencies": {
     "cjson": "0.3.3",
     "depd": "1.1.0",
@@ -28,18 +40,6 @@
     "mocha-lcov-reporter": "1.0.0",
     "must": "0.13.1",
     "obj_diff": "0.3.0"
-  },
-  "scripts": {
-    "test": "mocha --check-leaks -R spec",
-    "posttest": "npm run lint",
-    "test:coverage": "istanbul cover _mocha -- --check-leaks test/*-tests.js",
-    "posttest:coverage": "npm run lint",
-    "test:ci": "istanbul cover _mocha -- --check-leaks test/*-tests.js && cat test/coverage/lcov.info | coveralls",
-    "posttest:ci": "npm run lint",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
-    "clean": "rm -rf test/coverage",
-    "version": "./changelog_assert_entries $npm_package_version"
   },
   "bugs": "https://github.com/mozilla/node-convict/issues",
   "license": "Apache-2.0",

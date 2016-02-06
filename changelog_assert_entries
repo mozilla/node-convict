@@ -7,9 +7,9 @@ for entry in $(git tag|cut -c 2-) $new_version
 do
     if $(grep -q -E ^$entry ChangeLog)
     then
-        echo "Entry $entry present in the ChangeLog"
+        echo "OK: Entry $entry present in the ChangeLog"
     else
-        echo "Entry $entry MISSING in the ChangeLog"
+        echo "KO: Entry $entry MISSING in the ChangeLog"
 
         # Rollback modified package.json file so it has the previous version
         git checkout package.json

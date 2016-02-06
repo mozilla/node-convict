@@ -1,16 +1,15 @@
 #!/bin/sh
 
 # cf. https://docs.npmjs.com/cli/version
-new_version=v$1
+new_version=$1
 
-for tag in $(git tag) $new_version
+for entry in $(git tag|cut -c 2-) $new_version
 do
-    entry=$(echo $tag|cut -c 2-)
     if $(grep -q -E ^$entry ChangeLog)
     then
         echo "Entry $entry present in the ChangeLog"
     else
-        echo "Entry $entry missing in the ChangeLog"
+        echo "Entry $entry MISSING in the ChangeLog"
         exit 1
     fi
 done

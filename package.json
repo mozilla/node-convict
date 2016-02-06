@@ -23,6 +23,9 @@
     "clean": "rm -rf test/coverage",
     "version": "./changelog_assert_entries $npm_package_version"
   },
+  "files": [
+    "lib"
+  ],
   "main": "lib/convict.js",
   "dependencies": {
     "cjson": "0.3.3",
@@ -47,8 +50,5 @@
     "transform": [
       "varify"
     ]
-  },
-  "files": [
-    "lib"
-  ]
+  }
 }

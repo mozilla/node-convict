@@ -8,7 +8,9 @@ the [Node aesthetic](http://substack.net/node_aesthetic).
 Code style
 ----------
 
-Coding style is described through EditorConfig and enforced by ESLint.
+Coding style is described through the EditorConfig
+[.editorconfig](./.editorconfig) file and enforced by ESLint through the
+[.eslintrc](./.eslintrc) file.
 
 Running the following command line will help you to conform your newly written
 code:
@@ -32,7 +34,7 @@ Test
 
 Check that your code passes the tests before submitting a PR:
 
-    $ npm test
+    npm test
 
 
 Creating/Tagging new versions
@@ -47,8 +49,10 @@ This must be done so in order to:
 
 * never forget to create a Git tag
 * never create wrong tags and versions
-* never forget to add a corresponding entry in the ChangeLog file
+* never forget to add a corresponding entry in the [ChangeLog](./ChangeLog)
+  file
 
+Example on how to create/tag new versions:
 
 ```bash
 npm version patch

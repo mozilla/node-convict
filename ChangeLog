@@ -1,9 +1,9 @@
 1.1.1 / 2016-02-05
 ==================
 
-  * Update dependency to `moment@2.11.2"` to fix
+  * Deps: moment@2.11.2 to fix
         https://nodesecurity.io/advisories/moment_regular-expression-denial-of-service
-  * Update dependency `validator@4.6.1"` to stay in sync
+  * Deps: validator@4.6.1 to stay in sync
 
 1.1.0 / 2016-02-02
 ==================
@@ -14,8 +14,8 @@
   * Coerce values loaded from a file #96 (Jens Olsson @jsol)
   * Improvement: Pass instance to coerce #109 (Abdullah Ali @voodooattack)
   * Fix missing return in validate reducer #101 (Kris Reeves @myndzi)
-  * Update dependency `moment`
-  * Update dependency `validator`
+  * Deps: moment
+  * Deps: validator
   * Switch back from Blanket to Istanbul for test coverage (Marc-Aurèle darche @madarche)
   * Stricter JSLint linting (Marc-Aurèle darche @madarche)
   * Improve documentation (Olivier Lalonde @olalonde, Marc-Aurèle darche @madarche)
@@ -25,7 +25,6 @@
 
   * Merge pull request [#97](https://github.com/mozilla/node-convict/issues/97) from yoz/cjson-0.3.2
     Update cjson dependency to 0.3.2
-  * Remove instructions about 'file' and 'system' from README.md
   * Update cjson dependency to 0.3.2
     This removes the transitive dependency on 'jsonlint' (in favor of json-parse-helpfulerror), which avoids its problems with unstated depdendencies on 'file' and 'system'.
   * Coerce values loaded from a file
@@ -35,26 +34,8 @@
     so that values added through load() and loadFile()
     are also coerced.
     Corrected a test to reflect this.
-  * Merge pull request [#95](https://github.com/mozilla/node-convict/issues/95) from madarche/feat-update-dependencies
-    Feat update dependencies
-  * Merge pull request [#94](https://github.com/mozilla/node-convict/issues/94) from madarche/feat-ci-nodejs-4
-    Test against Node.js v4.x.x
-  * Follow @pdehaan's advise: test against "stable"
-  * Update dependencies
-  * Test against Node.js v4.x.x
-    It is stated "4" and not "4.0" to test against minor updates of Node.js.
-    Only the newest 4.x release is supported by upstream so it doesn't make
-    sense to test specifically on 4.0. Node now follows semver so no
-    breaking changes are allowed to land before Node 5.0.0.
-  * Merge pull request [#90](https://github.com/mozilla/node-convict/issues/90) from pdehaan/yo-eslint
-    Switch from JSHint to ESLint
-  * Merge pull request [#91](https://github.com/mozilla/node-convict/issues/91) from pdehaan/yo-travis
-    Update .travis.yml to use sudo:false
-  * Update .travis.yml to use sudo:false
+  * Deps: update all
   * Switch from JSHint to ESLint
-  * Merge pull request [#89](https://github.com/mozilla/node-convict/issues/89) from madarche/feat-factor_scripts_blocks
-    Factor scripts blocks (lint actions)
-  * Factor scripts blocks (lint actions)
 
 1.0.1 / 2015-08-11
 ==================
@@ -207,7 +188,7 @@
 0.4.1 / 2013-10-14
 ==================
 
-  * support JSON formatted objects in env
+  * Support JSON formatted objects in env
 
 0.4.0 / 2013-07-31
 ==================
@@ -238,3 +219,5 @@
 
 0.1.0 / 2013-03-05
 ==================
+
+  * Initial release

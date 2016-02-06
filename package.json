@@ -47,5 +47,8 @@
     "transform": [
       "varify"
     ]
-  }
+  },
+  "files": [
+    "lib"
+  ]
 }

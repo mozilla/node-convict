@@ -1,13 +1,22 @@
 {
   "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
   "name": "convict",
-  "description": "Unruly configuration management for nodejs",
+  "description": "Unruly configuration management for Node.js",
+  "keywords": [
+    "configuration",
+    "key value store",
+    "schema",
+    "nested",
+    "validation"
+  ],
   "version": "1.1.1",
+  "license": "Apache-2.0",
   "homepage": "https://github.com/mozilla/node-convict",
   "repository": {
     "type": "git",
     "url": "https://github.com/mozilla/node-convict.git"
   },
+  "bugs": "https://github.com/mozilla/node-convict/issues",
   "engines": {
     "node": ">=0.4.7"
   },
@@ -44,8 +53,6 @@
     "must": "0.13.1",
     "obj_diff": "0.3.0"
   },
-  "bugs": "https://github.com/mozilla/node-convict/issues",
-  "license": "Apache-2.0",
   "browserify": {
     "transform": [
       "varify"

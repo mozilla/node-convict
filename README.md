@@ -71,6 +71,8 @@ module.exports = conf;
 
 ### Usage
 
+Example `server.js`:
+
 ```javascript
 var http = require('http');
 var conf = require('./config.js');
@@ -86,6 +88,14 @@ server.listen(conf.get('port'), conf.get('ip'), function(x) {
   console.log('running on http://' + addy.address + ":" + addy.port);
 });
 ```
+
+To launch your example server, and set a port:
+
+```bash
+node ./server.js --port 8080
+```
+
+*Note*: arguments *must* be supplied with the double-hyphen `--arg`. (Single hypen's are not supported at this time.)
 
 ## The Schema
 

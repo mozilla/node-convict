@@ -13,7 +13,6 @@
 1.1.0 / 2016-02-02
 ==================
 
-  * Never published on NPM because of a vulnerability in the used version of `moment`
   * Fix loading consecutive files could cause an error to be thrown #111
         (Abdullah Ali @voodooattack)
   * Coerce values loaded from a file #96 (Jens Olsson @jsol)

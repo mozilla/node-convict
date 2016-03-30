@@ -13,8 +13,12 @@ describe('convict schema file', function() {
     }
   });
 
-  it('must parse a config specification from a file', function() {
+  beforeEach(function() {
     conf = convict(path.join(__dirname, 'schema.json'));
+  });
+
+  it('must parse a specification with built-in formats', function() {
+    conf = convict(path.join(__dirname, 'cases/schema-built-in-formats.json'));
   });
 
   it('must be valid', function() {
@@ -172,8 +176,8 @@ describe('convict schema file', function() {
 
   describe('.default()', function() {
     // Temporarily modify a property while testing default()
-    before(function() { conf.set('foo.bar', 8); });
-    after(function() { conf.set('foo.bar', 7); });
+    beforeEach(function() { conf.set('foo.bar', 8); });
+    afterEach(function() { conf.set('foo.bar', 7); });
 
     it('must report the default value of a property', function() {
       conf.get('foo.bar').must.be(8); // Modified

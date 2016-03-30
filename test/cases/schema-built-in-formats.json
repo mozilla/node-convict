@@ -1,0 +1,22 @@
+{
+  "someNumber": {
+    "format": "Number",
+    "default": 1
+  },
+  "someObject": {
+    "format": "Object",
+    "default": {}
+  },
+  "someArray": {
+    "format": "Array",
+    "default": []
+  },
+  "someBoolean": {
+    "format": "Boolean",
+    "default": true
+  },
+  "someString": {
+    "format": "String",
+    "default": "foo"
+  }
+}

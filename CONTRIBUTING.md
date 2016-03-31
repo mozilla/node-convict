@@ -1,8 +1,11 @@
 CONTRIBUTING
 ============
 
-Pull Requests and contributions in general are welcome as long as they follow
-the [Node aesthetic](http://substack.net/node_aesthetic).
+We strive for stability and security.
+
+Pull Requests and contributions in general are welcome as long as they don't
+compromise those goals and follow the
+[Node aesthetic](http://substack.net/node_aesthetic).
 
 
 Code style
@@ -27,6 +30,15 @@ We only use strict versions for all dependencies (`dependencies`,
 
 We're also being conservative here for stability reasons. But we're due to look
 over new versions though.
+
+Finally we maintain an exact dependency version tree through
+[npm-shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap).
+So when updating dependencies in the `package.json`, you have to run the
+following command:
+
+```bash
+npm run safefreeze
+```
 
 
 Test

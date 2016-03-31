@@ -1,8 +1,20 @@
 #!/bin/sh
+#
+# Asserts that the module is ready for release with the expected quality
 
 # cf. https://docs.npmjs.com/cli/version
 new_version=$1
 
+# Checking that the npm-shrinkwrap.json file is up-to-date wrt to the
+# package.json file.
+if [ package.json -nt npm-shrinkwrap.json ]
+then
+    echo "File package.json is newer than file npm-shrinkwrap.json"
+    printf "To fix this, run:\nnpm run safefreeze\n\n"
+    exit 1
+fi
+
+# Checking the ChangeLog contains an entry for each version
 for entry in $(git tag|cut -c 2-) $new_version
 do
     if $(grep -q -E ^$entry ChangeLog)

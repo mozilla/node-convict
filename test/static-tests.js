@@ -4,9 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 const obj_diff = require('obj_diff');
-const mocha = require('mocha');
-
-mocha.Suite('static tests');
 
 const casesDir = path.join(__dirname, 'cases');
 var files = fs.readdirSync(casesDir);

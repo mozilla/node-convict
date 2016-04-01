@@ -40,6 +40,15 @@ following command:
 npm run safefreeze
 ```
 
+Tip: If the `package.json` file has been modified in other areas than the
+dependencies, it's irrelevant to regenerate a new `npm-shrinkwrap.json` file. So
+to avoid our `assert_release_quality` script to complain in this situation you
+can run the following command:
+
+```bash
+touch npm-shrinkwrap.json
+```
+
 
 Test
 ----

@@ -5,6 +5,11 @@
 # cf. https://docs.npmjs.com/cli/version
 new_version=$1
 
+# Rollback modified package.json file so it has the previous version
+rollbackPackage() {
+    git checkout package.json
+}
+
 # Checking that the npm-shrinkwrap.json file is up-to-date wrt to the
 # package.json file.
 if [ package.json -nt npm-shrinkwrap.json ]
@@ -30,7 +35,3 @@ do
     fi
 done
 
-# Rollback modified package.json file so it has the previous version
-rollbackPackage() {
-    git checkout package.json
-}

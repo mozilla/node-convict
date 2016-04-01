@@ -31,7 +31,7 @@
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf test/coverage",
     "safefreeze": "rm -rf node_modules npm-shrinkwrap.json && npm install && npm dedupe && npm test && npm shrinkwrap && touch package.json npm-shrinkwrap.json",
-    "preversion": "./assert_shrinkwrap_ready"
+    "preversion": "./assert_shrinkwrap_ready",
     "version": "./assert_changelog_ready $npm_package_version"
   },
   "files": [

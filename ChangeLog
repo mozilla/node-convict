@@ -2,7 +2,7 @@
 ==================
 
   * Support for built-in formats in schema files #138 (Hem Brahmbhatt @damnhipster)
-  * Use shrinkwrap to lock module dependencies #139 (Marc-Aurèle Darche @madarche)
+  * Improve stability and security: Use shrinkwrap to lock module dependencies #139 (Marc-Aurèle Darche @madarche)
   * devDeps: coveralls@2.11.9 to stay in sync
   * devDeps: eslint@2.5.3 to stay in sync
 

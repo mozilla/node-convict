@@ -11,6 +11,8 @@ if [ package.json -nt npm-shrinkwrap.json ]
 then
     echo "File package.json is newer than file npm-shrinkwrap.json"
     printf "To fix this, run:\nnpm run safefreeze\n\n"
+
+    rollbackPackage
     exit 1
 fi
 
@@ -23,9 +25,12 @@ do
     else
         echo "KO: Entry $entry MISSING in the ChangeLog"
 
-        # Rollback modified package.json file so it has the previous version
-        git checkout package.json
-
+        rollbackPackage
         exit 1
     fi
 done
+
+# Rollback modified package.json file so it has the previous version
+rollbackPackage() {
+    git checkout package.json
+}

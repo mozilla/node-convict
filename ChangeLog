@@ -1,3 +1,8 @@
+1.2.1 / 2016-XX-XX
+==================
+
+  * Fix missing npm-shrinkwrap.json file in published NPM module
+
 1.2.0 / 2016-04-01
 ==================
 

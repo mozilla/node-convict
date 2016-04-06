@@ -281,7 +281,9 @@ When merging configuration values from different sources, Convict follows preced
 
 ### var config = convict(schema)
 
-`convict()` takes a schema object and returns a convict configuration object. The configuration object has an API for getting and setting values, described below.
+`convict()` takes a schema object or a path to a schema file and returns a
+convict configuration object. The configuration object has an API for getting
+and setting values, described below.
 
 ### config.addFormat(format)
 
@@ -325,7 +327,7 @@ config.get('property.that.may.not.exist.yet');
 
 ### config.load(object)
 
-This will load and merge a JavaScript object into `config`. E.g.:
+Loads and merges a JavaScript object into `config`. E.g.:
 ```javascript
 config.load({
   "env": "test",
@@ -335,7 +337,7 @@ config.load({
 ```
 ### config.loadFile(file or [file1, file2, ...])
 
-This will load and merge one or multiple JSON configuration files into `config`. JSON files are loaded using `cjson`, so they can contain comments. E.g.:
+Loads and merges one or multiple JSON configuration files into `config`. JSON files are loaded using `cjson`, so they can contain comments. E.g.:
 ```javascript
 conf.loadFile('./config/' + conf.get('env') + '.json');
 ```

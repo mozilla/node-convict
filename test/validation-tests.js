@@ -62,7 +62,7 @@ describe('configuration files contain properties not declared in the schema', fu
   });
   it('must not break when a failed validation follows an undeclared property', function() {
     (function() {
-      convict.addFormat('foo', function (val) {
+      convict.addFormat('foo', function(val) {
         if (val !== 0) { throw new Error('Validation error'); }
       });
 
@@ -83,7 +83,7 @@ describe('configuration files contain properties not declared in the schema', fu
       config.validate();
     }).must.throw(/Validation error/);
   });
-  it('must not break on consecutive overrides', function () {
+  it('must not break on consecutive overrides', function() {
     (function() {
       var config = convict({
         object: {

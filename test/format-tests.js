@@ -92,7 +92,7 @@ describe('convict formats', function() {
           default: 'foo'
         },
         custom: {
-          format: function (val) {
+          format: function(val) {
             if (!validator.isAlpha(val)) {
               throw new Error('expected alpha characters, got ' + val);
             }

@@ -17,7 +17,7 @@ var conf = convict({
   }
 }).loadFile(path.join(__dirname, 'config.json')).validate();
 
-var server = http.createServer(function (req, res) {
+var server = http.createServer(function(req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.end('Hello World\n');
 }).listen(conf.get('port'), conf.get('ip'), function() {

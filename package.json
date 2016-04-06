@@ -30,7 +30,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf test/coverage",
-    "safefreeze": "rm -rf node_modules npm-shrinkwrap.json && npm install && npm dedupe && npm test && npm shrinkwrap && touch package.json npm-shrinkwrap.json",
+    "safefreeze": "rm -rf node_modules npm-shrinkwrap.json && npm install --production --registry https://registry.npmjs.org/ && npm dedupe && npm shrinkwrap && npm install && npm test && touch package.json npm-shrinkwrap.json",
     "preversion": "./assert_shrinkwrap_ready",
     "version": "./assert_changelog_ready $npm_package_version"
   },
@@ -40,8 +40,8 @@
   ],
   "main": "lib/convict.js",
   "dependencies": {
-    "cjson": "0.3.3",
     "depd": "1.1.0",
+    "json5": "0.5.0",
     "moment": "2.12.0",
     "optimist": "0.6.1",
     "validator": "4.6.1",

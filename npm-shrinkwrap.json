@@ -2,29 +2,25 @@
   "name": "convict",
   "version": "1.2.0",
   "dependencies": {
-    "cjson": {
-      "version": "0.3.3",
-      "from": "cjson@0.3.3",
-      "resolved": "https://registry.npmjs.org/cjson/-/cjson-0.3.3.tgz",
-      "dependencies": {
-        "json-parse-helpfulerror": {
-          "version": "1.0.3",
-          "from": "json-parse-helpfulerror@>=1.0.3 <2.0.0",
-          "resolved": "https://registry.npmjs.org/json-parse-helpfulerror/-/json-parse-helpfulerror-1.0.3.tgz",
-          "dependencies": {
-            "jju": {
-              "version": "1.3.0",
-              "from": "jju@>=1.1.0 <2.0.0",
-              "resolved": "https://registry.npmjs.org/jju/-/jju-1.3.0.tgz"
-            }
-          }
-        }
-      }
-    },
     "depd": {
       "version": "1.1.0",
       "from": "depd@1.1.0",
       "resolved": "https://registry.npmjs.org/depd/-/depd-1.1.0.tgz"
+    },
+    "esprima": {
+      "version": "1.0.4",
+      "from": "esprima@>=1.0.4 <1.1.0",
+      "resolved": "https://registry.npmjs.org/esprima/-/esprima-1.0.4.tgz"
+    },
+    "json5": {
+      "version": "0.5.0",
+      "from": "json5@0.5.0",
+      "resolved": "https://registry.npmjs.org/json5/-/json5-0.5.0.tgz"
+    },
+    "minimist": {
+      "version": "0.0.10",
+      "from": "minimist@>=0.0.1 <0.1.0",
+      "resolved": "https://registry.npmjs.org/minimist/-/minimist-0.0.10.tgz"
     },
     "moment": {
       "version": "2.12.0",
@@ -34,19 +30,17 @@
     "optimist": {
       "version": "0.6.1",
       "from": "optimist@0.6.1",
-      "resolved": "https://registry.npmjs.org/optimist/-/optimist-0.6.1.tgz",
-      "dependencies": {
-        "wordwrap": {
-          "version": "0.0.3",
-          "from": "wordwrap@>=0.0.2 <0.1.0",
-          "resolved": "https://registry.npmjs.org/wordwrap/-/wordwrap-0.0.3.tgz"
-        },
-        "minimist": {
-          "version": "0.0.10",
-          "from": "minimist@>=0.0.1 <0.1.0",
-          "resolved": "https://registry.npmjs.org/minimist/-/minimist-0.0.10.tgz"
-        }
-      }
+      "resolved": "https://registry.npmjs.org/optimist/-/optimist-0.6.1.tgz"
+    },
+    "redeyed": {
+      "version": "0.4.4",
+      "from": "redeyed@>=0.4.2 <0.5.0",
+      "resolved": "https://registry.npmjs.org/redeyed/-/redeyed-0.4.4.tgz"
+    },
+    "through": {
+      "version": "2.3.8",
+      "from": "through@>=2.3.4 <2.4.0",
+      "resolved": "https://registry.npmjs.org/through/-/through-2.3.8.tgz"
     },
     "validator": {
       "version": "4.6.1",
@@ -56,26 +50,12 @@
     "varify": {
       "version": "0.1.1",
       "from": "varify@0.1.1",
-      "resolved": "https://registry.npmjs.org/varify/-/varify-0.1.1.tgz",
-      "dependencies": {
-        "through": {
-          "version": "2.3.8",
-          "from": "through@>=2.3.4 <2.4.0",
-          "resolved": "https://registry.npmjs.org/through/-/through-2.3.8.tgz"
-        },
-        "redeyed": {
-          "version": "0.4.4",
-          "from": "redeyed@>=0.4.2 <0.5.0",
-          "resolved": "https://registry.npmjs.org/redeyed/-/redeyed-0.4.4.tgz",
-          "dependencies": {
-            "esprima": {
-              "version": "1.0.4",
-              "from": "esprima@>=1.0.4 <1.1.0",
-              "resolved": "https://registry.npmjs.org/esprima/-/esprima-1.0.4.tgz"
-            }
-          }
-        }
-      }
+      "resolved": "https://registry.npmjs.org/varify/-/varify-0.1.1.tgz"
+    },
+    "wordwrap": {
+      "version": "0.0.3",
+      "from": "wordwrap@>=0.0.2 <0.1.0",
+      "resolved": "https://registry.npmjs.org/wordwrap/-/wordwrap-0.0.3.tgz"
     }
   }
 }

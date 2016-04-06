@@ -21,8 +21,9 @@ Convict expands on the standard pattern of configuring node.js applications in a
 * **Validation**: configurations are validated against your schema (presence
     checking, type checking, custom checking), generating an error report with
     all errors that are found
-* **Comments allowed**: JSON files are loaded with the `cjson` module, so
-    comments are welcome
+* **Comments allowed**: JSON files can be either be in the JSON format or in the
+    newer [JSON5](https://www.npmjs.com/package/json5) format, so comments are
+    welcome
 
 
 ## Install

@@ -188,12 +188,30 @@ describe('convict schema file', function() {
       it('must report the default value of a property', function() {
         conf.get('foo.bar').must.be(8); // Modified
         conf.default('foo.bar').must.be(7);
+        conf.get('foo.bar').must.be(8);
       });
 
       it('must throw if key doesn\'t exist', function() {
         (function() { conf.default('foo.no'); }).must.throw();
       });
     });
+
+    describe('.reset()', function() {
+      // Temporarily modify a property while testing default()
+      beforeEach(function() { conf.set('foo.bar', 8); });
+      afterEach(function() { conf.set('foo.bar', 7); });
+
+      it('must reset the property to its default value', function() {
+        conf.get('foo.bar').must.be(8); // Modified
+        conf.reset('foo.bar');
+        conf.get('foo.bar').must.be(7);
+      });
+
+      it('must throw if key doesn\'t exist', function() {
+        (function() { conf.reset('foo.no'); }).must.throw();
+      });
+    });
+
   });
 });
 

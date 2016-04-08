@@ -63,6 +63,10 @@ describe('convict formats', function() {
           format: 'duration',
           default: '12345'
         },
+        duration5: {
+          format: 'duration',
+          default: '12345'
+        },
         host: {
           format: 'ipaddress',
           default: '127.0.0.1'
@@ -138,7 +142,10 @@ describe('convict formats', function() {
     conf.set('foo.primeNumber', 16);
     (function() { conf.validate(); }).must.throw();
 
-    conf.set('foo.duration4', '-1 days');
+    conf.set('foo.duration4', '-7 days');
+    (function() { conf.validate(); }).must.throw(Error, /must be a positive integer or human readable string/);
+
+    conf.set('foo.duration5', 'zz-7zzdays');
     (function() { conf.validate(); }).must.throw(Error, /must be a positive integer or human readable string/);
   });
 

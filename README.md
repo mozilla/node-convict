@@ -302,12 +302,21 @@ config.get('database.host');
 // or
 config.get('database').host;
 ```
+
 ### config.default(name)
 
 Returns the default value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
 ```javascript
 config.default('server.port');
 ```
+
+### config.reset(name)
+
+Resets a property to its default value as defined in the schema. E.g.:
+```javascript
+config.reset('server.port');
+```
+
 ### config.has(name)
 
 Returns `true` if the property `name` is defined, or `false` otherwise. E.g.:
@@ -316,6 +325,7 @@ if (config.has('some.property')) {
   // Do something
 }
 ```
+
 ### config.set(name, value)
 
 Sets the value of `name` to value. `name` can use dot notation to reference nested values, e.g. `"database.port"`. If objects in the chain don't yet exist, they will be initialized to empty objects. E.g.:

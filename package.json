@@ -4,6 +4,7 @@
   "description": "Unruly configuration management for Node.js",
   "keywords": [
     "configuration",
+    "config",
     "key value store",
     "schema",
     "nested",

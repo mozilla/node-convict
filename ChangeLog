@@ -1,8 +1,8 @@
 1.4.0 / 2016-XX-XX
 ==================
 
-  * Add new reset method (Marc-Aurèle Darche @madarche)
-  * Replace optimist which is deprecated (Brian Vanderbusch @LongLiveCHIEF)
+  * Add new reset method #148 (Marc-Aurèle Darche @madarche)
+  * Replace optimist which is deprecated #154 (Brian Vanderbusch @LongLiveCHIEF)
   * Move varify to optionalDependencies #153 (@mlucool)
 
 1.3.0 / 2016-04-07

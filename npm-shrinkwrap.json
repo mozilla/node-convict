@@ -29,7 +29,7 @@
     },
     "varify": {
       "version": "0.1.1",
-      "from": "https://registry.npmjs.org/varify/-/varify-0.1.1.tgz",
+      "from": "varify@0.1.1",
       "resolved": "https://registry.npmjs.org/varify/-/varify-0.1.1.tgz",
       "dependencies": {
         "through": {

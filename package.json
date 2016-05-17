@@ -62,6 +62,6 @@
     ]
   },
   "optionalDependencies": {
-    "varify": "https://registry.npmjs.org/varify/-/varify-0.1.1.tgz"
+    "varify": "0.1.1"
   }
 }

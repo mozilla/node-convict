@@ -4,5 +4,6 @@
   "nat": 666,
   "num": 789.1011,
   "array": ["a", "b", "c"],
-  "object": {"foo": "bar"}
+  "object": {"foo": "bar"},
+  "regexp": {}
 }

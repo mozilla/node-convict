@@ -175,7 +175,7 @@ convict provides several predefined formats for validation that you can use ([us
 * `timestamp` - Unix timestamps or date strings recognized by [moment.js](http://momentjs.com/)
 * `nat` - positive integer (natural number)
 
-If `format` is set to one of the built-in JavaScript constructors, `Object`, `Array`, `String`, `Number`, or `Boolean`, validation will use Object.prototype.toString.call to check that the setting is the proper type.
+If `format` is set to one of the built-in JavaScript constructors, `Object`, `Array`, `String`, `Number`, `RegExp`, or `Boolean`, validation will use Object.prototype.toString.call to check that the setting is the proper type.
 
 #### Custom format checking
 

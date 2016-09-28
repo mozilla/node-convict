@@ -18,5 +18,9 @@
   "someString": {
     "format": "String",
     "default": "foo"
+  },
+  "someRegExp": {
+    "format": "RegExp",
+    "default": ".*"
   }
 }

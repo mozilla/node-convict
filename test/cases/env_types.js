@@ -28,6 +28,11 @@ exports.conf = {
     format: Object,
     default: {},
     env: 'OBJECT'
+  },
+  regexp: {
+    format: RegExp,
+    default: /.*/,
+    env: 'REGEXP'
   }
 };
 
@@ -37,5 +42,6 @@ exports.env = {
   NAT: 666,
   NUM: 789.1011,
   ARRAY: 'a,b,c',
-  OBJECT: '{"foo": "bar"}'
+  OBJECT: '{"foo": "bar"}',
+  REGEXP: '^foo$'
 };

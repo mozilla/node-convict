@@ -32,7 +32,8 @@ We're also being conservative here for stability reasons. But we're due to look
 over new versions though.
 
 Finally we maintain an exact dependency version tree through
-[npm-shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap).
+[npm-shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) using npm@2.
+The resulting `npm-shrinkwrap` will work both with npm@2 and npm@3.
 So when updating dependencies in the `package.json`, you have to run the
 following command:
 

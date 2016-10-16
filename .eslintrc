@@ -6,7 +6,7 @@ env:
   node: true
 
 rules:
-  # As long as support Node.js v0.10 and v0.12 we can't support strict mode
+  # As long as support Node.js v0.12 we can't support strict mode
   # (since it conflicts with the usage of the "const" declaration).
   strict: [2, "never"]
 

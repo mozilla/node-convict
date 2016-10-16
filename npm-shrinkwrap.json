@@ -12,10 +12,10 @@
       "from": "json5@0.5.0",
       "resolved": "https://registry.npmjs.org/json5/-/json5-0.5.0.tgz"
     },
-    "lodash": {
-      "version": "4.16.2",
-      "from": "lodash@4.16.2",
-      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.16.2.tgz"
+    "lodash.clonedeep": {
+      "version": "4.5.0",
+      "from": "lodash.clonedeep@4.5.0",
+      "resolved": "https://registry.npmjs.org/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz"
     },
     "minimist": {
       "version": "1.2.0",

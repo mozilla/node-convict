@@ -49,12 +49,12 @@
     "validator": "4.6.1"
   },
   "devDependencies": {
-    "coveralls": "2.11.9",
-    "eslint": "2.5.3",
-    "istanbul": "0.4.2",
-    "mocha": "2.4.5",
+    "coveralls": "2.11.14",
+    "eslint": "2.13.1",
+    "istanbul": "0.4.5",
+    "mocha": "3.1.2",
     "mocha-lcov-reporter": "1.2.0",
-    "must": "0.13.1",
+    "must": "0.13.2",
     "obj_diff": "0.3.0"
   },
   "browserify": {

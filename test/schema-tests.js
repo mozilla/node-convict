@@ -52,21 +52,6 @@ describe('convict schema file', function() {
       });
     });
 
-    it('must export all its properties as JSON (deprecated method)', function() {
-      let res = conf.root();
-      res.must.eql({
-        'foo': {
-          'bar': 7,
-          'baz': {
-            'bing': 'foo',
-            'name with spaces': {
-              'name_with_underscores': true
-            }
-          }
-        }
-      });
-    });
-
     it('must export all its properties as a string', function() {
       let res = conf.toString();
       res.must.eql(JSON.stringify({
@@ -107,29 +92,6 @@ describe('convict schema file', function() {
 
     it('must export the schema as a JSON string', function() {
       let res = conf.getSchemaString();
-      res.must.eql(JSON.stringify({
-        'properties': {
-          'foo': {
-            'properties': {
-              'bar': {},
-              'baz': {
-                'properties': {
-                  'bing': {},
-                  'name with spaces': {
-                    'properties': {
-                      'name_with_underscores': {}
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }, null, 2));
-    });
-
-    it('must export the schema as a JSON string (deprecated method)', function() {
-      let res = conf.toSchemaString();
       res.must.eql(JSON.stringify({
         'properties': {
           'foo': {

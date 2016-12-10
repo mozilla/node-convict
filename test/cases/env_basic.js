@@ -1,3 +1,5 @@
+'use strict';
+
 exports.conf = {
   ip: {
     default: '127.0.0.1',

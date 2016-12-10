@@ -1,10 +1,12 @@
+'use strict';
+
 const expect = require('must');
 const moment = require('moment');
 const validator = require('validator');
 
 describe('convict formats', function() {
   const convict = require('../');
-  var conf;
+  let conf;
 
   it('must parse a config specification', function() {
     convict.addFormats({
@@ -12,7 +14,7 @@ describe('convict formats', function() {
         validate: function(val) {
           function isPrime(n) {
             if (n <= 1) return false; // zero and one are not prime
-            for (var i=2; i*i <= n; i++) {
+            for (let i=2; i*i <= n; i++) {
               if (n % i === 0) return false;
             }
             return true;
@@ -151,7 +153,7 @@ describe('convict formats', function() {
 
   describe('predefined formats', function() {
     it('must handle timestamp', function() {
-      var val = conf.get('foo.date');
+      let val = conf.get('foo.date');
       val.must.be(moment('2013-05-05').valueOf());
     });
 
@@ -180,7 +182,7 @@ describe('convict formats', function() {
   });
 
   it('must accept undefined as a default', function() {
-    var val = conf.get('foo.optional');
+    let val = conf.get('foo.optional');
     expect(val).to.be(undefined);
   });
 });

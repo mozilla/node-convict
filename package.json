@@ -19,7 +19,7 @@
   },
   "bugs": "https://github.com/mozilla/node-convict/issues",
   "engines": {
-    "node": ">=0.12"
+    "node": ">=4"
   },
   "scripts": {
     "test": "mocha --check-leaks -R spec",
@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "coveralls": "2.11.14",
-    "eslint": "2.13.1",
+    "eslint": "3.12.0",
     "istanbul": "0.4.5",
     "mocha": "3.1.2",
     "mocha-lcov-reporter": "1.2.0",

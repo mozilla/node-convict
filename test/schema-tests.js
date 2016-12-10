@@ -1,10 +1,12 @@
+'use strict';
+
 const path = require('path');
 require('must');
 
 describe('convict schema file', function() {
   const convict = require('../');
-  var conf;
-  var conf2 = convict({
+  let conf;
+  let conf2 = convict({
     foo: {
       none: {
         format: String,
@@ -36,7 +38,7 @@ describe('convict schema file', function() {
     });
 
     it('must export all its properties as JSON', function() {
-      var res = conf.getProperties();
+      let res = conf.getProperties();
       res.must.eql({
         'foo': {
           'bar': 7,
@@ -51,7 +53,7 @@ describe('convict schema file', function() {
     });
 
     it('must export all its properties as JSON (deprecated method)', function() {
-      var res = conf.root();
+      let res = conf.root();
       res.must.eql({
         'foo': {
           'bar': 7,
@@ -66,7 +68,7 @@ describe('convict schema file', function() {
     });
 
     it('must export all its properties as a string', function() {
-      var res = conf.toString();
+      let res = conf.toString();
       res.must.eql(JSON.stringify({
         'foo': {
           'bar': 7,
@@ -81,7 +83,7 @@ describe('convict schema file', function() {
     });
 
     it('must export the schema as JSON', function() {
-      var res = conf.getSchema();
+      let res = conf.getSchema();
       res.must.eql({
         'properties': {
           'foo': {
@@ -104,7 +106,7 @@ describe('convict schema file', function() {
     });
 
     it('must export the schema as a JSON string', function() {
-      var res = conf.getSchemaString();
+      let res = conf.getSchemaString();
       res.must.eql(JSON.stringify({
         'properties': {
           'foo': {
@@ -127,7 +129,7 @@ describe('convict schema file', function() {
     });
 
     it('must export the schema as a JSON string (deprecated method)', function() {
-      var res = conf.toSchemaString();
+      let res = conf.toSchemaString();
       res.must.eql(JSON.stringify({
         'properties': {
           'foo': {
@@ -151,19 +153,19 @@ describe('convict schema file', function() {
 
     describe('.has()', function() {
       it('must not have undefined properties', function() {
-        var val = conf.has('foo.bar.madeup');
+        let val = conf.has('foo.bar.madeup');
         val.must.be(false);
       });
 
       it('must not have properties specified with a default of undefined', function() {
-        var val = conf2.has('foo.none');
+        let val = conf2.has('foo.none');
         val.must.be(false);
       });
     });
 
     describe('.get()', function() {
       it('must find a nested value', function() {
-        var val = conf.get('foo.bar');
+        let val = conf.get('foo.bar');
         val.must.be(7);
       });
 
@@ -217,7 +219,7 @@ describe('convict schema file', function() {
 
 describe('convict used multiple times on one schema', function() {
   const convict = require('../');
-  var schema = {
+  let schema = {
     publicServerAddress:  {
       doc: 'The public-facing server address',
       format: String,

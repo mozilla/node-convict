@@ -1,3 +1,5 @@
+'use strict';
+
 exports.conf = {
   bool: {
     default: true,

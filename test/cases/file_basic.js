@@ -1,3 +1,5 @@
+'use strict';
+
 exports.conf = {
   ip: {
     doc: 'The IP Address to bind.',

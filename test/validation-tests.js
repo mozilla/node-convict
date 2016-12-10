@@ -1,9 +1,11 @@
+'use strict';
+
 const path = require('path');
 require('must');
 
 describe('configuration files contain properties not declared in the schema', function() {
   const convict = require('../');
-  var config = convict({
+  let config = convict({
     foo: {
       doc: 'testing',
       format: String,
@@ -66,7 +68,7 @@ describe('configuration files contain properties not declared in the schema', fu
         if (val !== 0) { throw new Error('Validation error'); }
       });
 
-      var config = convict({
+      let config = convict({
         test2: {
           one: { default: 0 },
           two: {
@@ -85,7 +87,7 @@ describe('configuration files contain properties not declared in the schema', fu
   });
   it('must not break on consecutive overrides', function() {
     (function() {
-      var config = convict({
+      let config = convict({
         object: {
           doc: 'testing',
           format: Object,

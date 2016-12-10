@@ -6,9 +6,7 @@ env:
   node: true
 
 rules:
-  # As long as support Node.js v0.12 we can't support strict mode
-  # (since it conflicts with the usage of the "const" declaration).
-  strict: [2, "never"]
+  strict: [2, "global"]
 
   # JavaScript core
   no-array-constructor: 2
@@ -31,4 +29,3 @@ rules:
   camelcase: 0
   no-underscore-dangle: 0
   space-before-function-paren: [1, "never"]
-

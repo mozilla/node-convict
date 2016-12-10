@@ -1,8 +1,10 @@
+'use strict';
+
 const path = require('path');
 const http = require('http');
 const convict = require('../lib/convict.js');
 
-var conf = convict({
+let conf = convict({
   ip: {
     doc: 'The IP Address to bind.',
     format: 'ipaddress',
@@ -17,10 +19,10 @@ var conf = convict({
   }
 }).loadFile(path.join(__dirname, 'config.json')).validate();
 
-var server = http.createServer(function(req, res) {
+let server = http.createServer(function(req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.end('Hello World\n');
 }).listen(conf.get('port'), conf.get('ip'), function() {
-  var addy = server.address();
+  let addy = server.address();
   console.log('running on http://%s:%d', addy.address, addy.port); // eslint-disable-line no-console
 });

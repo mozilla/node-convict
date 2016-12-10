@@ -1,8 +1,10 @@
+'use strict';
+
 require('must');
 
 describe('convict', function() {
   const convict = require('../');
-  var conf;
+  let conf;
 
   it('must parse a config specification', function() {
     conf = convict({
@@ -29,7 +31,7 @@ describe('convict', function() {
 
   describe('.get()', function() {
     it('must find a nested value', function() {
-      var val = conf.get('foo.bar');
+      let val = conf.get('foo.bar');
       val.must.be(7);
     });
 
@@ -46,7 +48,7 @@ describe('convict', function() {
     });
 
     it('must get env', function() {
-      var val = conf.get('env');
+      let val = conf.get('env');
       val.must.be('bar');
     });
   });

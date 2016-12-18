@@ -77,6 +77,14 @@ describe('convict formats', function() {
           format: 'port',
           default: 8080
         },
+        pipe: {
+          format: 'named_pipe',
+          default: '\\\\.\\pipe\\test',
+        },
+        pipe_port: {
+          format: 'named_pipe_or_port',
+          default: '\\\\.\\pipe\\pipe_port',
+        },
         email: {
           format: 'email',
           default: 'foo@bar.com'
@@ -168,6 +176,74 @@ describe('convict formats', function() {
     it('must handle duration in milliseconds as a string', function() {
       conf.get('foo.duration3').must.be(12345);
     });
+
+    describe('named_pipe_or_port', function() {
+
+      let conf = convict({
+        port: {
+          format: 'named_pipe_or_port',
+          default: '1234',
+        },
+        pipe: {
+          format: 'named_pipe_or_port',
+          default: '\\\\.\\pipe\\test',
+        },
+        to_pipe: {
+          format: 'named_pipe_or_port',
+          default: 1234,
+        },
+        to_port: {
+          format: 'named_pipe_or_port',
+          default: '\\\\.\\pipe\\default',
+        },
+      });
+
+      it('must coerce ports to integers', function() {
+        conf.get('port').must.be(1234);
+      });
+
+      it('must not coerce pipes to integers', function() {
+        conf.get('pipe').must.be('\\\\.\\pipe\\test');
+      });
+
+      it('must handle switching from port to pipe', function() {
+        conf.set('to_pipe', '\\\\.\\pipe\\changed');
+        conf.get('to_pipe').must.be('\\\\.\\pipe\\changed');
+      });
+
+      it('must handle switching from pipe to port', function() {
+        conf.set('to_port', '8080');
+        conf.get('to_port').must.be(8080);
+      });
+
+      it('must throw for invalid ports', function() {
+
+        let conf = convict({
+          invalid: {
+            format: 'named_pipe_or_port',
+            default: '235235452355',
+          },
+        });
+
+        (function() { conf.validate() }).must.throw(Error, /must be a pipe or a number within range/);
+
+      });
+
+      it('must throw for invalid pipes', function() {
+
+        let conf = convict({
+          invalid: {
+            format: 'named_pipe_or_port',
+            default: '\\.pipe\\test',
+          },
+        });
+
+        (function() { conf.validate() }).must.throw(Error, /must be a pipe or a number within range/);
+
+      });
+
+    });
+
   });
 
   it('must throw with unknown format', function() {

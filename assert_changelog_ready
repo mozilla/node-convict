@@ -10,14 +10,14 @@ rollbackPackage() {
     git checkout package.json
 }
 
-# Checking the ChangeLog contains an entry for each version
+# Checking the CHANGELOG contains an entry for each version
 for entry in $(git tag|cut -c 2-) $new_version
 do
-    if $(grep -q -E ^$entry ChangeLog)
+    if $(grep -q -E ^$entry CHANGELOG)
     then
-        echo "OK: Entry $entry present in the ChangeLog"
+        echo "OK: Entry $entry present in the CHANGELOG"
     else
-        echo "KO: Entry $entry MISSING in the ChangeLog"
+        echo "KO: Entry $entry MISSING in the CHANGELOG"
 
         rollbackPackage
         exit 1

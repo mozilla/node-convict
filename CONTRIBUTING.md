@@ -71,7 +71,7 @@ This must be done so in order to:
 
 * never forget to create a Git tag
 * never create wrong tags and versions
-* never forget to add a corresponding entry in the [ChangeLog](./ChangeLog)
+* never forget to add a corresponding entry in the [CHANGELOG](./CHANGELOG.md)
   file
 
 Example on how to create/tag new versions:

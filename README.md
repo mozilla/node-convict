@@ -168,6 +168,8 @@ convict provides several predefined formats for validation that you can use ([us
 * `*` - any value is valid
 * `int`
 * `port`
+* `named_pipe`
+* `named_pipe_or_port`
 * `url`
 * `email`
 * `ipaddress` - IPv4 and IPv6 addresses

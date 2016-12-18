@@ -1,10 +1,14 @@
-2.0.0 / 201X-XX-XX
+2.0.0 / 2016-12-18
 ==================
 
   * Named Pipe Support #175 (Gurpreet Atwal @gurpreetatwal)
   * Stop supporting Node.js 0.12 by december 2016 #166 (Marc-Aurèle Darche @madarche)
   * Stop supporting Node.js 0.10 by october 2016 #164 (Marc-Aurèle Darche @madarche)
   * Remove deprecated methods `root` and `toSchemaString`
+  * Deps: validator@6.2.0
+  * Deps: moment@2.17.1
+  * Deps: json5@0.5.1
+  * devDeps: all up-to-date
 
 1.5.0 / 2016-09-28
 ==================

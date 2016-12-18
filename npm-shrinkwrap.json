@@ -1,6 +1,6 @@
 {
   "name": "convict",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "dependencies": {
     "json5": {
       "version": "0.5.1",

@@ -1,10 +1,10 @@
 2.0.0 / 201X-XX-XX
 ==================
 
-  * Remove deprecated methods `root` and `toSchemaString`
   * Named Pipe Support #175 (Gurpreet Atwal @gurpreetatwal)
   * Stop supporting Node.js 0.12 by december 2016 #166 (Marc-Aurèle Darche @madarche)
   * Stop supporting Node.js 0.10 by october 2016 #164 (Marc-Aurèle Darche @madarche)
+  * Remove deprecated methods `root` and `toSchemaString`
 
 1.5.0 / 2016-09-28
 ==================

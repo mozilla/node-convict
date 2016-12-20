@@ -78,11 +78,11 @@ describe('convict formats', function() {
           default: 8080
         },
         pipe: {
-          format: 'named_pipe',
+          format: 'windows_named_pipe',
           default: '\\\\.\\pipe\\test',
         },
         pipe_port: {
-          format: 'named_pipe_or_port',
+          format: 'port_or_windows_named_pipe',
           default: '\\\\.\\pipe\\pipe_port',
         },
         email: {
@@ -177,23 +177,23 @@ describe('convict formats', function() {
       conf.get('foo.duration3').must.be(12345);
     });
 
-    describe('named_pipe_or_port', function() {
+    describe('port_or_windows_named_pipe', function() {
 
       let conf = convict({
         port: {
-          format: 'named_pipe_or_port',
+          format: 'port_or_windows_named_pipe',
           default: '1234',
         },
         pipe: {
-          format: 'named_pipe_or_port',
+          format: 'port_or_windows_named_pipe',
           default: '\\\\.\\pipe\\test',
         },
         to_pipe: {
-          format: 'named_pipe_or_port',
+          format: 'port_or_windows_named_pipe',
           default: 1234,
         },
         to_port: {
-          format: 'named_pipe_or_port',
+          format: 'port_or_windows_named_pipe',
           default: '\\\\.\\pipe\\default',
         },
       });
@@ -220,12 +220,12 @@ describe('convict formats', function() {
 
         let conf = convict({
           invalid: {
-            format: 'named_pipe_or_port',
+            format: 'port_or_windows_named_pipe',
             default: '235235452355',
           },
         });
 
-        (function() { conf.validate() }).must.throw(Error, /must be a pipe or a number within range/);
+        (function() { conf.validate() }).must.throw(Error, /must be a windows named pipe or a number within range/);
 
       });
 
@@ -233,12 +233,12 @@ describe('convict formats', function() {
 
         let conf = convict({
           invalid: {
-            format: 'named_pipe_or_port',
+            format: 'port_or_windows_named_pipe',
             default: '\\.pipe\\test',
           },
         });
 
-        (function() { conf.validate() }).must.throw(Error, /must be a pipe or a number within range/);
+        (function() { conf.validate() }).must.throw(Error, /must be a windows named pipe or a number within range/);
 
       });
 

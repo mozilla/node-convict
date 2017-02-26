@@ -156,6 +156,30 @@ var config = convict({
 });
 ```
 
+Deep nested example:
+
+```javascript
+conf = convict({
+  db: {
+    name: {
+      format: String,
+      default: ''
+    },
+    synchro: {
+      active: {
+        format: 'Boolean',
+        default: false
+      },
+      remote_url: {
+        format: 'url',
+        default: 'http://localhost:8080/'
+      }
+    }
+
+  }
+});
+```
+
 Note: Search for the word "nested" throughout this documentation to find out
 more about nested configuration settings.
 

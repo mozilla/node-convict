@@ -41,6 +41,7 @@
   ],
   "main": "lib/convict.js",
   "dependencies": {
+    "depd": "1.1.0",
     "json5": "0.5.1",
     "lodash.clonedeep": "4.5.0",
     "minimist": "1.2.0",

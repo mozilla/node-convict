@@ -65,7 +65,7 @@ var env = conf.get('env');
 conf.loadFile('./config/' + env + '.json');
 
 // Perform validation
-conf.validate({strict: true});
+conf.validate({allowed: 'strict'});
 
 module.exports = conf;
 ```
@@ -352,14 +352,15 @@ conf.loadFile(process.env.CONFIG_FILES.split(','));
 ### config.validate([options])
 
 Validates `config` against the schema used to initialize it. All errors are
-collected and thrown at once.
+collected and thrown or displayed at once.
 
-Options: At the moment `strict` is the only available option.
-
-If the `strict` option is passed (that is `{strict: true}` is passed), any
+#### allowed option
+1. `warn`: If the `warn` value is passed (that is `{allowed: 'warn'}` is passed), any
+properties specified in config files that are not declared in the schema will just be displayed. By default the allowed option is set to `warn`.
+2. `strict`: If the `strict` value is passed (that is `{allowed: 'strict'}` is passed), any
 properties specified in config files that are not declared in the schema will
 result in errors. This is to ensure that the schema and the config files are in
-sync. By default the strict mode is set to false.
+sync.
 
 ### config.getProperties()
 

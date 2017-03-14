@@ -46,15 +46,15 @@
     "lodash.clonedeep": "4.5.0",
     "minimist": "1.2.0",
     "moment": "2.17.1",
-    "validator": "6.2.0"
+    "validator": "7.0.0"
   },
   "devDependencies": {
-    "coveralls": "2.11.15",
-    "eslint": "3.12.2",
+    "coveralls": "2.12.0",
+    "eslint": "3.17.1",
     "istanbul": "0.4.5",
     "mocha": "3.2.0",
-    "mocha-lcov-reporter": "1.2.0",
-    "must": "0.13.2",
+    "mocha-lcov-reporter": "1.3.0",
+    "must": "0.13.4",
     "obj_diff": "0.3.0"
   },
   "browserify": {
@@ -63,6 +63,6 @@
     ]
   },
   "optionalDependencies": {
-    "varify": "0.1.1"
+    "varify": "0.2.0"
   }
 }

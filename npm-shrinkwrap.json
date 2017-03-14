@@ -4,7 +4,7 @@
   "dependencies": {
     "depd": {
       "version": "1.1.0",
-      "from": "depd@latest",
+      "from": "depd@1.1.0",
       "resolved": "https://registry.npmjs.org/depd/-/depd-1.1.0.tgz"
     },
     "json5": {
@@ -28,35 +28,31 @@
       "resolved": "https://registry.npmjs.org/moment/-/moment-2.17.1.tgz"
     },
     "validator": {
-      "version": "6.2.0",
-      "from": "validator@6.2.0",
-      "resolved": "https://registry.npmjs.org/validator/-/validator-6.2.0.tgz"
+      "version": "7.0.0",
+      "from": "validator@7.0.0",
+      "resolved": "https://registry.npmjs.org/validator/-/validator-7.0.0.tgz"
     },
     "varify": {
-      "version": "0.1.1",
-      "from": "varify@0.1.1",
-      "resolved": "https://registry.npmjs.org/varify/-/varify-0.1.1.tgz",
-      "optional": true,
+      "version": "0.2.0",
+      "from": "varify@0.2.0",
+      "resolved": "https://registry.npmjs.org/varify/-/varify-0.2.0.tgz",
       "dependencies": {
         "redeyed": {
-          "version": "0.4.4",
-          "from": "redeyed@>=0.4.2 <0.5.0",
-          "resolved": "https://registry.npmjs.org/redeyed/-/redeyed-0.4.4.tgz",
-          "optional": true,
+          "version": "1.0.1",
+          "from": "redeyed@>=1.0.1 <1.1.0",
+          "resolved": "https://registry.npmjs.org/redeyed/-/redeyed-1.0.1.tgz",
           "dependencies": {
             "esprima": {
-              "version": "1.0.4",
-              "from": "esprima@>=1.0.4 <1.1.0",
-              "resolved": "https://registry.npmjs.org/esprima/-/esprima-1.0.4.tgz",
-              "optional": true
+              "version": "3.0.0",
+              "from": "esprima@>=3.0.0 <3.1.0",
+              "resolved": "https://registry.npmjs.org/esprima/-/esprima-3.0.0.tgz"
             }
           }
         },
         "through": {
           "version": "2.3.8",
           "from": "through@>=2.3.4 <2.4.0",
-          "resolved": "https://registry.npmjs.org/through/-/through-2.3.8.tgz",
-          "optional": true
+          "resolved": "https://registry.npmjs.org/through/-/through-2.3.8.tgz"
         }
       }
     }

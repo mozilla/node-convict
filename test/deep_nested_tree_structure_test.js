@@ -37,7 +37,7 @@ describe('deep nested tree structure', function() {
     });
     (function() {
       conf.validate({
-        strict: true
+        allowed: 'strict'
       });
     }).must.not.throw();
   });
@@ -76,7 +76,7 @@ describe('deep nested tree structure', function() {
       conf.set('db.synchro', synchro);
       (function() {
         conf.validate({
-          strict: true
+          allowed: 'strict'
         });
       }).must.not.throw();
       conf.get('db.synchro.active').must.be(false);
@@ -98,7 +98,7 @@ describe('deep nested tree structure', function() {
       conf.set('db', db);
       (function() {
         conf.validate({
-          strict: true
+          allowed: 'strict'
         });
       }).must.not.throw();
       conf.get('db.synchro.remote_url').must.be('http://local.test:9876');

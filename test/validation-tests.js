@@ -31,7 +31,17 @@ describe('configuration files contain properties not declared in the schema', fu
       }
     }
   });
+
   it('must not throw, if properties in config file match with the schema', function() {
+    config.loadFile(path.join(__dirname, 'cases/validation_correct.json'));
+    (function() {
+      config.validate({
+        allowed: 'strict'
+      });
+    }).must.not.throw();
+  });
+
+  it('must not throw, if properties in config file match with the schema and must display a deprecate (strict: true to allowed: \'strict\')', function() {
     config.loadFile(path.join(__dirname, 'cases/validation_correct.json'));
     (function() {
       config.validate({
@@ -40,7 +50,13 @@ describe('configuration files contain properties not declared in the schema', fu
     }).must.not.throw();
   });
 
-  it('must not throw, if the option to check for non schema properties is set to false', function() {
+  it('must not throw, if the option to check for non schema properties is set by default but must display warnings', function() {
+    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    (function() {
+      config.validate();
+    }).must.not.throw();
+  });
+  it('must not throw, if the option to check for non schema properties is set by default and must display a deprecate (strict: false to void) and warnings', function() {
     config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
     (function() {
       config.validate({
@@ -48,7 +64,7 @@ describe('configuration files contain properties not declared in the schema', fu
       });
     }).must.not.throw();
   });
-  it('must not throw, if the option to check for non schema properties is not specified', function() {
+  it('must not throw, if the option to check for non schema properties is not specified and must display warnings', function() {
     config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
     (function() {
       config.validate();
@@ -58,11 +74,34 @@ describe('configuration files contain properties not declared in the schema', fu
     config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
     (function() {
       config.validate({
-        strict: true
+        allowed: 'strict'
       });
     }).must.throw(/not declared/);
   });
-  it('must not break when a failed validation follows an undeclared property', function() {
+  it('must display warning, if properties in config file do not match the properties declared in the schema', function() {
+    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    (function() {
+      config.validate({
+        allowed: 'warn'
+      });
+    }).must.not.throw(/not declared/);
+  });
+  it('must throw, if properties in instance do not match the properties declared in the schema and there are incorrect values', function() {
+    (function() {
+      config.load({
+        'foo': 58,
+        'bar': 98,
+        'nested': {
+          'level1_1': 'undeclared'
+        },
+        'undeclared': 'this property is not declared in the schema'
+      });
+      config.validate({
+        allowed: 'strict'
+      });
+    }).must.throw();
+  });
+  it('must not break when a failed validation follows an undeclared property and must display warnings', function() {
     (function() {
       convict.addFormat('foo', function(val) {
         if (val !== 0) { throw new Error('Validation error'); }

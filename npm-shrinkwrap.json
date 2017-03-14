@@ -2,6 +2,11 @@
   "name": "convict",
   "version": "2.0.0",
   "dependencies": {
+    "depd": {
+      "version": "1.1.0",
+      "from": "depd@latest",
+      "resolved": "https://registry.npmjs.org/depd/-/depd-1.1.0.tgz"
+    },
     "json5": {
       "version": "0.5.1",
       "from": "json5@0.5.1",
@@ -31,23 +36,27 @@
       "version": "0.1.1",
       "from": "varify@0.1.1",
       "resolved": "https://registry.npmjs.org/varify/-/varify-0.1.1.tgz",
+      "optional": true,
       "dependencies": {
-        "through": {
-          "version": "2.3.8",
-          "from": "through@>=2.3.4 <2.4.0",
-          "resolved": "https://registry.npmjs.org/through/-/through-2.3.8.tgz"
-        },
         "redeyed": {
           "version": "0.4.4",
           "from": "redeyed@>=0.4.2 <0.5.0",
           "resolved": "https://registry.npmjs.org/redeyed/-/redeyed-0.4.4.tgz",
+          "optional": true,
           "dependencies": {
             "esprima": {
               "version": "1.0.4",
               "from": "esprima@>=1.0.4 <1.1.0",
-              "resolved": "https://registry.npmjs.org/esprima/-/esprima-1.0.4.tgz"
+              "resolved": "https://registry.npmjs.org/esprima/-/esprima-1.0.4.tgz",
+              "optional": true
             }
           }
+        },
+        "through": {
+          "version": "2.3.8",
+          "from": "through@>=2.3.4 <2.4.0",
+          "resolved": "https://registry.npmjs.org/through/-/through-2.3.8.tgz",
+          "optional": true
         }
       }
     }

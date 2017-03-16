@@ -355,12 +355,15 @@ Validates `config` against the schema used to initialize it. All errors are
 collected and thrown or displayed at once.
 
 #### allowed option
-1. `warn`: If the `warn` value is passed (that is `{allowed: 'warn'}` is passed), any
-properties specified in config files that are not declared in the schema will just be displayed. By default the allowed option is set to `warn`.
-2. `strict`: If the `strict` value is passed (that is `{allowed: 'strict'}` is passed), any
-properties specified in config files that are not declared in the schema will
-result in errors. This is to ensure that the schema and the config files are in
-sync.
+
+1. `warn`: If set to `warn` (that is `{allowed: 'warn'}` is passed), any
+   properties specified in config files that are not declared in the schema will
+   print a warning. This is the default behavior.
+
+2. `strict`: If set to `strict` (that is `{allowed: 'strict'}` is passed), any
+   properties specified in config files that are not declared in the schema will
+   throw errors. This is to ensure that the schema and the config files are in
+   sync.
 
 ### config.getProperties()
 

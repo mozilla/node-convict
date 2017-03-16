@@ -1,3 +1,23 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
+and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## 3.0.0 / 2017-03-16
+
+### Added
+
+- In validate function alter option strict to allowed, with option 'strict' and 'warn' #182 (@benTrust)
+
+### Changed
+
+- Rename pipe formats to emphasize that they are for windows pipes #179
+  (Gurpreet Atwal @gurpreetatwal)
+- Update dependencies #184 (Marc-Aurèle Darche @madarche)
+
+
 2.0.0 / 2016-12-18
 ==================
 
@@ -215,6 +235,7 @@
 
 0.5.0 / 2014-10-15
 ==================
+
   * Fix npmignore anything that's not needed for production #38
   * Fix The schema get modified by convict #37
   * npm ignore things

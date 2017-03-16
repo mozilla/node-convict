@@ -10,10 +10,12 @@ rollbackPackage() {
     git checkout package.json
 }
 
-# Checking the CHANGELOG contains an entry for each version
+# Checking the CHANGELOG contains an entry (with right format) for each version.
+# The expected format is as follows:
+# ## [VERSION]
 for entry in $(git tag|cut -c 2-) $new_version
 do
-    if $(grep -q -E ^$entry CHANGELOG.md)
+    if $(grep --quiet -E "^## \[$entry\]" CHANGELOG.md)
     then
         echo "OK: Entry $entry present in the CHANGELOG.md"
     else

@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [3.0.0] - 2017-03-16
 ### Added
 
-- In validate function alter option `strict` to `allowed`, with option values `strict` and `warn` #182 (@benTrust)
+- In `validate` function alter option `strict` to `allowed`, with option values `strict` and `warn` #182 (@benTrust)
 
 ### Changed
 

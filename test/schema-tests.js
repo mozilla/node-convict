@@ -23,6 +23,13 @@ describe('convict schema file', function() {
     conf = convict(path.join(__dirname, 'cases/schema-built-in-formats.json'));
   });
 
+  it('must throw when parsing a specification that reuses an env variable', function() {
+    (function() { convict({
+      foo: {default: 'a', env: 'BAZ'},
+      bar: {default: 'a', env: 'BAZ'}
+    })}).must.throw();
+  })
+
   describe('after being parsed', function() {
 
     beforeEach(function() {

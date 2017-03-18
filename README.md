@@ -121,7 +121,7 @@ Each setting in the schema has four possible properties, each aiding in convict'
 
 * **Type information**: the `format` property specifies either a built-in convict format (`ipaddress`, `port`, `int`, etc.), or it can be a function to check a custom format. During validation, if a format check fails it will be added to the error report.
 * **Default values**:  Every setting *must* have a default value.
-* **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value.
+* **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value. An environment variable may not be mapped to more than one setting.
 * **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
 * **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `conf.toSchemaString()` and have it displayed in the output.
 

@@ -15,6 +15,7 @@ files.forEach(function(f) {
   if (m) tests[m[1]] = {
     spec: f,
     output: m[1] + '.out',
+    outputString: m[1] + '.string',
     config_files: []
   };
 });
@@ -55,6 +56,7 @@ function run(name, done) {
   n.on('message', function(m) {
     let expected;
     let got;
+    let errs = [];
     try {
       if (!m.error) {
         // let's read the expected output
@@ -63,7 +65,21 @@ function run(name, done) {
 
         // check that configuration is what we expect
         let err = diffObjects(expected, got);
-        if (err) throw err;
+        if (err) {
+          errs.push(err);
+        }
+
+        if (fs.existsSync(path.join(casesDir, test.outputString))) {
+          expected = JSON.parse(fs.readFileSync(path.join(casesDir, test.outputString)));
+          got = JSON.parse(m.string);
+          let err = diffObjects(expected, got);
+          if (err) {
+            errs.push(err);
+          }
+        }
+        if(errs.length > 0) {
+          throw new Error(errs.join('\n'));
+        }
         return done();
       } else {
         expected = fs.readFileSync(path.join(casesDir, test.output)).toString().trim();

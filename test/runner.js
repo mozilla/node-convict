@@ -11,7 +11,7 @@ process.on('message', function(spec) {
     if (s.formats)
       convict.addFormats(s.formats);
     let conf = convict(s.conf).loadFile(spec.config_files).validate();
-    process.send({result: conf.get()});
+    process.send({result: conf.get(), string: conf.toString()});
     process.exit(0);
   } catch(e) {
     console.error(e); // eslint-disable-line no-console

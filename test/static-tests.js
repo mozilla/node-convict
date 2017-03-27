@@ -49,10 +49,21 @@ function run(name, done) {
 
   let env = kase.env || {};
   let argv = kase.argv ? kase.argv.split(' ') : [];
+  let exec = path.join(__dirname, 'runner.js');
+  if (process.env.running_under_istanbul) {
+    argv = ['cover', '--report', 'none', '--print', 'none', '--include-pid',
+      exec, '--'].concat(argv);
+    exec = path.join(__dirname, '..', 'node_modules', '.bin', 'istanbul');
+  }
 
-  let n = cp.fork(path.join(__dirname, 'runner.js'), argv, { env: env });
+  let n = cp.fork(exec, argv, {env: env});
 
   n.on('message', function(m) {
+    if (m.ready) {
+      n.send(tests[name]);
+      return;
+    }
+
     let expected;
     let got;
     try {
@@ -75,8 +86,6 @@ function run(name, done) {
       return done(e);
     }
   });
-
-  n.send(tests[name]);
 }
 
 describe('Static tests', function() {

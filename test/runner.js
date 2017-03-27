@@ -19,3 +19,8 @@ process.on('message', function(spec) {
     process.exit(1);
   }
 });
+
+// Tell the parent process that the runner is ready to perform work. This is
+// necessary because, when run under Istanbul, the runner takes long enough to
+// start that it misses messages sent immediately post-fork.
+process.send({ready: true});

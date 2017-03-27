@@ -28,7 +28,14 @@ describe('convict schema file', function() {
       foo: {default: 'a', env: 'BAZ'},
       bar: {default: 'a', env: 'BAZ'}
     })}).must.throw();
-  })
+  });
+
+  it('must throw when parsing a specification that reuses a command-line argument', function() {
+    (function() { convict({
+      foo: {default: 'a', arg: 'BAZ'},
+      bar: {default: 'a', arg: 'BAZ'}
+    })}).must.throw();
+  });
 
   describe('after being parsed', function() {
 

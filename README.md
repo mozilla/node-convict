@@ -32,7 +32,7 @@ Convict expands on the standard pattern of configuring node.js applications in a
 npm install convict
 ```
 
-## Example
+## Usage
 
 An example `config.js` file:
 
@@ -71,7 +71,7 @@ conf.validate({allowed: 'strict'});
 module.exports = conf;
 ```
 
-An example `server.js` file:
+An example `server.js` file leveraging the `config.js` file above:
 
 ```javascript
 var http = require('http');

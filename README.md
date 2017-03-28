@@ -28,7 +28,7 @@ Convict expands on the standard pattern of configuring node.js applications in a
 
 ## Install
 
-```bash
+```shell
 npm install convict
 ```
 
@@ -92,7 +92,7 @@ server.listen(conf.get('port'), conf.get('ip'), function(x) {
 
 To launch your example server, and set a port:
 
-```bash
+```shell
 node ./server.js --port 8080
 ```
 

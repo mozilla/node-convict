@@ -32,9 +32,10 @@ Convict expands on the standard pattern of configuring node.js applications in a
 npm install convict
 ```
 
-## Example:
+## Example
 
-An example `config.js`:
+An example `config.js` file:
+
 ```javascript
 var convict = require('convict');
 
@@ -70,9 +71,7 @@ conf.validate({allowed: 'strict'});
 module.exports = conf;
 ```
 
-### Usage
-
-Example `server.js`:
+An example `server.js` file:
 
 ```javascript
 var http = require('http');
@@ -96,7 +95,8 @@ To launch your example server, and set a port:
 node ./server.js --port 8080
 ```
 
-*Note*: arguments *must* be supplied with the double-hyphen `--arg`. (Single hypen's are not supported at this time.)
+*Note*: arguments *must* be supplied with the double-hyphen `--arg`. (Single hypen's are not supported at this time)
+
 
 ## The Schema
 

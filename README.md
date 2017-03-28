@@ -106,12 +106,17 @@ config.js:
 ```javascript
 var config = module.exports = convict({
   env: {
-    doc: "The application environment.",
-    format: ["production", "development", "test"],
-    default: "development",
-    env: "NODE_ENV",
-    arg: "node-env",
-    sensitive: true,
+    doc: 'The application environment',
+    format: ['production', 'development', 'test'],
+    default: 'development',
+    env: 'NODE_ENV',
+    arg: 'node-env'
+  },
+  secret: {
+    doc: 'Secret used for session cookies and CSRF tokens',
+    format: '*',
+    default: '',
+    sensitive: true
   }
 });
 

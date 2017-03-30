@@ -16,6 +16,7 @@ files.forEach(function(f) {
     spec: f,
     output: m[1] + '.out',
     outputString: m[1] + '.string',
+    outputSchema: m[1] + '.schema',
     config_files: []
   };
 });
@@ -77,7 +78,7 @@ function run(name, done) {
         // check that configuration is what we expect
         let err = diffObjects(expected, got);
         if (err) {
-          errs.push(err);
+          errs.push(`get ${err}`);
         }
 
         if (fs.existsSync(path.join(casesDir, test.outputString))) {
@@ -85,9 +86,20 @@ function run(name, done) {
           got = JSON.parse(m.string);
           let err = diffObjects(expected, got);
           if (err) {
-            errs.push(err);
+            errs.push(`toString ${err}`);
           }
         }
+
+        if (fs.existsSync(path.join(casesDir, test.outputSchema))) {
+          expected = JSON.parse(fs.readFileSync(path.join(casesDir,
+            test.outputSchema)));
+          got = m.schema;
+          let err = diffObjects(expected, got);
+          if (err) {
+            errs.push(`getSchema ${err}`);
+          }
+        }
+
         if(errs.length > 0) {
           throw new Error(errs.join('\n'));
         }

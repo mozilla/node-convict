@@ -1,5 +1,6 @@
 {
-  "bool": true,
+  "boolTrue": true,
+  "boolFalse": false,
   "int": 77,
   "nat": 666,
   "num": 789.1011,

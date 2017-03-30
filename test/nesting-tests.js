@@ -105,4 +105,26 @@ describe('deep nested tree structure', function() {
     });
 
   });
+
+  describe('missing chains', function() {
+    it('must error when attempting to access a missing chain', function() {
+      (function() {
+        conf.get('invalid');
+      }).must.throw();
+      (function() {
+        conf.get('invalid.child');
+      }).must.throw();
+    });
+
+    it('must initialize an empty chain', function() {
+      (function() {
+        conf.set('invalid.child', 'value');
+      }).must.not.throw();
+    });
+
+    it('must retrieve an initialized empty chain', function() {
+      conf.get('invalid.child').must.be('value');
+      conf.get('invalid').must.be.eql({child: 'value'});
+    });
+  });
 })

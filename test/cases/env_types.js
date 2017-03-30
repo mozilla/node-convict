@@ -1,10 +1,15 @@
 'use strict';
 
 exports.conf = {
-  bool: {
+  boolTrue: {
     default: true,
     format: Boolean,
-    env: 'BOOL'
+    env: 'BOOLTRUE'
+  },
+  boolFalse: {
+    default: false,
+    format: Boolean,
+    env: 'BOOLFALSE'
   },
   int: {
     default: 42,
@@ -39,7 +44,8 @@ exports.conf = {
 };
 
 exports.env = {
-  BOOL: true,
+  BOOLTRUE: true,
+  BOOLFALSE: false,
   INT: 77,
   NAT: 666,
   NUM: 789.1011,

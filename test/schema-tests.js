@@ -80,13 +80,19 @@ describe('convict schema file', function() {
         'properties': {
           'foo': {
             'properties': {
-              'bar': {},
+              'bar': {
+                'default': 7
+              },
               'baz': {
                 'properties': {
-                  'bing': {},
+                  'bing': {
+                    'default': 'foo'
+                  },
                   'name with spaces': {
                     'properties': {
-                      'name_with_underscores': {}
+                      'name_with_underscores': {
+                        'default': true
+                      }
                     }
                   }
                 }
@@ -103,13 +109,19 @@ describe('convict schema file', function() {
         'properties': {
           'foo': {
             'properties': {
-              'bar': {},
+              'bar': {
+                'default': 7
+              },
               'baz': {
                 'properties': {
-                  'bing': {},
+                  'bing': {
+                    'default': 'foo'
+                  },
                   'name with spaces': {
                     'properties': {
-                      'name_with_underscores': {}
+                      'name_with_underscores': {
+                        'default': true
+                      }
                     }
                   }
                 }

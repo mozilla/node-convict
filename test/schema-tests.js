@@ -3,7 +3,7 @@
 const path = require('path');
 require('must');
 
-describe('convict schema file', function() {
+describe('convict schema', function() {
   const convict = require('../');
   let conf;
   let conf2 = convict({

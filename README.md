@@ -21,7 +21,7 @@ Convict expands on the standard pattern of configuring node.js applications in a
 * **Validation**: configurations are validated against your schema (presence
     checking, type checking, custom checking), generating an error report with
     all errors that are found
-* **Comments allowed**: Configuration and schema files can be either be in the
+* **Comments allowed**: Schema and configuration files can be either in the
     JSON format or in the newer [JSON5](https://www.npmjs.com/package/json5)
     format, so comments are welcome
 
@@ -40,7 +40,7 @@ An example `config.js` file:
 var convict = require('convict');
 
 // Define a schema
-var conf = convict({
+var config = convict({
   env: {
     doc: "The applicaton environment.",
     format: ["production", "development", "test"],
@@ -280,9 +280,38 @@ When merging configuration values from different sources, Convict follows preced
 
 ### var config = convict(schema)
 
-`convict()` takes a schema object or a path to a schema file and returns a
-convict configuration object. The configuration object has an API for getting
-and setting values, described below.
+`convict()` takes a schema object or a path to a schema JSON file and returns a
+convict configuration object.
+JSON files are loaded using `JSON5`, so they can contain comments.
+
+The configuration object has an API for getting and setting values, described
+below.
+
+```javascript
+var config = convict({
+  env: {
+    doc: "The applicaton environment.",
+    format: ["production", "development", "test"],
+    default: "development",
+    env: "NODE_ENV"
+  },
+  ip: {
+    doc: "The IP address to bind.",
+    format: "ipaddress",
+    default: "127.0.0.1",
+    env: "IP_ADDRESS",
+  },
+  port: {
+    doc: "The port to bind.",
+    format: "port",
+    default: 0,
+    env: "PORT"
+  }
+});
+
+// or
+config = convict('/some/path/to/a/config-schema.json');
+```
 
 ### config.addFormat(format)
 
@@ -327,7 +356,10 @@ if (config.has('some.property')) {
 
 ### config.set(name, value)
 
-Sets the value of `name` to value. `name` can use dot notation to reference nested values, e.g. `"database.port"`. If objects in the chain don't yet exist, they will be initialized to empty objects. E.g.:
+Sets the value of `name` to value. `name` can use dot notation to reference
+nested values, e.g. `"database.port"`. If objects in the chain don't yet exist,
+they will be initialized to empty objects.
+E.g.:
 ```javascript
 config.set('property.that.may.not.exist.yet', 'some value');
 config.get('property.that.may.not.exist.yet');
@@ -344,9 +376,11 @@ config.load({
   "port": 80
 });
 ```
-### config.loadFile(file or [file1, file2, ...])
+### config.loadFile(file1[, file2, file3, ...])
 
-Loads and merges one or multiple JSON configuration files into `config`. JSON files are loaded using `cjson`, so they can contain comments. E.g.:
+Loads and merges one or multiple JSON configuration files into `config`.
+JSON files are loaded using `JSON5`, so they can contain comments.
+E.g.:
 ```javascript
 conf.loadFile('./config/' + conf.get('env') + '.json');
 ```

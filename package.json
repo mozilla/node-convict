@@ -24,9 +24,10 @@
   "scripts": {
     "test": "mocha --check-leaks -R spec test/*-tests.js",
     "posttest": "npm run lint",
-    "test:coverage": "istanbul cover --print none --report none --include-pid _mocha -- --check-leaks test/*-tests.js && istanbul report text-summary lcov && rm -f test/coverage/coverage-*.json",
+    "pretest:coverage": "rm -f test/coverage/coverage-*.json",
+    "test:coverage": "istanbul cover --print none --report none --include-pid _mocha -- --check-leaks test/*-tests.js && istanbul report text-summary lcov",
     "posttest:coverage": "npm run lint",
-    "test:ci": "istanbul cover --print none --report none --include-pid _mocha -- --check-leaks test/*-tests.js && istanbul report text-summary lcov && rm -f test/coverage/coverage-*.json && cat test/coverage/lcov.info | coveralls",
+    "test:ci": "istanbul cover --print none --report none --include-pid _mocha -- --check-leaks test/*-tests.js && istanbul report text-summary lcov && cat test/coverage/lcov.info | coveralls",
     "posttest:ci": "npm run lint",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",

@@ -56,8 +56,20 @@ var config = convict({
   port: {
     doc: "The port to bind.",
     format: "port",
-    default: 0,
+    default: 8080,
     env: "PORT"
+  },
+  database: {
+    host: {
+      doc: "Database host name/IP",
+      format: '*',
+      default: 'server1.dev.test'
+    },
+    name: {
+      doc: "Database name",
+      format: String,
+      default: 'users'
+    }
   }
 });
 
@@ -100,73 +112,11 @@ node ./server.js --port 8080
 
 ## The Schema
 
-A configuration module could look like this:
+A configuration module, with its deep nested schema, could look like this:
 
 config.js:
 ```javascript
-var config = module.exports = convict({
-  env: {
-    doc: 'The application environment',
-    format: ['production', 'development', 'test'],
-    default: 'development',
-    env: 'NODE_ENV',
-    arg: 'node-env'
-  },
-  secret: {
-    doc: 'Secret used for session cookies and CSRF tokens',
-    format: '*',
-    default: '',
-    sensitive: true
-  }
-});
-
-config.loadFile(['./prod.json', './config.json']);
-```
-
-Each setting in the schema has six possible properties, each aiding in convict's goal of being more robust and collaborator friendly.
-
-* **Type information**: the `format` property specifies either a built-in convict format (`ipaddress`, `port`, `int`, etc.), or it can be a function to check a custom format. During validation, if a format check fails it will be added to the error report.
-* **Default values**:  Every setting *must* have a default value.
-* **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value. An environment variable may not be mapped to more than one setting.
-* **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
-* **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `conf.getSchemaString()` and have it displayed in the output.
-* **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `conf.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
-
-Nested configuration settings are also supported:
-
-```javascript
 var config = convict({
-  server: {
-    ip: {
-      doc: "IP address to bind",
-      format: 'ipaddress',
-      default: '0.0.0.0'
-    },
-    port: {
-      doc: "port to bind",
-      format: 'port',
-      default: 8080
-    }
-  },
-  database: {
-    host: {
-      doc: "Database host name/IP",
-      format: String,
-      default: 'testing'
-    },
-    name: {
-      doc: "Database name",
-      format: String,
-      default: 'users'
-    }
-  }
-});
-```
-
-Deep nested example:
-
-```javascript
-conf = convict({
   db: {
     name: {
       format: String,
@@ -182,13 +132,28 @@ conf = convict({
         default: 'http://localhost:8080/'
       }
     }
-
+  },
+  secret: {
+    doc: 'Secret used for session cookies and CSRF tokens',
+    format: '*',
+    default: '',
+    sensitive: true
   }
 });
+
+config.loadFile(['./prod.json', './config.json']);
 ```
 
-Note: Search for the word "nested" throughout this documentation to find out
-more about nested configuration settings.
+Each setting in the schema has the following possible properties, each aiding in
+convict's goal of being more robust and collaborator friendly.
+
+* **Type information**: the `format` property specifies either a built-in convict format (`ipaddress`, `port`, `int`, etc.), or it can be a function to check a custom format. During validation, if a format check fails it will be added to the error report.
+* **Default values**:  Every setting *must* have a default value.
+* **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value. An environment variable may not be mapped to more than one setting.
+* **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
+* **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `conf.getSchemaString()` and have it displayed in the output.
+* **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `conf.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
+
 
 ### Validation
 
@@ -295,17 +260,10 @@ var config = convict({
     default: "development",
     env: "NODE_ENV"
   },
-  ip: {
-    doc: "The IP address to bind.",
-    format: "ipaddress",
-    default: "127.0.0.1",
-    env: "IP_ADDRESS",
-  },
-  port: {
-    doc: "The port to bind.",
-    format: "port",
-    default: 0,
-    env: "PORT"
+  log_file_path: {
+    "doc": "Log file path",
+    "format": String,
+    "default": "/tmp/app.log"
   }
 });
 

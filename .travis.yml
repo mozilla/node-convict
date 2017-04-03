@@ -4,8 +4,7 @@ sudo: false
 
 node_js:
   - "stable"
-  - "6"
-  - "4"
+  - "lts/*"
 
 script:
   - npm run test:ci

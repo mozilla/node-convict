@@ -50,7 +50,10 @@ function run(name, done) {
   let kase = require(path.join(casesDir, test.spec));
 
   let env = kase.env || {};
-  let argv = kase.argv ? kase.argv.split(' ') : [];
+  let argv = kase.argv || [];
+  if (!Array.isArray(argv)) {
+    argv = argv.split(' ');
+  }
   let exec = path.join(__dirname, 'lib/runner.js');
   if (process.env.running_under_istanbul) {
     argv = ['cover', '--report', 'none', '--print', 'none', '--include-pid',

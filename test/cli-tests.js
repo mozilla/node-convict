@@ -51,7 +51,7 @@ function run(name, done) {
 
   let env = kase.env || {};
   let argv = kase.argv ? kase.argv.split(' ') : [];
-  let exec = path.join(__dirname, 'runner.js');
+  let exec = path.join(__dirname, 'lib/runner.js');
   if (process.env.running_under_istanbul) {
     argv = ['cover', '--report', 'none', '--print', 'none', '--include-pid',
       exec, '--'].concat(argv);
@@ -116,7 +116,7 @@ function run(name, done) {
   });
 }
 
-describe('Static tests', function() {
+describe('CLI tests', function() {
   toRun.forEach(function(name) {
     it(name, function(done) {
       run(name, done);

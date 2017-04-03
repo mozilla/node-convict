@@ -74,20 +74,20 @@ var config = convict({
 });
 
 // Load environment dependent configuration
-var env = conf.get('env');
-conf.loadFile('./config/' + env + '.json');
+var env = config.get('env');
+config.loadFile('./config/' + env + '.json');
 
 // Perform validation
-conf.validate({allowed: 'strict'});
+config.validate({allowed: 'strict'});
 
-module.exports = conf;
+module.exports = config;
 ```
 
 An example `server.js` file leveraging the `config.js` file above:
 
 ```javascript
 var http = require('http');
-var conf = require('./config.js');
+var config = require('./config.js');
 
 var server = http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -95,7 +95,7 @@ var server = http.createServer(function (req, res) {
 });
 
 // Consume
-server.listen(conf.get('port'), conf.get('ip'), function(x) {
+server.listen(config.get('port'), config.get('ip'), function(x) {
   var addy = server.address();
   console.log('running on http://' + addy.address + ":" + addy.port);
 });
@@ -151,8 +151,8 @@ convict's goal of being more robust and collaborator friendly.
 * **Default values**:  Every setting *must* have a default value.
 * **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value. An environment variable may not be mapped to more than one setting.
 * **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
-* **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `conf.getSchemaString()` and have it displayed in the output.
-* **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `conf.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
+* **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `config.getSchemaString()` and have it displayed in the output.
+* **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `config.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
 
 
 ### Validation
@@ -182,7 +182,7 @@ You can specify a custom format checking method on a property basis.
 For example:
 
 ```javascript
-var conf = convict({
+var config = convict({
   key: {
     doc: "API key",
     format: function check (val) {
@@ -211,7 +211,7 @@ convict.addFormat({
   }
 });
 
-var conf = convict({
+var config = convict({
   space_used: {
     format: 'float-percent',
     default: 0.5
@@ -340,13 +340,13 @@ Loads and merges one or multiple JSON configuration files into `config`.
 JSON files are loaded using `JSON5`, so they can contain comments.
 E.g.:
 ```javascript
-conf.loadFile('./config/' + conf.get('env') + '.json');
+config.loadFile('./config/' + conf.get('env') + '.json');
 ```
 
 Or, loading multiple files at once:
 ```javascript
 // CONFIG_FILES=/path/to/production.json,/path/to/secrets.json,/path/to/sitespecific.json
-conf.loadFile(process.env.CONFIG_FILES.split(','));
+config.loadFile(process.env.CONFIG_FILES.split(','));
 ```
 ### config.validate([options])
 

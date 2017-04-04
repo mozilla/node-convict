@@ -27,6 +27,7 @@
     "pretest:coverage": "rm -f test/coverage/coverage-*.json",
     "test:coverage": "istanbul cover --print none --report none --include-pid _mocha -- --check-leaks test/*-tests.js && istanbul report text-summary lcov",
     "posttest:coverage": "npm run lint",
+    "pretest:ci": "rm -f test/coverage/coverage-*.json",
     "test:ci": "istanbul cover --print none --report none --include-pid _mocha -- --check-leaks test/*-tests.js && istanbul report text-summary lcov && cat test/coverage/lcov.info | coveralls",
     "posttest:ci": "npm run lint",
     "lint": "eslint .",

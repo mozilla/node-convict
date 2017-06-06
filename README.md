@@ -334,7 +334,7 @@ config.load({
   "port": 80
 });
 ```
-### config.loadFile(file1[, file2, file3, ...])
+### config.loadFile(file or fileArray)
 
 Loads and merges one or multiple JSON configuration files into `config`.
 JSON files are loaded using `JSON5`, so they can contain comments.

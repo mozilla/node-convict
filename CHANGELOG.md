@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.0] - 2017-06-22
+### Added
+
+- Handle shorthand for default empty objects #194 (Eli Young @elyscape)
+- 100% test coverage #192 (Eli Young @elyscape)
+- Include static tests in code coverage checks #191 (Eli Young @elyscape)
+- Add support for masking sensitive values #190 (Eli Young @elyscape)
+- Support mapping env vars to multiple settings #189 (Richard Marmorstein @twitchard)
+
+### Changed
+
+- Rework validate() to check for overridden parent #206 (Eli Young @elyscape)
+- Document that a JSON/JSON5 schema file can be used #198 (Marc-Aurèle Darche @madarche)
+- Better advertize CLI tests as such #197 (Marc-Aurèle Darche @madarche)
+- Support arbitrary casing of booleans #195 (Eli Young @elyscape)
+
+### Removed
+
+- Remove the npm-shrinkwrap.json file #210 (Marc-Aurèle Darche @madarche)
+
+### Fixed
+
+- Fix documentation for config.loadFile() #207 (Eli Young @elyscape)
+- Tests env/arg type coercion and fix arg number coercion #199 (Eli Young @elyscape)
+- Make schema objects actually useful #196 (Eli Young @elyscape)
+
 ## [3.0.0] - 2017-03-16
 ### Added
 

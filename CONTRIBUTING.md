@@ -31,25 +31,6 @@ We only use strict versions for all dependencies (`dependencies`,
 We're also being conservative here for stability reasons. But we're due to look
 over new versions though.
 
-Finally we maintain an exact dependency version tree through
-[npm-shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) using npm@2.
-The resulting `npm-shrinkwrap` will work both with npm@2 and npm@3.
-So when updating dependencies in the `package.json`, you have to run the
-following command:
-
-```bash
-npm run safefreeze
-```
-
-Tip: If the `package.json` file has been modified in other areas than the
-dependencies, it's irrelevant to regenerate a new `npm-shrinkwrap.json` file. So
-to avoid our `assert_release_quality` script to complain in this situation you
-can run the following command:
-
-```bash
-touch npm-shrinkwrap.json
-```
-
 
 Test
 ----

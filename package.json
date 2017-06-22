@@ -33,13 +33,10 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "clean": "rm -rf test/coverage",
-    "safefreeze": "rm -rf node_modules npm-shrinkwrap.json && npm install --production --registry https://registry.npmjs.org/ && npm dedupe && npm shrinkwrap && npm install && npm test && touch package.json npm-shrinkwrap.json",
-    "preversion": "./assert_shrinkwrap_ready",
     "version": "./assert_changelog_ready $npm_package_version"
   },
   "files": [
-    "lib",
-    "npm-shrinkwrap.json"
+    "lib"
   ],
   "main": "lib/convict.js",
   "dependencies": {

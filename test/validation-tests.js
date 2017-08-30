@@ -140,6 +140,10 @@ describe('configuration files contain properties not declared in the schema', fu
       config.validate();
     }).must.not.throw();
   })
+});
+
+describe('setting specific values', function() {
+  const convict = require('../');
   it('must not show warning for undeclared nested object values', function() {
     (function() {
       let config = convict({

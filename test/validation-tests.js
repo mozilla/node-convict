@@ -140,4 +140,17 @@ describe('configuration files contain properties not declared in the schema', fu
       config.validate();
     }).must.not.throw();
   })
+  it('must not show warning for undeclared nested object values', function() {
+    (function() {
+      let config = convict({
+        object: {
+          doc: 'testing',
+          format: Object,
+          default: {}
+        }
+      });
+      config.set('object', { foo: 'bar' });
+      config.validate({ allowed: 'strict' });
+    }).must.not.throw();
+  })
 });

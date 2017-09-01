@@ -177,6 +177,29 @@ describe('convict schema', function() {
       it('must throw if key doesn\'t exist', function() {
         (function() { conf.default('foo.no'); }).must.throw();
       });
+
+      describe('when acting on an Object property', function() {
+        beforeEach(function() {
+          conf = convict(path.join(__dirname, 'cases/schema-built-in-formats.json'));
+        });
+
+        it('must report the default value of the property', function() {
+          conf.get('someObject').must.eql({});
+          conf.default('someObject').must.eql({});
+        });
+
+        it('must not be altered by calls to .set()', function() {
+          conf.set('someObject.five', 5);
+          conf.default('someObject').must.eql({});
+          (function() { conf.default('someObject.five'); }).must.throw();
+        });
+
+        it('must not be altered by calls to .load()', function() {
+          conf.load({someObject: {five: 5}});
+          conf.default('someObject').must.eql({});
+          (function() { conf.default('someObject.five'); }).must.throw();
+        });
+      });
     });
 
     describe('.reset()', function() {

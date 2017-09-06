@@ -19,7 +19,7 @@
   },
   "bugs": "https://github.com/mozilla/node-convict/issues",
   "engines": {
-    "node": ">=4"
+    "node": ">=4.2"
   },
   "scripts": {
     "test": "mocha --check-leaks -R spec test/*-tests.js",

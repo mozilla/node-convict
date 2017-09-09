@@ -42,7 +42,7 @@ var convict = require('convict');
 // Define a schema
 var config = convict({
   env: {
-    doc: "The applicaton environment.",
+    doc: "The application environment.",
     format: ["production", "development", "test"],
     default: "development",
     env: "NODE_ENV"

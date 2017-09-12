@@ -141,3 +141,50 @@ describe('configuration files contain properties not declared in the schema', fu
     }).must.not.throw();
   })
 });
+
+describe('setting specific values', function() {
+  const convict = require('../');
+  it('must not show warning for undeclared nested object values', function() {
+    (function() {
+      let config = convict({
+        object: {
+          doc: 'testing',
+          format: Object,
+          default: {}
+        }
+      });
+      config.set('object', { foo: 'bar' });
+      config.validate({ allowed: 'strict' });
+    }).must.not.throw();
+  });
+  it('must show warning for undeclared property names similar to nested declared property name', function() {
+    (function() {
+      let config = convict({
+        parent: {
+          object: {
+            doc: 'testing',
+            format: Object,
+            default: {}
+          }
+        },
+      });
+      config.set('parent.object', { foo: 'bar' });
+      config.set('parent_object', { foo: 'bar' });
+      config.validate({ allowed: 'strict' });
+    }).must.throw();
+  });
+  it('must show warning for undeclared property names starting with declared object properties', function() {
+    (function() {
+      let config = convict({
+        object: {
+          doc: 'testing',
+          format: Object,
+          default: {}
+        }
+      });
+      config.set('object', { foo: 'bar' });
+      config.set('objectfoo', { foo: 'bar' });
+      config.validate({ allowed: 'strict' });
+    }).must.throw();
+  });
+});

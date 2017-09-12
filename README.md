@@ -59,7 +59,7 @@ var config = convict({
     default: 8080,
     env: "PORT"
   },
-  database: {
+  db: {
     host: {
       doc: "Database host name/IP",
       format: '*',
@@ -283,10 +283,10 @@ Adds new custom formats.
 
 Returns the current value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
 ```javascript
-config.get('database.host');
+config.get('db.host');
 
 // or
-config.get('database').host;
+config.get('db').host;
 ```
 
 ### config.default(name)
@@ -315,7 +315,7 @@ if (config.has('some.property')) {
 ### config.set(name, value)
 
 Sets the value of `name` to value. `name` can use dot notation to reference
-nested values, e.g. `"database.port"`. If objects in the chain don't yet exist,
+nested values, e.g. `"db.port"`. If objects in the chain don't yet exist,
 they will be initialized to empty objects.
 E.g.:
 ```javascript

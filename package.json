@@ -40,18 +40,18 @@
   ],
   "main": "lib/convict.js",
   "dependencies": {
-    "depd": "1.1.0",
+    "depd": "1.1.1",
     "json5": "0.5.1",
     "lodash.clonedeep": "4.5.0",
-    "moment": "2.17.1",
-    "validator": "7.0.0",
+    "moment": "2.18.1",
+    "validator": "7.2.0",
     "yargs-parser": "7.0.0"
   },
   "devDependencies": {
-    "coveralls": "2.12.0",
-    "eslint": "3.17.1",
+    "coveralls": "2.13.1",
+    "eslint": "4.6.1",
     "istanbul": "0.4.5",
-    "mocha": "3.2.0",
+    "mocha": "3.5.3",
     "must": "0.13.4",
     "obj_diff": "0.3.0"
   },

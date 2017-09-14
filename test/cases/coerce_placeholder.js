@@ -39,7 +39,7 @@ exports.formats = {
   placeholder: {
     validate: function() { },
     coerce: function(value, config) {
-      return value.replace(/\$\{([\w\.]+)}/g, function(v,m) { return config.get(m); });
+      return value.replace(/\$\{([\w.]+)}/g, function(v,m) { return config.get(m); });
     }
   }
 };

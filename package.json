@@ -43,9 +43,9 @@
     "depd": "1.1.0",
     "json5": "0.5.1",
     "lodash.clonedeep": "4.5.0",
-    "minimist": "1.2.0",
     "moment": "2.17.1",
-    "validator": "7.0.0"
+    "validator": "7.0.0",
+    "yargs-parser": "7.0.0"
   },
   "devDependencies": {
     "coveralls": "2.12.0",

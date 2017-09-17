@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.1] - 2017-09-17
+### Changed
+
+- Update dependencies #220 (Marc-Aurèle Darche @madarche)
+- Move away from minimist to yargs-parser #219 (Marc-Aurèle Darche @madarche)
+- Corrected a typo #218 (Nikolay Govorov @nikolay-govorov)
+- Fix issue with empty string over default not null value #217 (Jonathan Petitcolas @jpetitcolas)
+- Ensure property defaults are not modified #216 (Eli Young @elyscape)
+- Nested props in 'object' values are not undeclared #215 (Michael McGahan @mmcgahan)
+
 ## [4.0.0] - 2017-06-22
 ### Added
 

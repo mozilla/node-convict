@@ -30,6 +30,27 @@ describe('convict schema', function() {
     })}).must.throw();
   });
 
+  it('must accept process arguments and environment variables as parameters', function() {
+    conf = convict({
+      foo: {
+        format: String,
+        default: 'DEFAULT',
+        env: 'FOO',
+        arg: 'foo',
+      },
+      bar: {
+        format: String,
+        default: 'DEFAULT',
+        env: 'BAR',
+        arg: 'bar'
+      }
+    }, { args: ['--bar', 'baz'], env: { FOO: 'foz' } });
+    conf.getArgs().must.eql(['--bar', 'baz'])
+    conf.getEnv().must.eql({ FOO: 'foz' })
+    conf.get('bar').must.be('baz');
+    conf.get('foo').must.be('foz');
+  });
+
   describe('after being parsed', function() {
 
     beforeEach(function() {

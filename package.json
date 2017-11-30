@@ -43,7 +43,7 @@
     "depd": "1.1.1",
     "json5": "0.5.1",
     "lodash.clonedeep": "4.5.0",
-    "moment": "2.18.1",
+    "moment": "2.19.3",
     "validator": "7.2.0",
     "yargs-parser": "7.0.0"
   },

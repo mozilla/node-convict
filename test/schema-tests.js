@@ -163,6 +163,31 @@ describe('convict schema', function() {
       });
     });
 
+    describe('.addProvider()', function() {
+
+      // Temporarily add a mock provider
+      beforeEach(function() { 
+        let provider = {
+          get: function(key){
+
+            let foo = {
+              key: 'value'
+            }; 
+
+            return foo[key];
+          }
+        }
+
+        conf.addProvider(provider.get); 
+
+      });
+
+      it('must be able to get variables from the provider', function() {
+        conf.externalProvider.get('key').must.be('value'); 
+      });
+
+    });
+
     describe('.default()', function() {
       // Temporarily modify a property while testing default()
       beforeEach(function() { conf.set('foo.bar', 8); });

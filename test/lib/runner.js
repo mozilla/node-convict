@@ -10,6 +10,9 @@ process.on('message', function(spec) {
     let s = require(path.join(__dirname, '../cases', spec.spec));
     if (s.formats)
       convict.addFormats(s.formats);
+    if (s.provider)
+      convict.configureProvider(s.provider);
+    
     let conf = convict(s.conf).loadFile(spec.config_files).validate();
     process.send({
       result: conf.get(),

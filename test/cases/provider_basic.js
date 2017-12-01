@@ -13,7 +13,12 @@ exports.conf = {
   }
 };
 
-exports.provider = {
-  IP_ADDRESS: '10.0.1.101',
-  PORT: 8080
-};
+exports.provider =
+  function(key){
+    let out =  {
+      'ip': '10.0.1.101',
+      'port': '8080'
+    }
+
+    return out[key];
+  };

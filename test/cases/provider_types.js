@@ -68,6 +68,6 @@ function(key){
     REGEXP: '^foo$'
   };
   
-  return String(out[key]);
+  return out[key];
 };
 

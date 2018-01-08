@@ -191,6 +191,21 @@ var config = convict({
       }
     },
     default: '3cec609c9bc601c047af917a544645c50caf8cd606806b4e0a23312441014deb'
+  },
+  name: {
+    doc: "user name",
+    format: function check (val) {
+      if (typeof val.first_name !== 'string') {
+        throw new TypeError(`first name '${val.first_name}' is not a string`);
+      }
+      if (typeof val.last_name !== 'string') {
+        throw new TypeError(`last name '${val.last_name}' is not a string`);
+      }
+    },
+    default: {
+      first_name: 'John',
+      last_name: 'Doe'
+    }
   }
 });
 ```

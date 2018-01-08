@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [XXX] - XXXX-XX-XX
+### Fixed
+
+- Fix README on how cli args work #226 (Ian Chadwick @ianchadwick)
+- Update moment to fixed security version #231 (Marc-Aurèle Darche @madarche)
+
 ## [4.0.2] - 2017-11-30
 ### Changed
 

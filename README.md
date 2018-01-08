@@ -57,7 +57,8 @@ var config = convict({
     doc: "The port to bind.",
     format: "port",
     default: 8080,
-    env: "PORT"
+    env: "PORT",
+    arg: "port"
   },
   db: {
     host: {
@@ -236,8 +237,8 @@ When merging configuration values from different sources, Convict follows preced
 
 1. Default value
 2. File (`config.loadFile()`)
-3. Environment variables
-4. Command line arguments
+3. Environment variables (only if `env` property is set)
+4. Command line arguments (only if `arg` property is set)
 5. Set and load calls (`config.set()` and `config.load()`)
 
 

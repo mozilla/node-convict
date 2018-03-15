@@ -15,11 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   type instead of item format #234 (Helias Criouet @Helias-Criouet)
 - Fix README on how cli args work #226 (Ian Chadwick @ianchadwick)
 
-### Security
-- Update moment to fixed security version #231 (Marc-Aurèle Darche @madarche)
-
 ## [4.0.2] - 2017-11-30
-### Changed
+### Security
 
 - Update moment to fixed security version #231 (Marc-Aurèle Darche @madarche)
 

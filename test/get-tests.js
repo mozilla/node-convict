@@ -51,5 +51,17 @@ describe('convict', function() {
       let val = conf.get('env');
       val.must.be('bar');
     });
+
+    it('must clone value by default', function() {
+      let val = {};
+      conf.set('someValue', val);
+      conf.get('someValue').must.not.be(val);
+    });
+
+    it('must return value reference if specified', function() {
+      let val = {};
+      conf.set('someValue', val);
+      conf.get('someValue', { clone: false }).must.be(val);
+    });
   });
 });

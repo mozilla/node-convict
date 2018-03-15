@@ -51,9 +51,11 @@
     "coveralls": "2.13.1",
     "eslint": "4.6.1",
     "istanbul": "0.4.5",
+    "js-yaml": "^3.11.0",
     "mocha": "3.5.3",
     "must": "0.13.4",
-    "obj_diff": "0.3.0"
+    "obj_diff": "0.3.0",
+    "toml": "^2.3.3"
   },
   "browserify": {
     "transform": [

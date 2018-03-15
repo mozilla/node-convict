@@ -5,10 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [XXX] - XXXX-XX-XX
-### Fixed
+## [4.1.0] - 2018-03-15
+### Changed
 
+- Make warnings more visible by coloring them #242 (Nawfel @NawfelBgh)
+
+### Fixed
+- Fix custom format object nested properties warning by checking for the item
+  type instead of item format #234 (Helias Criouet @Helias-Criouet)
 - Fix README on how cli args work #226 (Ian Chadwick @ianchadwick)
+
+### Security
 - Update moment to fixed security version #231 (Marc-Aurèle Darche @madarche)
 
 ## [4.0.2] - 2017-11-30

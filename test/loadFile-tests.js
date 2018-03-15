@@ -11,7 +11,37 @@ describe('convict', function() {
   const schema = require('./cases/formats/schema');
   const expected_output = require('./cases/formats/out');
 
-  describe('.loadFile()', function() {
+  describe('.addParser()', function() {
+    it('must not throw on valid parser', function() {
+      (function() { convict.addParser({ formats: ['json'], parse: JSON.parse }); }).must.not.throw();
+    });
+
+    it('must throw on invalid parser', function() {
+      (function() { convict.addParser({ formats: ['json'], parse: 'foo' }); }).must.throw();
+    });
+  });
+
+  describe('.addParsers()', function() {
+    it('must not throw on valid parsers', function() {
+      (function() {
+        convict.addParsers([
+          { formats: ['json'], parse: JSON.parse },
+          { formats: ['json5'], parse: json5.parse }
+        ]);
+      }).must.not.throw();
+    });
+
+    it('must throw on invalid parser', function() {
+      (function() {
+        convict.addParsers([
+          { formats: ['json'], parse: 'foo' },
+          { formats: ['json5'], parse: 'bar' }
+        ]);
+      }).must.throw();
+    });
+  });
+
+  describe('convict().loadFile()', function() {
     it('must work using default json5 parser if format isn\'t supported', function() {
       const conf = convict(schema);
       conf.loadFile(path.join(__dirname, 'cases/formats/data'));
@@ -50,7 +80,7 @@ describe('convict', function() {
       conf.get().must.eql(expected_output);
     });
 
-    it('must work with custom tom parser', function() {
+    it('must work with custom toml parser', function() {
       convict.addParser({ formats: ['toml'], parse: toml.parse });
 
       const conf = convict(schema);

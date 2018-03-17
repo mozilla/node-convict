@@ -256,6 +256,25 @@ When merging configuration values from different sources, Convict follows preced
 4. Command line arguments (only if `arg` property is set)
 5. Set and load calls (`config.set()` and `config.load()`)
 
+### Custom file extensions
+
+To make Convict able to parse files with custom extensions during `loadFile`, you can specify corresponding parsers associate with such extensions.
+
+```javascript
+convict.addParser({ extension: 'toml', parse: toml.parse });
+convict.addParser({ extension: ['yml', 'yaml'], parse: yaml.safeLoad });
+convict.addParser([
+  { extension: 'json', parse: JSON.parse },
+  { extension: 'json5', parse: json5.parse },
+  { extension: ['yml', 'yaml'], parse: yaml.safeLoad },
+  { extension: 'toml', parse: toml.parse }
+]);
+
+const conf = convict({ ... });
+conf.loadFile('config.toml');
+```
+
+If no supported extension is detected, loadFile will fallback to using the default json5 parser for backward compatibility.
 
 ## API
 
@@ -286,6 +305,10 @@ var config = convict({
 // or
 config = convict('/some/path/to/a/config-schema.json');
 ```
+
+### convict.addParser(parser or parserArray)
+
+Adds new parsers for custom file extensions
 
 ### config.addFormat(format)
 

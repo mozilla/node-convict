@@ -13,29 +13,51 @@ describe('convict', function() {
 
   describe('.addParser()', function() {
     it('must not throw on valid parser', function() {
-      (function() { convict.addParser({ formats: ['json'], parse: JSON.parse }); }).must.not.throw();
+      (function() { convict.addParser({ extension: 'json', parse: JSON.parse }); }).must.not.throw();
+      (function() { convict.addParser({ extension: ['yml', 'yaml'], parse: yaml.safeLoad }); }).must.not.throw();
     });
 
-    it('must throw on invalid parser', function() {
-      (function() { convict.addParser({ formats: ['json'], parse: 'foo' }); }).must.throw();
-    });
-  });
-
-  describe('.addParsers()', function() {
-    it('must not throw on valid parsers', function() {
+    it('must not throw on valid array of parsers', function() {
       (function() {
-        convict.addParsers([
-          { formats: ['json'], parse: JSON.parse },
-          { formats: ['json5'], parse: json5.parse }
+        convict.addParser([
+          { extension: 'json', parse: JSON.parse },
+          { extension: ['yml', 'yaml'], parse: yaml.safeLoad }
         ]);
       }).must.not.throw();
     });
 
     it('must throw on invalid parser', function() {
+      (function() { convict.addParser(undefined); }).must.throw();
+      (function() { convict.addParser(null); }).must.throw();
+    });
+
+    it('must throw on invalid parser that is missing extension', function() {
+      (function() { convict.addParser({ parse: JSON.parse }); }).must.throw();
+    });
+
+    it('must throw on invalid parser that has invalid extension', function() {
+      (function() { convict.addParser({ extension: 100, parse: JSON.parse }); }).must.throw();
+      (function() { convict.addParser({ extension: ['yml', 100], parse: yaml.parse }); }).must.throw();
+    });
+
+    it('must throw on invalid parser that is missing parse function', function() {
+      (function() { convict.addParser({ extension: 'json' }); }).must.throw();
+    });
+
+    it('must throw on invalid parser that has invalid parse function', function() {
+      (function() { convict.addParser({ extension: 'json', parse: 100 }); }).must.throw();
+    });
+
+    it('must throw on invalid array of parsers', function() {
       (function() {
-        convict.addParsers([
-          { formats: ['json'], parse: 'foo' },
-          { formats: ['json5'], parse: 'bar' }
+        convict.addParser([
+          undefined,
+          null,
+          { extension: 'json' }, // Missing parse function
+          { extension: 'json', parse: 100 }, // Invalid parse function
+          { parse: JSON.parse }, // Missing extension
+          { extension: 100, parse: JSON.parse }, // Invalid extension
+          { extension: ['yaml', 200], parse: yaml.parse }, // Invalid extension array
         ]);
       }).must.throw();
     });
@@ -51,7 +73,7 @@ describe('convict', function() {
     });
 
     it('must work with custom json parser', function() {
-      convict.addParser({ formats: ['json'], parse: JSON.parse });
+      convict.addParser({ extension: 'json', parse: JSON.parse });
 
       const conf = convict(schema);
       conf.loadFile(path.join(__dirname, 'cases/formats/data.json'));
@@ -61,7 +83,7 @@ describe('convict', function() {
     });
 
     it('must work with custom json5 parser', function() {
-      convict.addParser({ formats: ['json5'], parse: json5.parse });
+      convict.addParser({ extension: 'json5', parse: json5.parse });
 
       const conf = convict(schema);
       conf.loadFile(path.join(__dirname, 'cases/formats/data.json5'));
@@ -71,7 +93,7 @@ describe('convict', function() {
     });
 
     it('must work with custom yaml parser', function() {
-      convict.addParser({ formats: ['yml', 'yaml'], parse: yaml.safeLoad });
+      convict.addParser({ extension: ['yml', 'yaml'], parse: yaml.safeLoad });
 
       const conf = convict(schema);
       conf.loadFile(path.join(__dirname, 'cases/formats/data.yaml'));
@@ -81,7 +103,7 @@ describe('convict', function() {
     });
 
     it('must work with custom toml parser', function() {
-      convict.addParser({ formats: ['toml'], parse: toml.parse });
+      convict.addParser({ extension: 'toml', parse: toml.parse });
 
       const conf = convict(schema);
       conf.loadFile(path.join(__dirname, 'cases/formats/data.toml'));

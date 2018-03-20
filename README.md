@@ -21,9 +21,11 @@ Convict expands on the standard pattern of configuring node.js applications in a
 * **Validation**: configurations are validated against your schema (presence
     checking, type checking, custom checking), generating an error report with
     all errors that are found
-* **Comments allowed**: Schema and configuration files can be either in the
+* **Comments allowed**: schema and configuration files can be either in the
     JSON format or in the newer [JSON5](https://www.npmjs.com/package/json5)
     format, so comments are welcome
+* **Configuration file additional types support**: Custom file type support can
+    be used for the configuration file
 
 
 ## Install
@@ -256,9 +258,10 @@ When merging configuration values from different sources, Convict follows preced
 4. Command line arguments (only if `arg` property is set)
 5. Set and load calls (`config.set()` and `config.load()`)
 
-### Custom file extensions
+### Configuration file additional types support
 
-To make Convict able to parse files with custom extensions during `loadFile`, you can specify corresponding parsers associate with such extensions.
+Convict is able to parse files with custom file types during `loadFile`.
+For this specify the corresponding parsers with the associated file extensions.
 
 ```javascript
 convict.addParser({ extension: 'toml', parse: toml.parse });
@@ -270,11 +273,12 @@ convict.addParser([
   { extension: 'toml', parse: toml.parse }
 ]);
 
-const conf = convict({ ... });
+const config = convict({ ... });
 conf.loadFile('config.toml');
 ```
 
-If no supported extension is detected, loadFile will fallback to using the default json5 parser for backward compatibility.
+If no supported extension is detected, `loadFile` will fallback to using the
+default json5 parser for backward compatibility.
 
 ## API
 
@@ -310,7 +314,7 @@ config = convict('/some/path/to/a/config-schema.json');
 
 Adds new parsers for custom file extensions
 
-### config.addFormat(format)
+### convict.addFormat(format)
 
 Adds a new custom format.
 

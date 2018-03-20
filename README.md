@@ -274,7 +274,7 @@ convict.addParser([
 ]);
 
 const config = convict({ ... });
-conf.loadFile('config.toml');
+config.loadFile('config.toml');
 ```
 
 If no supported extension is detected, `loadFile` will fallback to using the

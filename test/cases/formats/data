@@ -1,0 +1,4 @@
+{
+  // json5 parser should ignore this comment
+  "data": "lorem ispum"
+}

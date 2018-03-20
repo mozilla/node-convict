@@ -24,7 +24,7 @@ Convict expands on the standard pattern of configuring node.js applications in a
 * **Comments allowed**: schema and configuration files can be either in the
     JSON format or in the newer [JSON5](https://www.npmjs.com/package/json5)
     format, so comments are welcome
-* **Configuration file additional types support**: Custom file type support can
+* **Configuration file additional types support**: custom file type support can
     be used for the configuration file
 
 
@@ -318,7 +318,7 @@ Adds new parsers for custom file extensions
 
 Adds a new custom format.
 
-### config.addFormats(format1, format2, ...)
+### config.addFormats(formatArray)
 
 Adds new custom formats.
 

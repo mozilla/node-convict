@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.2.0] - 2018-XX-XX
+### Added
+
+- Enhanced file formats support #244 (Tuan Nguyen @rocketspacer)
+
+### Changed
+
+- Fix doc (Marc-Aurèle Darche @madarche)
+
 ## [4.1.0] - 2018-03-15
 ### Changed
 

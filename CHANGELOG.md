@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [4.2.0] - 2018-XX-XX
+## [4.2.0] - 2018-03-23
 ### Added
 
 - Enhanced file formats support #244 (Tuan Nguyen @rocketspacer)

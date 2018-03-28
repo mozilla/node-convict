@@ -111,5 +111,13 @@ describe('convict', function() {
       (function() { conf.validate() }).must.not.throw();
       conf.get().must.eql(expected_output);
     });
+
+    it('must use wildcard parser if no parser is registered for extension', function() {
+      const message = 'Unsupported file type'
+      convict.addParser({ extension: '*', parse: function() { throw new Error(message) } });
+
+      const conf = convict(schema);
+      (function() { conf.loadFile(path.join(__dirname, 'cases/formats/data.xml')) }).must.throw(message);
+    });
   });
 });

@@ -23,6 +23,7 @@
   },
   "scripts": {
     "test": "mocha --check-leaks -R spec test/*-tests.js",
+    "build": "babel ./lib -d ./dist/",
     "posttest": "npm run lint",
     "pretest:coverage": "rm -f test/coverage/coverage-*.json",
     "test:coverage": "istanbul cover --print none --report none --include-pid _mocha -- --check-leaks test/*-tests.js && istanbul report text-summary lcov",
@@ -39,7 +40,9 @@
     "lib"
   ],
   "main": "lib/convict.js",
+  "module": "dist/convict.js",
   "dependencies": {
+    "babel-cli": "^6.26.0",
     "depd": "1.1.1",
     "json5": "0.5.1",
     "lodash.clonedeep": "4.5.0",
@@ -47,6 +50,8 @@
     "validator": "7.2.0"
   },
   "devDependencies": {
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-2": "^6.24.1",
     "coveralls": "2.13.1",
     "eslint": "4.6.1",
     "istanbul": "0.4.5",

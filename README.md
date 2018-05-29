@@ -254,8 +254,8 @@ When merging configuration values from different sources, Convict follows preced
 
 1. Default value
 2. File (`config.loadFile()`)
-3. Environment variables (only if `env` property is set)
-4. Command line arguments (only if `arg` property is set)
+3. Environment variables (only used when `env` property is set in schema; can be overridden using the `env` option of the convict function)
+4. Command line arguments (only used when `arg` property is set in schema; can be overridden using the `args` option of the convict function)
 5. Set and load calls (`config.set()` and `config.load()`)
 
 ### Configuration file additional types support
@@ -425,6 +425,13 @@ Exports the schema as JSON.
 
 Exports the schema as a JSON string.
 
+### config.getArgs()
+
+The array of process arguments (not including the launcher and application file arguments). Defaults to process.argv unless an override is specified using the args key of the second (options) argument of the convict function.
+
+### config.getEnv()
+
+The map of environment variables. Defaults to process.env unless an override is specified using the env key of the second argument (options) argument of the convict function.
 
 ## FAQ
 

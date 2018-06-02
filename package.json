@@ -56,13 +56,5 @@
     "must": "0.13.4",
     "obj_diff": "0.3.0",
     "toml": "^2.3.3"
-  },
-  "browserify": {
-    "transform": [
-      "varify"
-    ]
-  },
-  "optionalDependencies": {
-    "varify": "0.2.0"
   }
 }

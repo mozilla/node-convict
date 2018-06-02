@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.3.0] - 2018-06-02
+### Fixed
+
+- Allow argument value to be falsy #246 (Dan Allen @mojavelinux)
+
+### Added
+
+- Accept args and env as parameters to convict function #223 (Dan Allen @mojavelinux)
+- Allow the default parser to be set #248 (Dan Allen @mojavelinux)
+- Add package-lock.json file (Marc-Aurèle Darche @madarche)
+
+### Changed
+
+- Update deps (almost all) (Marc-Aurèle Darche @madarche)
+
+### Removed
+
+- Remove browserify package and configuration. This was never needed. (Marc-Aurèle Darche @madarche)
+
 ## [4.2.0] - 2018-03-23
 ### Added
 

@@ -119,5 +119,14 @@ describe('convict', function() {
       const conf = convict(schema);
       (function() { conf.loadFile(path.join(__dirname, 'cases/formats/data.xml')) }).must.throw(message);
     });
+	
+    it('must not break when parsing an empty file', function() {
+      convict.addParser({ extension: ['yml', 'yaml'], parse: yaml.safeLoad });
+    
+      const conf = convict(schema);
+      conf.loadFile(path.join(__dirname, 'cases/formats/data.empty.yaml'));
+    
+      (function() { conf.validate() }).must.not.throw();
+    });
   });
 });

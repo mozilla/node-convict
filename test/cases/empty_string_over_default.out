@@ -1,4 +1,4 @@
 {
-  "prefix": "",
-  "suffix": ""
+  "prefix": "/foo",
+  "suffix": ".js"
 }

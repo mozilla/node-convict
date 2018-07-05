@@ -1,0 +1,7 @@
+{
+  "nested": {
+    "data": {
+      "foo": "baz"
+    }
+  }
+}

@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.3.2] - 2018-07-19
+### Fixed
+
+- Update deps (validator.js@10.4.0, yargs-parser@10.1.0, coveralls@3.0.2) fixes #264 (Marc-Aurèle Darche @madarche)
+
 ## [4.3.1] - 2018-06-07
 ### Fixed
 

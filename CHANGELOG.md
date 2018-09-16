@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.3.3] - XXXX-XX-XX
+### Fixed
+
+- Fixed dot notation parsing by disabling dot-notation option in yarg-parser #269 (Patrick Shaw @PatrickShaw)
+
 ## [4.3.2] - 2018-07-19
 ### Fixed
 

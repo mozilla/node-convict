@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed dot notation parsing by disabling dot-notation option in yarg-parser #269 (Patrick Shaw @PatrickShaw)
 
+### Added
+
+- Pass the name of the property being assigned to the custom coerce function #262 (Dan Allen mojavelinux)
+
 ## [4.3.2] - 2018-07-19
 ### Fixed
 

@@ -1,0 +1,8 @@
+{
+  "nested": {
+    "data": {
+      "foo": "bar",
+      "key": "val"
+    }
+  }
+}

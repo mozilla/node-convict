@@ -188,3 +188,55 @@ describe('setting specific values', function() {
     }).must.throw();
   });
 });
+
+describe('schema contains an object property with a custom format', function() {
+  const convict = require('../');
+  it('must throw if a nested object property has an undeclared format', function() {
+    (function() {
+      const config = convict({
+        object: {
+          doc: 'testing',
+          format: 'undefinedFormat',
+          default: {
+            bar: 'baz',
+          },
+        },
+      });
+
+      config.validate({ allowed: 'strict' });
+    }).must.throw();
+  });
+  it('must not throw if an object property has a nested value and a custom format', function() {
+    (function() {
+      convict.addFormat('foo', function() {});
+      const config = convict({
+        object: {
+          doc: 'testing',
+          format: 'foo',
+          default: {
+            bar: 'baz',
+          },
+        },
+      });
+
+      config.validate({ allowed: 'strict' });
+    }).must.not.throw();
+  });
+  it('must not throw if a declared object property with a custom format and with nested values is set', function() {
+    (function() {
+      convict.addFormat('foo', function() {});
+      const config = convict({
+        object: {
+          doc: 'testing',
+          format: 'foo',
+          default: {
+            bar: 'baz',
+          },
+        },
+      });
+
+      config.set('object', { bar: '', baz: 'blah' });
+      config.validate({ allowed: 'strict' });
+    }).must.not.throw();
+  });
+});

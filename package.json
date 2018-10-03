@@ -10,7 +10,7 @@
     "nested",
     "validation"
   ],
-  "version": "4.0.1",
+  "version": "4.4.0",
   "license": "Apache-2.0",
   "homepage": "https://github.com/mozilla/node-convict",
   "repository": {
@@ -40,28 +40,22 @@
   ],
   "main": "lib/convict.js",
   "dependencies": {
-    "depd": "1.1.1",
-    "json5": "0.5.1",
+    "depd": "1.1.2",
+    "json5": "1.0.1",
     "lodash.clonedeep": "4.5.0",
-    "moment": "2.18.1",
-    "validator": "7.2.0",
-    "yargs-parser": "7.0.0"
+    "moment": "2.22.2",
+    "validator": "10.4.0",
+    "yargs-parser": "10.1.0"
   },
   "devDependencies": {
-    "coveralls": "2.13.1",
-    "eslint": "4.6.1",
+    "coveralls": "3.0.2",
+    "eslint": "4.19.1",
     "istanbul": "0.4.5",
     "lodash.foreach": "^4.5.0",
-    "mocha": "3.5.3",
+    "js-yaml": "^3.11.0",
+    "mocha": "5.2.0",
     "must": "0.13.4",
-    "obj_diff": "0.3.0"
-  },
-  "browserify": {
-    "transform": [
-      "varify"
-    ]
-  },
-  "optionalDependencies": {
-    "varify": "0.2.0"
+    "obj_diff": "0.3.0",
+    "toml": "^2.3.3"
   }
 }

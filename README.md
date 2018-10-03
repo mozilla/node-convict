@@ -21,9 +21,11 @@ Convict expands on the standard pattern of configuring node.js applications in a
 * **Validation**: configurations are validated against your schema (presence
     checking, type checking, custom checking), generating an error report with
     all errors that are found
-* **Comments allowed**: Schema and configuration files can be either in the
+* **Comments allowed**: schema and configuration files can be either in the
     JSON format or in the newer [JSON5](https://www.npmjs.com/package/json5)
     format, so comments are welcome
+* **Configuration file additional types support**: custom file type support can
+    be used for the configuration file
 
 
 ## Install
@@ -57,7 +59,8 @@ var config = convict({
     doc: "The port to bind.",
     format: "port",
     default: 8080,
-    env: "PORT"
+    env: "PORT",
+    arg: "port"
   },
   db: {
     host: {
@@ -191,6 +194,21 @@ var config = convict({
       }
     },
     default: '3cec609c9bc601c047af917a544645c50caf8cd606806b4e0a23312441014deb'
+  },
+  name: {
+    doc: "user name",
+    format: function check (val) {
+      if (typeof val.first_name !== 'string') {
+        throw new TypeError(`first name '${val.first_name}' is not a string`);
+      }
+      if (typeof val.last_name !== 'string') {
+        throw new TypeError(`last name '${val.last_name}' is not a string`);
+      }
+    },
+    default: {
+      first_name: 'John',
+      last_name: 'Doe'
+    }
   }
 });
 ```
@@ -236,10 +254,31 @@ When merging configuration values from different sources, Convict follows preced
 
 1. Default value
 2. File (`config.loadFile()`)
-3. Environment variables
-4. Command line arguments
+3. Environment variables (only used when `env` property is set in schema; can be overridden using the `env` option of the convict function)
+4. Command line arguments (only used when `arg` property is set in schema; can be overridden using the `args` option of the convict function)
 5. Set and load calls (`config.set()` and `config.load()`)
 
+### Configuration file additional types support
+
+Convict is able to parse files with custom file types during `loadFile`.
+For this specify the corresponding parsers with the associated file extensions.
+
+```javascript
+convict.addParser({ extension: 'toml', parse: toml.parse });
+convict.addParser({ extension: ['yml', 'yaml'], parse: yaml.safeLoad });
+convict.addParser([
+  { extension: 'json', parse: JSON.parse },
+  { extension: 'json5', parse: json5.parse },
+  { extension: ['yml', 'yaml'], parse: yaml.safeLoad },
+  { extension: 'toml', parse: toml.parse }
+]);
+
+const config = convict({ ... });
+config.loadFile('config.toml');
+```
+
+If no supported extension is detected, `loadFile` will fallback to using the
+default json5 parser for backward compatibility.
 
 ## API
 
@@ -271,11 +310,15 @@ var config = convict({
 config = convict('/some/path/to/a/config-schema.json');
 ```
 
-### config.addFormat(format)
+### convict.addParser(parser or parserArray)
+
+Adds new parsers for custom file extensions
+
+### convict.addFormat(format)
 
 Adds a new custom format.
 
-### config.addFormats(format1, format2, ...)
+### config.addFormats(formatArray)
 
 Adds new custom formats.
 
@@ -382,6 +425,13 @@ Exports the schema as JSON.
 
 Exports the schema as a JSON string.
 
+### config.getArgs()
+
+The array of process arguments (not including the launcher and application file arguments). Defaults to process.argv unless an override is specified using the args key of the second (options) argument of the convict function.
+
+### config.getEnv()
+
+The map of environment variables. Defaults to process.env unless an override is specified using the env key of the second argument (options) argument of the convict function.
 
 ## FAQ
 

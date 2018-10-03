@@ -5,6 +5,68 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.4.0] - 2018-09-22
+### Fixed
+
+- Fixed dot notation parsing by disabling dot-notation option in yarg-parser #269 (Patrick Shaw @PatrickShaw)
+
+### Added
+
+- Pass the name of the property being assigned to the custom coerce function #262 (Dan Allen mojavelinux)
+
+## [4.3.2] - 2018-07-19
+### Fixed
+
+- Update deps (validator.js@10.4.0, yargs-parser@10.1.0, coveralls@3.0.2) fixes #264 (Marc-Aurèle Darche @madarche)
+
+## [4.3.1] - 2018-06-07
+### Fixed
+
+- Handle loading empty files #257 (Paul Colleoni @polco)
+
+## [4.3.0] - 2018-06-02
+### Fixed
+
+- Allow argument value to be falsy #246 (Dan Allen @mojavelinux)
+
+### Added
+
+- Accept args and env as parameters to convict function #223 (Dan Allen @mojavelinux)
+- Allow the default parser to be set #248 (Dan Allen @mojavelinux)
+- Add package-lock.json file (Marc-Aurèle Darche @madarche)
+
+### Changed
+
+- Update deps (almost all) (Marc-Aurèle Darche @madarche)
+
+### Removed
+
+- Remove browserify package and configuration. This was never needed. (Marc-Aurèle Darche @madarche)
+
+## [4.2.0] - 2018-03-23
+### Added
+
+- Enhanced file formats support #244 (Tuan Nguyen @rocketspacer)
+
+### Changed
+
+- Fix doc (Marc-Aurèle Darche @madarche)
+
+## [4.1.0] - 2018-03-15
+### Changed
+
+- Make warnings more visible by coloring them #242 (Nawfel @NawfelBgh)
+
+### Fixed
+- Fix custom format object nested properties warning by checking for the item
+  type instead of item format #234 (Helias Criouet @Helias-Criouet)
+- Fix README on how cli args work #226 (Ian Chadwick @ianchadwick)
+
+## [4.0.2] - 2017-11-30
+### Security
+
+- Update moment to fixed security version #231 (Marc-Aurèle Darche @madarche)
+
 ## [4.0.1] - 2017-09-17
 ### Changed
 

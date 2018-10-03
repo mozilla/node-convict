@@ -4,12 +4,12 @@ exports.conf = {
   ip: {
     default: '127.0.0.1',
     format: 'ipaddress',
-    provider: 'IP_ADDRESS'
+    providerPath: 'ip'
   },
   port: {
     default: 0,
     format: 'port',
-    provider: 'PORT'
+    providerPath: 'port'
   }
 };
 

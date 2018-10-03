@@ -1,3 +1,5 @@
+'use strict'
+
 // an example provider
 
 module.exports =

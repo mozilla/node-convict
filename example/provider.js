@@ -1,12 +1,10 @@
-'use strict';
+// an example provider
 
 module.exports =
-  function(key){
-    
+  function(providerPath){
     let out =  {
-      'ip': '10.0.1.101',
-      'port': '8080'
+      'message': 'Hello world!'
     }
 
-    return out[key];
+    return out[providerPath];
   };

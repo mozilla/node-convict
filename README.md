@@ -11,7 +11,7 @@ Convict expands on the standard pattern of configuring node.js applications in a
 
 ## Features
 
-* **Loading and merging**: configurations are loaded from disk or inline and
+* **Loading and merging**: configurations are loaded from disk, an external provider, or inline and
     merged
 * **Nested structure**: keys and values can be organized in a tree structure
 * **Environmental variables**: values can be derived from environmental
@@ -123,7 +123,8 @@ var config = convict({
   db: {
     name: {
       format: String,
-      default: ''
+      default: '',
+      providerPath: '/service/db/name'
     },
     synchro: {
       active: {
@@ -156,7 +157,7 @@ convict's goal of being more robust and collaborator friendly.
 * **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
 * **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `config.getSchemaString()` and have it displayed in the output.
 * **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `config.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
-
+* **External providers**: If an `providerPath` string is provided and an external provider function is initialized, convict will pass this key into the external provider function to return a value from the provider. This value will be overriden by environmental variables and command-line arguments.
 
 ### Validation
 
@@ -254,9 +255,10 @@ When merging configuration values from different sources, Convict follows preced
 
 1. Default value
 2. File (`config.loadFile()`)
-3. Environment variables (only used when `env` property is set in schema; can be overridden using the `env` option of the convict function)
-4. Command line arguments (only used when `arg` property is set in schema; can be overridden using the `args` option of the convict function)
-5. Set and load calls (`config.set()` and `config.load()`)
+3. External provider
+4. Environment variables (only used when `env` property is set in schema; can be overridden using the `env` option of the convict function)
+5. Command line arguments (only used when `arg` property is set in schema; can be overridden using the `args` option of the convict function)
+6. Set and load calls (`config.set()` and `config.load()`)
 
 ### Configuration file additional types support
 
@@ -279,6 +281,44 @@ config.loadFile('config.toml');
 
 If no supported extension is detected, `loadFile` will fallback to using the
 default json5 parser for backward compatibility.
+
+## Pluggable external providers support
+
+Convict supports loading values synchronously from external providers -- any key/value store, such as the AWS Parameter store -- can be used to bootstrap configuration. 
+
+This is accomplished by passing a function that (synchronously) accepts a key and returns a value into `convict.configureProvider()`. 
+
+For instance:
+
+```javascript
+const convict = require("node-convict");
+
+let provider = function(providerPath) {
+  let out = {
+    "/service/ip": "10.0.1.101",
+    port: "8080"
+  };
+
+  return out[providerPath];
+};
+
+convict.configureProvider(provider);
+
+module.exports = convict({
+  ip: {
+    default: "blah",
+    format: "String",
+    providerPath: "/service/ip"
+  },
+  port: {
+    default: "blah",
+    format: "String",
+    providerPath: "port"
+  }
+}).validate();
+```
+
+The `providerPath` is passed to the `provider` and returns the value associated with that key. An example of a more sophisticated provider module is [here](), for the AWS Parameter Store.
 
 ## API
 
@@ -391,6 +431,27 @@ Or, loading multiple files at once:
 // CONFIG_FILES=/path/to/production.json,/path/to/secrets.json,/path/to/sitespecific.json
 config.loadFile(process.env.CONFIG_FILES.split(','));
 ```
+
+
+### config.configureProvider(provider)
+
+Injects a custom provider - a function that synchronously accepts a key and returns a value (from an external key-value store).
+
+E.g.:
+```javascript
+let provider = function(providerPath) {
+  let out = {
+    "/service/ip": "10.0.1.101",
+    port: "8080"
+  };
+
+  return out[providerPath];
+};
+
+config.configureProvider(provider);
+```
+
+
 ### config.validate([options])
 
 Validates `config` against the schema used to initialize it. All errors are

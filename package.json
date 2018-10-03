@@ -51,7 +51,7 @@
     "coveralls": "3.0.2",
     "eslint": "4.19.1",
     "istanbul": "0.4.5",
-    "lodash.foreach": "^4.5.0",
+    "lodash.foreach": "4.5.0",
     "js-yaml": "^3.11.0",
     "mocha": "5.2.0",
     "must": "0.13.4",

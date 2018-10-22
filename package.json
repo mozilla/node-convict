@@ -44,8 +44,8 @@
     "json5": "1.0.1",
     "lodash.clonedeep": "4.5.0",
     "moment": "2.22.2",
-    "validator": "10.4.0",
-    "yargs-parser": "10.1.0"
+    "validator": "10.8.0",
+    "yargs-parser": "11.0.0"
   },
   "devDependencies": {
     "coveralls": "3.0.2",

@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [X.Y.Z] - XXXX-XX-XX
+### Changed
+
+- Update deps (yargs-parser, validator) (Marc-Aurèle Darche @madarche)
+
 ## [4.4.0] - 2018-09-22
 ### Fixed
 

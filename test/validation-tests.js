@@ -239,4 +239,21 @@ describe('schema contains an object property with a custom format', function() {
       config.validate({ allowed: 'strict' });
     }).must.not.throw();
   });
+
+  it.skip("must not throw if an object's default value property name contains a period", function() {
+    (function() {
+      const config = convict({
+        object: {
+          doc: 'default value contains property name that contains a period',
+          format: Object,
+          default: {
+            'foo.bar': ''
+          }
+        }
+      });
+
+      config.validate();
+    }).must.not.throw();
+  });
+
 });

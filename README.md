@@ -318,7 +318,7 @@ Adds new parsers for custom file extensions
 
 Adds a new custom format.
 
-### config.addFormats(formatArray)
+### convict.addFormats(formatArray)
 
 Adds new custom formats.
 

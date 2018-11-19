@@ -9,6 +9,19 @@ describe('convict formats', function() {
   let conf;
 
   it('must parse a config specification', function() {
+
+    convict.addFormat({
+      name: 'float-percent',
+      validate: function(val) {
+        if (val !== 0 && (!val || val > 1 || val < 0)) {
+          throw new Error('must be a float between 0 and 1, inclusive');
+        }
+      },
+      coerce: function(val) {
+        return parseFloat(val, 10);
+      }
+    });
+
     convict.addFormats({
       prime: {
         validate: function(val) {
@@ -31,18 +44,6 @@ describe('convict formats', function() {
             throw new Error('must be a hexidecimal string');
           }
         }
-      }
-    });
-
-    convict.addFormat({
-      name: 'float-percent',
-      validate: function(val) {
-        if (val !== 0 && (!val || val > 1 || val < 0)) {
-          throw new Error('must be a float between 0 and 1, inclusive');
-        }
-      },
-      coerce: function(val) {
-        return parseFloat(val, 10);
       }
     });
 

@@ -318,25 +318,42 @@ Adds new parsers for custom file extensions
 
 Adds a new custom format.
 
+```javascript
+convict.addFormat({
+  name: 'float-percent',
+  validate: function(val) {
+    if (val !== 0 && (!val || val > 1 || val < 0)) {
+      throw new Error('must be a float between 0 and 1, inclusive');
+    }
+  },
+  coerce: function(val) {
+    return parseFloat(val, 10);
+  }
+});
+```
+
 ### config.addFormats(formatsObject)
 
 Adds new custom formats.
 
 ```javascript
 convict.addFormats({
-  {
-    name: 'float-percent',
+  prime: {
     validate: function(val) {
-      if (val !== 0 && (!val || val > 1 || val < 0)) {
-        throw new Error('must be a float between 0 and 1, inclusive');
+      function isPrime(n) {
+        if (n <= 1) return false; // zero and one are not prime
+        for (let i=2; i*i <= n; i++) {
+          if (n % i === 0) return false;
+        }
+        return true;
       }
+      if (!isPrime(val)) throw new Error('must be a prime number');
     },
     coerce: function(val) {
-      return parseFloat(val, 10);
+      return parseInt(val, 10);
     }
   },
-  {
-    name: 'hex-string',
+  'hex-string': {
     validate: function(val) {
       if (/^[0-9a-fA-F]+$/.test(val)) {
         throw new Error('must be a hexidecimal string');

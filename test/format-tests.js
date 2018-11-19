@@ -24,6 +24,13 @@ describe('convict formats', function() {
         coerce: function(val) {
           return parseInt(val, 10);
         }
+      },
+      'hex-string': {
+        validate: function(val) {
+          if (/^[0-9a-fA-F]+$/.test(val)) {
+            throw new Error('must be a hexidecimal string');
+          }
+        }
       }
     });
 

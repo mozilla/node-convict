@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [X.Y.Z] - XXXX-XX-XX
+### Fixed
+
+- Fix README for addFormats #268 (Walter Rumsby @wrumsby and Sebastian Yandun @svyandun)
+
 ### Changed
 
 - Update deps (yargs-parser, validator) (Marc-Aurèle Darche @madarche)

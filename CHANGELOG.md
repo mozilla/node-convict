@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [X.Y.Z] - XXXX-XX-XX
 ### Fixed
 
-- Fix README for addFormats #268 (Walter Rumsby @wrumsby and Sebastian Yandun @svyandun)
+- Fix README for addFormats #268, #275 (Walter Rumsby @wrumsby, Sebastian Yandun
+  @svyandun, Eray Hanoglu @erayhanoglu, Marc-Aurèle Darche @madarche)
 
 ### Changed
 

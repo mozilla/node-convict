@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [X.Y.Z] - XXXX-XX-XX
+## [4.4.1] - 2018-12-15
 ### Fixed
 
 - Fix README for addFormats #268, #275 (Walter Rumsby @wrumsby, Sebastian Yandun

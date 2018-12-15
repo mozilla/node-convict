@@ -10,7 +10,7 @@
     "nested",
     "validation"
   ],
-  "version": "4.4.0",
+  "version": "4.4.1",
   "license": "Apache-2.0",
   "homepage": "https://github.com/mozilla/node-convict",
   "repository": {

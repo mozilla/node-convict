@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Pass the name of the property being assigned to the custom coerce function #262 (Dan Allen mojavelinux)
+- Pass the name of the property being assigned to the custom coerce function #262 (Dan Allen @mojavelinux)
 
 ## [4.3.2] - 2018-07-19
 ### Fixed

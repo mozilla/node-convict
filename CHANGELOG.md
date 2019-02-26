@@ -194,7 +194,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Merge pull request [#97](https://github.com/mozilla/node-convict/issues/97) from yoz/cjson-0.3.2
   Update cjson dependency to 0.3.2
 - Update cjson dependency to 0.3.2
-  This removes the transitive dependency on 'jsonlint' (in favor of json-parse-helpfulerror), which avoids its problems with unstated depdendencies on 'file' and 'system'.
+  This removes the transitive dependency on 'jsonlint' (in favor of json-parse-helpfulerror), which avoids its problems with unstated dependencies on 'file' and 'system'.
 - Coerce values loaded from a file
   Previously values were coerced if added through
   set(), command line arguments or env arguments.
@@ -334,7 +334,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Update cjson 0.2.1 —> 0.3.0
 - Coerce 'nat' formatted values #26
-- Updat canonical package.json URLs #24
+- Update canonical package.json URLs #24
 - Fix 'should handle timestamp' failing test #21
 - Update package.json #43
 - Add license info

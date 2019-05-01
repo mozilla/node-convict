@@ -4,10 +4,11 @@
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
-const obj_diff = require('obj_diff');
+const diff = require('deep-object-diff').diff;
 
-const casesDir = path.join(__dirname, 'cases');
-let files = fs.readdirSync(casesDir);
+// This test finds its cases in /test/cases
+const cases_dir_path = path.join(__dirname, 'cases');
+let files = fs.readdirSync(cases_dir_path);
 
 let tests = {};
 files.forEach(function(f) {
@@ -25,18 +26,15 @@ files.forEach(function(f) {
 Object.keys(tests).forEach(function(test) {
   let re = new RegExp('^' + test + '.*\\.json$');
   files.forEach(function(f) {
-    if (re.test(f)) tests[test].config_files.push(path.join(casesDir, f));
+    if (re.test(f)) tests[test].config_files.push(path.join(cases_dir_path, f));
   });
   tests[test].config_files.sort();
 });
 
-// NOTE: there are several object diff implementations to
-// choose from which could do a better diff and generate better
-// output
 function diffObjects(a, b) {
-  let diff = obj_diff(a,b);
-  if (Object.keys(diff).length) {
-    return 'mismatch: ' + JSON.stringify(diff, null, 4);
+  let res = diff(a, b);
+  if (Object.keys(res).length) {
+    return 'mismatch: ' + JSON.stringify(res, null, 4);
   }
   return null;
 }
@@ -47,7 +45,7 @@ let toRun = Object.keys(tests);
 function run(name, done) {
   let test = tests[name];
 
-  let kase = require(path.join(casesDir, test.spec));
+  let kase = require(path.join(cases_dir_path, test.spec));
 
   let env = kase.env || {};
   let argv = kase.argv || [];
@@ -75,7 +73,7 @@ function run(name, done) {
     try {
       if (!m.error) {
         // let's read the expected output
-        expected = JSON.parse(fs.readFileSync(path.join(casesDir, test.output)));
+        expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path, test.output)));
         got = m.result;
 
         // check that configuration is what we expect
@@ -84,8 +82,8 @@ function run(name, done) {
           errs.push(`get ${err}`);
         }
 
-        if (fs.existsSync(path.join(casesDir, test.outputString))) {
-          expected = JSON.parse(fs.readFileSync(path.join(casesDir, test.outputString)));
+        if (fs.existsSync(path.join(cases_dir_path, test.outputString))) {
+          expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path, test.outputString)));
           got = JSON.parse(m.string);
           let err = diffObjects(expected, got);
           if (err) {
@@ -93,8 +91,8 @@ function run(name, done) {
           }
         }
 
-        if (fs.existsSync(path.join(casesDir, test.outputSchema))) {
-          expected = JSON.parse(fs.readFileSync(path.join(casesDir,
+        if (fs.existsSync(path.join(cases_dir_path, test.outputSchema))) {
+          expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path,
             test.outputSchema)));
           got = m.schema;
           let err = diffObjects(expected, got);
@@ -108,7 +106,7 @@ function run(name, done) {
         }
         return done();
       } else {
-        expected = fs.readFileSync(path.join(casesDir, test.output)).toString().trim();
+        expected = fs.readFileSync(path.join(cases_dir_path, test.output)).toString().trim();
         got = m.error.trim();
         if (expected.trim() !== got.trim()) throw got;
         return done();

@@ -41,27 +41,10 @@ describe('configuration files contain properties not declared in the schema', fu
     }).must.not.throw();
   });
 
-  it('must not throw, if properties in config file match with the schema and must display a deprecate (strict: true to allowed: \'strict\')', function() {
-    config.loadFile(path.join(__dirname, 'cases/validation_correct.json'));
-    (function() {
-      config.validate({
-        strict: true
-      });
-    }).must.not.throw();
-  });
-
   it('must not throw, if the option to check for non schema properties is set by default but must display warnings', function() {
     config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
     (function() {
       config.validate();
-    }).must.not.throw();
-  });
-  it('must not throw, if the option to check for non schema properties is set by default and must display a deprecate (strict: false to void) and warnings', function() {
-    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
-    (function() {
-      config.validate({
-        strict: false
-      });
     }).must.not.throw();
   });
   it('must not throw, if the option to check for non schema properties is not specified and must display warnings', function() {

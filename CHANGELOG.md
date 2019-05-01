@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.0.1] - 2019-XX-XX ???
+### Changed
+
+- Drop long deprecated `strict: true`/`strict: false` option, which has been replaced by the
+  `allowed: 'strict`/`allowed: 'warn` option (Marc-Aurèle Darche @madarche)
+- Update runtime deps (json5, moment, validator, yargs-parser) (Marc-Aurèle Darche @madarche)
+- Update dev deps (coveralls, eslint, js-yaml, mocha, toml) (Marc-Aurèle Darche @madarche)
+- Replaced dev deps (istanbul replaced by nyc, obj_diff replaced by
+  deep-object-diff) (Marc-Aurèle Darche @madarche)
+- Drop Node.js < 6 support due to dep requirements (Marc-Aurèle Darche @madarche)
+
 ## [4.4.1] - 2018-12-15
 ### Fixed
 

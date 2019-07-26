@@ -243,7 +243,7 @@ var config = convict({
 
 The `coerce` function is optional.
 
-### Custom format for array items
+##### Custom format for array items
 
 You can specify a custom format checking for array items:
 

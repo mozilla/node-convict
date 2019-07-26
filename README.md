@@ -247,7 +247,7 @@ The `coerce` function is optional.
 
 You can specify a custom format checking for array items:
 
-```
+```js
 convict.addFormat({
   name: 'source-array',
   validate: function(sources, schema) {

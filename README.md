@@ -44,32 +44,32 @@ var convict = require('convict');
 // Define a schema
 var config = convict({
   env: {
-    doc: "The application environment.",
-    format: ["production", "development", "test"],
-    default: "development",
-    env: "NODE_ENV"
+    doc: 'The application environment.',
+    format: ['production', 'development', 'test'],
+    default: 'development',
+    env: 'NODE_ENV'
   },
   ip: {
-    doc: "The IP address to bind.",
-    format: "ipaddress",
-    default: "127.0.0.1",
-    env: "IP_ADDRESS",
+    doc: 'The IP address to bind.',
+    format: 'ipaddress',
+    default: '127.0.0.1',
+    env: 'IP_ADDRESS',
   },
   port: {
-    doc: "The port to bind.",
-    format: "port",
+    doc: 'The port to bind.',
+    format: 'port',
     default: 8080,
-    env: "PORT",
-    arg: "port"
+    env: 'PORT',
+    arg: 'port'
   },
   db: {
     host: {
-      doc: "Database host name/IP",
+      doc: 'Database host name/IP',
       format: '*',
       default: 'server1.dev.test'
     },
     name: {
-      doc: "Database name",
+      doc: 'Database name',
       format: String,
       default: 'users'
     }
@@ -100,7 +100,7 @@ var server = http.createServer(function (req, res) {
 // Consume
 server.listen(config.get('port'), config.get('ip'), function(x) {
   var addy = server.address();
-  console.log('running on http://' + addy.address + ":" + addy.port);
+  console.log('running on http://' + addy.address + ':' + addy.port);
 });
 ```
 
@@ -187,7 +187,7 @@ For example:
 ```javascript
 var config = convict({
   key: {
-    doc: "API key",
+    doc: 'API key',
     format: function check (val) {
       if (!/^[a-fA-F0-9]{64}$/.test(val)) {
         throw new Error('must be a 64 character hex key')
@@ -196,7 +196,7 @@ var config = convict({
     default: '3cec609c9bc601c047af917a544645c50caf8cd606806b4e0a23312441014deb'
   },
   name: {
-    doc: "user name",
+    doc: 'user name',
     format: function check (val) {
       if (typeof val.first_name !== 'string') {
         throw new TypeError(`first name '${val.first_name}' is not a string`);
@@ -294,15 +294,15 @@ below.
 ```javascript
 var config = convict({
   env: {
-    doc: "The applicaton environment.",
-    format: ["production", "development", "test"],
-    default: "development",
-    env: "NODE_ENV"
+    doc: 'The applicaton environment.',
+    format: ['production', 'development', 'test'],
+    default: 'development',
+    env: 'NODE_ENV'
   },
   log_file_path: {
-    "doc": "Log file path",
-    "format": String,
-    "default": "/tmp/app.log"
+    'doc': 'Log file path',
+    'format': String,
+    'default': '/tmp/app.log'
   }
 });
 
@@ -414,9 +414,9 @@ config.get('property.that.may.not.exist.yet');
 Loads and merges a JavaScript object into `config`. E.g.:
 ```javascript
 config.load({
-  "env": "test",
-  "ip": "127.0.0.1",
-  "port": 80
+  'env': 'test',
+  'ip': '127.0.0.1',
+  'port': 80
 });
 ```
 ### config.loadFile(file or fileArray)

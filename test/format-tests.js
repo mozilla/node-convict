@@ -273,19 +273,19 @@ describe('convict formats', function() {
   it('must return schema in second argument', function() {
     const schema = {
       sources: {
-        doc: "A collection of data sources.",
+        doc: 'A collection of data sources.',
         format: 'source-array',
         default: [],
 
         children: {
           type: {
-            doc: "The source type",
-            format: ["git", "hg", "svn"],
+            doc: 'The source type',
+            format: ['git', 'hg', 'svn'],
             default: null
           },
           url: {
-            doc: "The source URL",
-            format: "url",
+            doc: 'The source URL',
+            format: 'url',
             default: null
           }
         }
@@ -293,27 +293,27 @@ describe('convict formats', function() {
     };
 
     const config = {
-      "sources": [
+      'sources': [
         {
-          "type": "git",
-          "url": "https://github.com/mozilla/node-convict.git"
+          'type': 'git',
+          'url': 'https://github.com/mozilla/node-convict.git'
         },
         {
-          "type": "git",
-          "url": "https://github.com/github/hub.git"
+          'type': 'git',
+          'url': 'https://github.com/github/hub.git'
         }
       ]
     };
 
     const configWithError = {
-      "sources": [
+      'sources': [
         {
-          "type": "git",
-          "url": "https:/(è_é)/github.com/mozilla/node-convict.git"
+          'type': 'git',
+          'url': 'https:/(è_é)/github.com/mozilla/node-convict.git'
         },
         {
-          "type": "git",
-          "url": "https://github.com/github/hub.git"
+          'type': 'git',
+          'url': 'https://github.com/github/hub.git'
         }
       ]
     };
@@ -326,9 +326,9 @@ describe('convict formats', function() {
             throw new Error('must be of type Array');
           }
 
-          for (source of sources) {
+          sources.forEach((source) => {
             convict(schema.children).load(source).validate();
-          }
+          })
         }
       });
     });

@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.1.0] - 2019-07-26
+### Added
+
+- Add context argument to custom format validate (A-312)
+
 ## [5.0.2] - 2019-07-26
 ### Changed
 

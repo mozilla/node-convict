@@ -269,4 +269,76 @@ describe('convict formats', function() {
     let val = conf.get('foo.optional');
     expect(val).to.be(undefined);
   });
+
+  it('must return schema in second argument', function() {
+    const schema = {
+      sources: {
+        doc: 'A collection of data sources.',
+        format: 'source-array',
+        default: [],
+
+        children: {
+          type: {
+            doc: 'The source type',
+            format: ['git', 'hg', 'svn'],
+            default: null
+          },
+          url: {
+            doc: 'The source URL',
+            format: 'url',
+            default: null
+          }
+        }
+      }
+    };
+
+    const config = {
+      'sources': [
+        {
+          'type': 'git',
+          'url': 'https://github.com/mozilla/node-convict.git'
+        },
+        {
+          'type': 'git',
+          'url': 'https://github.com/github/hub.git'
+        }
+      ]
+    };
+
+    const configWithError = {
+      'sources': [
+        {
+          'type': 'git',
+          'url': 'https:/(è_é)/github.com/mozilla/node-convict.git'
+        },
+        {
+          'type': 'git',
+          'url': 'https://github.com/github/hub.git'
+        }
+      ]
+    };
+
+    it('must parse a config specification', function() {
+      convict.addFormat({
+        name: 'source-array',
+        validate: function(sources, schema) {
+          if (!Array.isArray(sources)) {
+            throw new Error('must be of type Array');
+          }
+
+          sources.forEach((source) => {
+            convict(schema.children).load(source).validate();
+          })
+        }
+      });
+    });
+
+    it('must validate children value without throw an Error', function() {
+      (() => convict(schema).load(config).validate()).must.not.throw();
+    });
+
+    it('successfully fails to validate incorrect children values', function() {
+      (() => convict(schema).load(configWithError).validate()).must.throw(Error, /url: must be a URL: value was "https:\/\(è_é\)\/github\.com\/mozilla\/node-convict\.git"/);
+    });
+  });
 });

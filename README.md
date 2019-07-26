@@ -243,6 +243,59 @@ var config = convict({
 
 The `coerce` function is optional.
 
+### Custom format for array items
+
+You can specify a custom format checking for array items:
+
+```js
+convict.addFormat({
+  name: 'source-array',
+  validate: function(sources, schema) {
+    if (!Array.isArray(sources)) {
+      throw new Error('must be of type Array');
+    }
+
+    for (source of sources) {
+      convict(schema.children).load(source).validate();
+    }
+  }
+});
+
+const schema = {
+  sources: {
+    doc: 'A collection of data sources.',
+    format: 'source-array',
+    default: [],
+
+    children: {
+      type: {
+        doc: 'The source type',
+        format: ['git', 'hg', 'svn'],
+        default: null
+      },
+      url: {
+        doc: 'The source URL',
+        format: 'url',
+        default: null
+      }
+    }
+  }
+};
+
+convict(schema).load({
+  'sources': [
+    {
+      'type': 'git',
+      'url': 'https://github.com/mozilla/node-convict.git'
+    },
+    {
+      'type': 'git',
+      'url': 'https://github.com/github/hub.git'
+    }
+  ]
+}).validate();
+```
+
 ### Coercion
 
 Convict will automatically coerce environmental variables from strings to their proper types when importing them. For instance, values with the format `int`, `nat`, `port`, or `Number` will become numbers after a straight forward `parseInt` or `parseFloat`. `duration` and `timestamp` are also parse and converted into numbers, though they utilize [moment.js](http://momentjs.com/) for date parsing.

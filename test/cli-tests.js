@@ -108,7 +108,9 @@ function run(name, done) {
       } else {
         expected = fs.readFileSync(path.join(cases_dir_path, test.output)).toString().trim();
         got = m.error.trim();
-        if (expected.trim() !== got.trim()) throw got;
+        // EOL for new line and windows support:
+        expected = expected.split(require('os').EOL).join('\n');
+        require('assert').strictEqual(expected, got, `must be pass ${name}`);
         return done();
       }
     } catch(e) {

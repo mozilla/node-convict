@@ -67,7 +67,7 @@ describe('configuration files contain properties not declared in the schema', fu
       config.validate({
         allowed: 'warn'
       });
-    }).must.not.throw(/not declared/);
+    }).must.not.throw();
   });
   it('must throw, if properties in instance do not match the properties declared in the schema and there are incorrect values', function() {
     (function() {

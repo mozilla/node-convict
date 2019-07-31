@@ -84,7 +84,11 @@ describe('configuration files contain properties not declared in the schema', fu
       });
     }).must.throw();
   });
-  it('must not break when a failed validation follows an undeclared property and must display warnings', function() {
+  let message = '';
+  function myOutput(str) {
+    message += str;
+  }
+  it('must not break when a failed validation follows an undeclared property and must display warnings, and call the user output function', function() {
     (function() {
       convict.addFormat('foo', function(val) {
         if (val !== 0) { throw new Error('Validation error'); }
@@ -104,8 +108,21 @@ describe('configuration files contain properties not declared in the schema', fu
       // i don't know why. the deep nesting is also required.
       config.load({'0': true});
       config.load({ test2: { two: 'two' } });
-      config.validate();
+      config.validate({
+        output: myOutput
+      });
     }).must.throw(/Validation error/);
+  });
+  it('must use the user output function when it was declared', function() {
+    message.must.eql("\u001b[33;1mWarning:\u001b[0m configuration param '0' not declared in the schema");
+  });
+  it('must only accept function when user set an output function', function() {
+    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    (function() {
+      config.validate({
+        output: 312
+      });
+    }).must.throw(/options\.output is optionnal and must be a function\./);
   });
   it('must not break on consecutive overrides', function() {
     (function() {

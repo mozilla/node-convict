@@ -502,6 +502,14 @@ collected and thrown or displayed at once.
    throw errors. This is to ensure that the schema and the config files are in
    sync.
 
+3. `output` : You can replace the default output `console.log`
+   by your own output function. You can use [debug module][debug] like this:
+   ```javascript
+     output: require('debug')('convict:validate:error')
+   ```
+
+[debug]: https://www.npmjs.com/package/debug
+
 ### config.getProperties()
 
 Exports all the properties (that is the keys and their current values) as JSON.

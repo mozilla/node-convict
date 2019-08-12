@@ -318,7 +318,7 @@ module.exports = convict({
 }).validate();
 ```
 
-The `providerPath` is passed to the `provider` and returns the value associated with that key. An example of a more sophisticated provider module is [here](), for the AWS Parameter Store.
+The `providerPath` is passed to the `provider` and returns the value associated with that key. An example of a more sophisticated provider module is [here](https://github.com/HBKEngineering/convict-provider-awsSsm/), for the AWS Parameter Store.
 
 ## API
 

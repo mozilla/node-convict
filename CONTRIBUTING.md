@@ -5,7 +5,7 @@ We strive for stability and security.
 
 Pull Requests and contributions in general are welcome as long as they don't
 compromise those goals and follow the
-[Node aesthetic](http://substack.net/node_aesthetic).
+[Node aesthetic](https://github.com/substack/blog/blob/master/node_aesthetic.markdown).
 
 
 Code style

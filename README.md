@@ -110,7 +110,7 @@ To launch your example server, and set a port:
 node ./server.js --port 8080
 ```
 
-*Note*: arguments *must* be supplied with the double-hyphen `--arg`. (Single hypen's are not supported at this time)
+*Note*: arguments *must* be supplied with the double-hyphen `--arg`. (Single hyphen's are not supported at this time)
 
 
 ## The Schema

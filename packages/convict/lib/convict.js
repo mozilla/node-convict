@@ -7,7 +7,6 @@
 
 const fs        = require('fs');
 const isEmail   = require('validator/lib/isEmail');
-const isIn      = require('validator/lib/isIn');
 const isURL     = require('validator/lib/isURL');
 const isIP      = require('validator/lib/isIP');
 const parseArgs = require('yargs-parser');
@@ -197,7 +196,7 @@ function validate(instance, schema, strictValidation) {
 
 // helper for asserting that a value is in the list of valid options
 function contains(options, x) {
-  assert(isIn(x, options), 'must be one of the possible values: ' +
+  assert(options.indexOf(x) !== -1, 'must be one of the possible values: ' +
          JSON.stringify(options));
 }
 

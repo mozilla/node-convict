@@ -2,9 +2,16 @@ language: node_js
 
 sudo: false
 
+cache:
+  directories:
+    - node_modules
+
 node_js:
   - "stable"
   - "lts/*"
+
+install:
+  - npm run bootstrap:ci
 
 script:
   - npm run test:ci

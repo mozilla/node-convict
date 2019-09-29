@@ -24,10 +24,6 @@
   "scripts": {
     "posttest": "npm run lint",
     "test": "mocha --check-leaks test/*-tests.js",
-    "posttest:coverage": "npm run lint",
-    "test:coverage": "nyc --nycrc-path=nycrc.json --cache-dir=/tmp/nyc_cache_convict mocha test/*-tests.js",
-    "pretest:ci": "npm run lint",
-    "test:ci": "npm run test:coverage && cat /tmp/nyc_report_convict/lcov.info | coveralls",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "version": "./assert_changelog_ready $npm_package_version"

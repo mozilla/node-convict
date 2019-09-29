@@ -64,7 +64,7 @@ describe('convict', function() {
   });
 
   describe('convict().loadFile()', function() {
-    it('must work using default json5 parser if format isn\'t supported', function() {
+    it('must work using default json parser if format isn\'t supported', function() {
       const conf = convict(schema);
       conf.loadFile(path.join(__dirname, 'cases/formats/data'));
 

@@ -37,7 +37,6 @@
   ],
   "main": "lib/convict.js",
   "dependencies": {
-    "json5": "2.1.0",
     "lodash.clonedeep": "4.5.0",
     "moment": "2.24.0",
     "validator": "11.1.0",
@@ -48,6 +47,7 @@
     "deep-object-diff": "1.1.0",
     "eslint": "6.5.1",
     "js-yaml": "3.13.1",
+    "json5": "^2.1.0",
     "mocha": "6.2.1",
     "must": "0.13.4",
     "nyc": "14.1.1",

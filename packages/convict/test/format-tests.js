@@ -52,10 +52,6 @@ describe('convict formats', function() {
           format: ['foo', 'bar'],
           default: 'foo'
         },
-        host: {
-          format: 'ipaddress',
-          default: '127.0.0.1'
-        },
         port: {
           format: 'port',
           default: 8080
@@ -67,14 +63,6 @@ describe('convict formats', function() {
         pipe_port: {
           format: 'port_or_windows_named_pipe',
           default: '\\\\.\\pipe\\pipe_port',
-        },
-        email: {
-          format: 'email',
-          default: 'foo@bar.com'
-        },
-        url: {
-          format: 'url',
-          default: 'http://example.com'
         },
         nat: {
           format: 'nat',

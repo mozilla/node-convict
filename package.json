@@ -11,6 +11,7 @@
   "devDependencies": {
     "convict": "file:./packages/convict/",
     "convict-moment": "file:./packages/convict-moment/",
+    "convict-validator": "file:./packages/convict-validator/",
     "coveralls": "3.0.5",
     "deep-object-diff": "1.1.0",
     "eslint": "5.16.0",

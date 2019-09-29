@@ -34,11 +34,11 @@
   "main": "lib/convict.js",
   "dependencies": {
     "lodash.clonedeep": "4.5.0",
-    "validator": "11.1.0",
     "yargs-parser": "13.0.0"
   },
   "devDependencies": {
     "convict-moment": "file:../convict-moment",
+    "convict-validator": "file:../convict-validator",
     "deep-object-diff": "1.1.0",
     "eslint": "6.5.1",
     "js-yaml": "3.13.1",

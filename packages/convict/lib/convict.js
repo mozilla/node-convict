@@ -6,9 +6,6 @@
 'use strict';
 
 const fs        = require('fs');
-const isEmail   = require('validator/lib/isEmail');
-const isURL     = require('validator/lib/isURL');
-const isIP      = require('validator/lib/isIP');
 const parseArgs = require('yargs-parser');
 const cloneDeep = require('lodash.clonedeep');
 
@@ -63,15 +60,6 @@ const types = {
     if (!isWindowsNamedPipe(x)) {
       assert(isPort(x), 'must be a windows named pipe or a number within range 0 - 65535');
     }
-  },
-  url: function(x) {
-    assert(isURL(x, {require_tld: false}), 'must be a URL');
-  },
-  email: function(x) {
-    assert(isEmail(x), 'must be an email address');
-  },
-  ipaddress: function(x) {
-    assert(isIP(x), 'must be an IP address');
   }
 };
 // alias

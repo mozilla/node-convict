@@ -18,3 +18,7 @@ This repository is a collection of packages.
  - [convict-moment](/packages/convict-moment/)
 
   Format 'duration' and 'timestamp'.
+
+ - [convict-validator](/packages/convict-validator/)
+
+  Format 'email', 'ipaddress' and 'url' for convict.

@@ -37,6 +37,8 @@ An example `config.js` file:
 ```javascript
 var convict = require('convict');
 
+convict.addFormat(require('convict-validator').ipaddress);
+
 // Define a schema
 var config = convict({
   env: {
@@ -158,17 +160,16 @@ convict's goal of being more robust and collaborator friendly.
 
 In order to help detect misconfigurations, convict allows you to define a format for each setting. By default, convict checks if the value of the property has the same type (according to `Object.prototype.toString.call`) as the default value specified in the schema. You can define a custom format checking function in the schema by setting the `format` property.
 
-convict provides several predefined formats for validation that you can use ([using node-validator](https://github.com/chriso/node-validator#list-of-validation-methods). Most of them are self-explanatory:
+convict provides several predefined formats for validation that you can use. Most of them are self-explanatory:
 
 * `*` - any value is valid
 * `int`
 * `port`
 * `windows_named_pipe`
 * `port_or_windows_named_pipe`
-* `url`
-* `email`
-* `ipaddress` - IPv4 and IPv6 addresses
 * `nat` - positive integer (natural number)
+
+You can find other format [here](https://www.npmjs.com/search?q=keywords:convict-format).
 
 If `format` is set to one of the built-in JavaScript constructors, `Object`, `Array`, `String`, `Number`, `RegExp`, or `Boolean`, validation will use Object.prototype.toString.call to check that the setting is the proper type.
 
@@ -254,6 +255,8 @@ convict.addFormat({
     }
   }
 });
+
+convict.addFormat(require('convict-validator').url);
 
 const schema = {
   sources: {

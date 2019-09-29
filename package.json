@@ -1,5 +1,5 @@
 {
-  "name": "convict-meta",
+  "name": "node-convict",
   "private": true,
   "dependencies": {
     "json5": "2.1.0",
@@ -9,6 +9,8 @@
     "yargs-parser": "13.0.0"
   },
   "devDependencies": {
+    "convict": "file:./packages/convict/",
+    "convict-moment": "file:./packages/convict-moment/",
     "coveralls": "3.0.5",
     "deep-object-diff": "1.1.0",
     "eslint": "5.16.0",

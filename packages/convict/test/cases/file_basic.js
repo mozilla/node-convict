@@ -1,5 +1,7 @@
 'use strict';
 
+exports.formats = require('convict-moment')
+
 exports.conf = {
   ip: {
     doc: 'The IP Address to bind.',

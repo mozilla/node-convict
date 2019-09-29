@@ -1,5 +1,5 @@
 /**
- * node-convict
+ * convict
  * Configuration management with support for environmental variables, files,
  * and validation.
  */
@@ -10,7 +10,6 @@ const isEmail   = require('validator/lib/isEmail');
 const isIn      = require('validator/lib/isIn');
 const isURL     = require('validator/lib/isURL');
 const isIP      = require('validator/lib/isIP');
-const moment    = require('moment');
 const parseArgs = require('yargs-parser');
 const cloneDeep = require('lodash.clonedeep');
 
@@ -74,17 +73,6 @@ const types = {
   },
   ipaddress: function(x) {
     assert(isIP(x), 'must be an IP address');
-  },
-  duration: function(x) {
-    let err_msg = 'must be a positive integer or human readable string (e.g. 3000, "5 days")';
-    if (Number.isInteger(x)) {
-      assert(x >= 0, err_msg);
-    } else {
-      assert(x.match(/^(\d)+ (.+)$/), err_msg);
-    }
-  },
-  timestamp: function(x) {
-    assert(Number.isInteger(x) && x >= 0, 'must be a positive integer');
   }
 };
 // alias
@@ -422,19 +410,6 @@ function coerce(k, v, schema, instance) {
     case 'array': v = v.split(','); break;
     case 'object': v = JSON.parse(v); break;
     case 'regexp': v = new RegExp(v); break;
-    case 'timestamp': v = moment(v).valueOf(); break;
-    case 'duration': {
-      let split = v.split(' ');
-      if (split.length == 1) {
-        // It must be an integer in string form.
-        v = parseInt(v, 10);
-      } else {
-        // Add an "s" as the unit of measurement used in Moment
-        if (!split[1].match(/s$/)) split[1] += 's';
-        v = moment.duration(parseInt(split[0], 10), split[1]).valueOf();
-      }
-      break;
-    }
     default:
         // TODO: Should we throw an exception here?
     }

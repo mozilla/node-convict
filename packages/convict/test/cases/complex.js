@@ -1,5 +1,7 @@
 'use strict';
 
+exports.formats = require('convict-moment')
+
 exports.conf = {
   env: {
     format: ['production', 'local'],

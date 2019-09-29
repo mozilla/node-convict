@@ -38,7 +38,7 @@ const duration = {
 
 const timestamp = {
   name: 'timestamp',
-  coerce: (v) => v = moment(v).valueOf(),
+  coerce: (v) => moment(v).valueOf(),
   validate: function(x) {
     assert(Number.isInteger(x) && x >= 0, 'must be a positive integer')
   }

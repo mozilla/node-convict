@@ -16,7 +16,6 @@ An example `config.js` file:
 
 ```javascript
 const convict = require('convict');
-const convictMoment = require('convict-moment');
 
 convict.addFormat(require('convict-moment').duration);
 convict.addFormat(require('convict-moment').timestamp);

@@ -32,4 +32,9 @@ describe('convict formats', function() {
   it('validates default schema', function() {
     (function() { conf.validate(); }).must.not.throw();
   });
+
+  it('successfully fails to validate incorrect values', function() {
+    conf.set('foo.email', ';aaaa;');
+    (function() { conf.validate(); }).must.throw(Error, /must be an email address: value was ";aaaa;"/);
+  });
 });

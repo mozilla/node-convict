@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.2.0] - 2019-10-12
+### Added
+
+- Add output preference for validate #301 (A-312)
+
+### Changed
+
+- Bump validator from 10.11.0 to 11.1.0 #316 (Tomasz Adamski @tmszdmsk)
+
+### Fixed
+
+- Fix vulns by upgrading some deps (eslint, mocha, coveralls) + npm audit fix
+  (Marc-Aurèle Darche @madarche)
+- Doc: Fix typo and improve grammar and consistency in double-hyphen warning
+  #324 (Maya Vera @mayavera)
+- Doc: Fix link #308 (Brett Neese @brettneese)
+- Fix test on Windows #304 (A-312)
+
 ## [5.1.0] - 2019-07-26
 ### Added
 

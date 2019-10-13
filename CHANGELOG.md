@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.0.0] - 2019-XX-XX
+### Changed
+
+- Remove json5 dependency and make it an optional parser #326 (A-312)
+
 ## [5.2.0] - 2019-10-12
 ### Added
 

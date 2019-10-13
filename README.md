@@ -333,13 +333,14 @@ config.loadFile('config.toml');
 If no supported extension is detected, `loadFile` will fallback to using the
 default json parser.
 
-#### Allow comment in json file
+#### Allow comments in JSON files
 
-If you want allow comment in your json file, use [json5](https://www.npmjs.com/package/json5).
+If you want to allow comments in your JSON file, use [JSON5](https://www.npmjs.com/package/json5).
 
 ```javascript
-convict.addParser({ extension: 'json', parse: require('json5').parse });
+convict.addParser({extension: 'json', parse: require('json5').parse});
 ```
+
 
 ## API
 
@@ -347,7 +348,6 @@ convict.addParser({ extension: 'json', parse: require('json5').parse });
 
 `convict()` takes a schema object or a path to a schema JSON file and returns a
 convict configuration object.
-JSON files are loaded using `JSON5`, so they can contain comments.
 
 The configuration object has an API for getting and setting values, described
 below.
@@ -483,7 +483,6 @@ config.load({
 ### config.loadFile(file or fileArray)
 
 Loads and merges one or multiple JSON configuration files into `config`.
-JSON files are loaded using `JSON5`, so they can contain comments.
 E.g.:
 ```javascript
 config.loadFile('./config/' + conf.get('env') + '.json');

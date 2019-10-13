@@ -331,7 +331,15 @@ config.loadFile('config.toml');
 ```
 
 If no supported extension is detected, `loadFile` will fallback to using the
-default json5 parser for backward compatibility.
+default json parser.
+
+#### Allow comment in json file
+
+If you want allow comment in your json file, use [json5](https://www.npmjs.com/package/json5).
+
+```javascript
+convict.addParser({ extension: 'json', parse: require('json5').parse });
+```
 
 ## API
 

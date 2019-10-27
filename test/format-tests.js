@@ -233,7 +233,7 @@ describe('convict formats', function() {
           },
         });
 
-        (function() { conf.validate() }).must.throw(Error, /must be a wè_éindows named pipe or a number within range/);
+        (function() { conf.validate() }).must.throw(Error, /must be a windows named pipe or a number within range/);
 
       });
 
@@ -246,7 +246,7 @@ describe('convict formats', function() {
           },
         });
 
-        (function() { conf.validate() }).must.throw(Error, /must be a wè_éindows named pipe or a number within range/);
+        (function() { conf.validate() }).must.throw(Error, /must be a windows named pipe or a number within range/);
 
       });
 

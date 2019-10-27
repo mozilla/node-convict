@@ -333,12 +333,75 @@ describe('convict formats', function() {
       });
     });
 
-    it('must validate children value without throw an Error', function() {
+    it('must validate children values without throw an Error', function() {
       (() => convict(schema).load(config).validate()).must.not.throw();
     });
 
     it('successfully fails to validate incorrect children values', function() {
       (() => convict(schema).load(configWithError).validate()).must.throw(Error, /url: must be a URL: value was "https:\/\(è_é\)\/github\.com\/mozilla\/node-convict\.git"/);
+    });
+  });
+
+  it('must accept regex name in .addFormat(...)', function() {
+    const schema = {
+      dependencies: {
+        format: 'Array[String]',
+        default: []
+      },
+      serverips: {
+        format: 'Array[ipaddress]',
+        default: []
+      }
+    };
+
+    const config = {
+      'dependencies': ['convict', 'express'],
+      'serverips': ['127.0.0.1', '8.8.8.8']
+    };
+
+    const configWithError = {
+      'dependencies': ['convict', 'express', []],
+      'serverips': ['127.0.0.1', '8.8.8.8']
+    };
+
+    const configWithError2 = {
+      'dependencies': ['convict', 'express'],
+      'serverips': ['127.0.0.1', '8.8.8.8', '127']
+    };
+
+    it('must parse a config specification', function() {
+      convict.addFormat({
+        name: /^Array\[(.*)]$/,
+        validate: function(values, schema) {
+          if (!Array.isArray(values)) {
+            throw new Error('must be of type Array');
+          }
+
+          values.forEach((value, key) => {
+            const name = `arr[${key}]`;
+
+            const subSchema = {};
+            const arr = {};
+
+            subSchema[name] = {
+              format: schema.format.match(/^Array\[(.*)]$/)[1],
+              default: null
+            };
+            arr[name] = value;
+
+            convict(subSchema).load(arr).validate();
+          })
+        }
+      });
+    });
+
+    it('must validate sub values without throw an Error', function() {
+      (() => convict(schema).load(config).validate()).must.not.throw();
+    });
+
+    it('successfully fails to validate incorrect sub values', function() {
+      (() => convict(schema).load(configWithError).validate()).must.throw(Error, /dependencies: arr\[2]: must be of type String: value was \[]/);
+      (() => convict(schema).load(configWithError2).validate()).must.throw(Error, /serverips: arr\[2]: must be an IP address: value was "127"/);
     });
   });
 });

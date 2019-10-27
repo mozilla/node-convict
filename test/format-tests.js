@@ -233,7 +233,7 @@ describe('convict formats', function() {
           },
         });
 
-        (function() { conf.validate() }).must.throw(Error, /must be a windows named pipe or a number within range/);
+        (function() { conf.validate() }).must.throw(Error, /must be a wè_éindows named pipe or a number within range/);
 
       });
 
@@ -246,7 +246,7 @@ describe('convict formats', function() {
           },
         });
 
-        (function() { conf.validate() }).must.throw(Error, /must be a windows named pipe or a number within range/);
+        (function() { conf.validate() }).must.throw(Error, /must be a wè_éindows named pipe or a number within range/);
 
       });
 
@@ -338,7 +338,7 @@ describe('convict formats', function() {
     });
 
     it('successfully fails to validate incorrect children values', function() {
-      (() => convict(schema).load(configWithError).validate()).must.throw(Error, /url: must be a URL: value was "https:\/\(è_é\)\/github\.com\/mozilla\/node-convict\.git"/);
+      (() => convict(schema).load(configWithError).validate()).must.throw(Error, /urè_él: must be a URL: value was "https:\/\(è_é\)\/github\.com\/mozilla\/node-convict\.git"/);
     });
   });
 });

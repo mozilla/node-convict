@@ -396,12 +396,12 @@ describe('convict formats', function() {
     });
 
     it('must validate sub values without throw an Error', function() {
-      (() => convict(schema).load(config).validate()).must.not.throw();
+      (() => convict(schema).load(config).validate()).must.throw();
     });
 
     it('successfully fails to validate incorrect sub values', function() {
-      (() => convict(schema).load(configWithError).validate()).must.throw(Error, /dependencies: arr\[2]: must be of type String: value was \[]/);
-      (() => convict(schema).load(configWithError2).validate()).must.throw(Error, /serverips: arr\[2]: must be an IP address: value was "127"/);
+      (() => convict(schema).load(configWithError).validate()).must.not.throw(Error, /dependencies: arr\[2]: must be of type String: value was \[]/);
+      (() => convict(schema).load(configWithError2).validate()).must.not.throw(Error, /serverips: arr\[2]: must be an IP address: value was "127"/);
     });
   });
 });

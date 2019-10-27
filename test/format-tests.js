@@ -334,15 +334,11 @@ describe('convict formats', function() {
     });
 
     it('must validate children value without throw an Error', function() {
-      (function() {
-        convict(schema).load(config).validate()
-      }).must.not.throw();
+      (() => convict(schema).load(config).validate()).must.not.throw();
     });
 
     it('successfully fails to validate incorrect children values', function() {
-      (function() {
-        convict(schema).load(configWithError).validate()
-      }).must.throw(Error, /urè_él: must be a URL: value was "https:\/\(è_é\)\/github\.com\/mozilla\/node-convict\.git"/);
+      (() => convict(schema).load(configWithError).validate()).must.throw(Error, /urè_él: must be a URL: value was "https:\/\(è_é\)\/github\.com\/mozilla\/node-convict\.git"/);
     });
   });
 });

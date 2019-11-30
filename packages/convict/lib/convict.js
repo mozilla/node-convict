@@ -202,6 +202,10 @@ const BUILT_INS = BUILT_IN_NAMES.map(function(name) {
 });
 
 function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
+  if (name === 'properties') {
+    throw new Error("'" + fullName + "': 'properties' is reserved word of convict.");
+  }
+
   // If the current schema node is not a config property (has no "default"), recursively normalize it.
   if (typeof node === 'object' && node !== null && !Array.isArray(node) &&
     Object.keys(node).length > 0 && !('default' in node)) {

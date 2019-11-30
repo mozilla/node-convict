@@ -83,9 +83,9 @@ function flatten(obj, useProperties) {
     let val = walk(obj, key);
     if (typeof val === 'object' && !Array.isArray(val) && val != null) {
       if (useProperties) {
-        if ('properties' in val) {
-          val = val.properties;
-          key = key + '.properties';
+        if ('_cvtProperties' in val) {
+          val = val._cvtProperties;
+          key = key + '._cvtProperties';
         } else {
           entries.push([key, val]);
           continue;
@@ -108,7 +108,7 @@ function flatten(obj, useProperties) {
   entries.forEach(function(entry) {
     let key = entry[0];
     if (useProperties) {
-      key = key.replace(/\.properties/g, '');
+      key = key.replace(/\._cvtProperties/g, '');
     }
     const val = entry[1];
     flattened[key] = val;
@@ -125,7 +125,7 @@ function validate(instance, schema, strictValidation) {
   };
 
   const flatInstance = flatten(instance);
-  const flatSchema = flatten(schema.properties, true);
+  const flatSchema = flatten(schema._cvtProperties, true);
 
   Object.keys(flatSchema).forEach(function(name) {
     const schemaItem = flatSchema[name];
@@ -202,18 +202,18 @@ const BUILT_INS = BUILT_IN_NAMES.map(function(name) {
 });
 
 function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
-  if (name === 'properties') {
-    throw new Error("'" + fullName + "': 'properties' is reserved word of convict.");
+  if (name === '_cvtProperties') {
+    throw new Error("'" + fullName + "': '_cvtProperties' is reserved word of convict.");
   }
 
   // If the current schema node is not a config property (has no "default"), recursively normalize it.
   if (typeof node === 'object' && node !== null && !Array.isArray(node) &&
     Object.keys(node).length > 0 && !('default' in node)) {
     props[name] = {
-      properties: {}
+      _cvtProperties: {}
     };
     Object.keys(node).forEach(function(k) {
-      normalizeSchema(k, node[k], props[name].properties, fullName + '.' +
+      normalizeSchema(k, node[k], props[name]._cvtProperties, fullName + '.' +
                       k, env, argv, sensitive);
     });
     return;
@@ -332,9 +332,9 @@ function importArguments(o) {
 }
 
 function addDefaultValues(schema, c, instance) {
-  Object.keys(schema.properties).forEach(function(name) {
-    let p = schema.properties[name];
-    if (p.properties) {
+  Object.keys(schema._cvtProperties).forEach(function(name) {
+    let p = schema._cvtProperties[name];
+    if (p._cvtProperties) {
       let kids = c[name] || {};
       addDefaultValues(p, kids, instance);
       c[name] = kids;
@@ -353,7 +353,7 @@ function overlay(from, to, schema) {
       to[k] = coerce(k, from[k], schema);
     } else {
       if (!isObj(to[k])) to[k] = {};
-      overlay(from[k], to[k], schema.properties[k]);
+      overlay(from[k], to[k], schema._cvtProperties[k]);
     }
   });
 }
@@ -363,8 +363,8 @@ function traverseSchema(schema, path) {
   let o = schema;
   while (ar.length > 0) {
     let k = ar.shift();
-    if (o && o.properties && o.properties[k]) {
-      o = o.properties[k];
+    if (o && o._cvtProperties && o._cvtProperties[k]) {
+      o = o._cvtProperties[k];
     } else {
       o = null;
       break;
@@ -514,10 +514,10 @@ let convict = function convict(def, opts) {
      *     notation to reference nested values
      */
     default: function(path) {
-      // The default value for FOO.BAR.BAZ is stored in `_schema.properties` at:
-      //   FOO.properties.BAR.properties.BAZ.default
-      path = (path.split('.').join('.properties.')) + '.default';
-      let o = walk(this._schema.properties, path);
+      // The default value for FOO.BAR.BAZ is stored in `_schema._cvtProperties` at:
+      //   FOO._cvtProperties.BAR._cvtProperties.BAZ.default
+      path = (path.split('.').join('._cvtProperties.')) + '.default';
+      let o = walk(this._schema._cvtProperties, path);
       return cloneDeep(o);
     },
 
@@ -665,7 +665,7 @@ let convict = function convict(def, opts) {
 
   // build up current config from definition
   rv._schema = {
-    properties: {}
+    _cvtProperties: {}
   };
 
   rv._env = {};
@@ -673,7 +673,7 @@ let convict = function convict(def, opts) {
   rv._sensitive = new Set();
 
   Object.keys(rv._def).forEach(function(k) {
-    normalizeSchema(k, rv._def[k], rv._schema.properties, k, rv._env, rv._argv,
+    normalizeSchema(k, rv._def[k], rv._schema._cvtProperties, k, rv._env, rv._argv,
       rv._sensitive);
   });
 

@@ -335,7 +335,7 @@ function addDefaultValues(schema, c, instance) {
       addDefaultValues(p, kids, instance);
       c[name] = kids;
     } else {
-      c[name] = coerce(name, cloneDeep(p.default), schema, instance);
+      c[name] = coerce(name, cloneDeep(p.default), schema);
     }
   });
 }
@@ -378,13 +378,13 @@ function getFormat(schema, path) {
   return null;
 }
 
-function coerce(k, v, schema, instance) {
+function coerce(k, v, schema) {
   // magic coerceing
   let format = getFormat(schema, k);
 
   if (typeof v === 'string') {
     if (converters.has(format)) {
-      return converters.get(format)(v, instance, k);
+      return converters.get(format)(v);
     }
     switch (format) {
     case 'port':
@@ -543,7 +543,7 @@ let convict = function convict(def, opts) {
      * exist, they will be initialized to empty objects
      */
     set: function(k, v) {
-      v = coerce(k, v, this._schema, this);
+      v = coerce(k, v, this._schema);
       let path = k.split('.');
       let childKey = path.pop();
       let parentKey = path.join('.');

@@ -275,6 +275,8 @@ function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive)
       // default format is the typeof the default value
       const defaultFormat = Object.prototype.toString.call(schema.default);
       const myFormat = defaultFormat.replace(/\[.* |]/g, '');
+      // magic coerceing
+      schema.format = myFormat.toLowerCase();
       return function(value) {
         const valueFormat = Object.prototype.toString.call(value);
         assert(valueFormat === defaultFormat, 'must be of type ' + myFormat);
@@ -364,17 +366,7 @@ function traverseSchema(schema, path) {
 }
 
 function coerce(schema, v) {
-  const format = (() => {
-    if (schema) {
-      if (typeof schema.format === 'string') {
-        return schema.format;
-      } else if (schema.default != null) {
-        // magic coerceing
-        return typeof schema.default;
-      }
-    }  
-    return null;
-  })();
+  const format = (schema && typeof schema.format === 'string') ? schema.format : null;
 
   if (typeof v === 'string') {
     if (converters.has(format)) {

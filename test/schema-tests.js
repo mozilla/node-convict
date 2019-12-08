@@ -102,17 +102,20 @@ describe('convict schema', function() {
           'foo': {
             'properties': {
               'bar': {
-                'default': 7
+                'default': 7,
+                'format': 'number'
               },
               'baz': {
                 'properties': {
                   'bing': {
-                    'default': 'foo'
+                    'default': 'foo',
+                    'format': 'string'
                   },
                   'name with spaces': {
                     'properties': {
                       'name_with_underscores': {
-                        'default': true
+                        'default': true,
+                        'format': 'boolean'
                       }
                     }
                   }
@@ -131,17 +134,20 @@ describe('convict schema', function() {
           'foo': {
             'properties': {
               'bar': {
-                'default': 7
+                'default': 7,
+                'format': 'number'
               },
               'baz': {
                 'properties': {
                   'bing': {
-                    'default': 'foo'
+                    'default': 'foo',
+                    'format': 'string'
                   },
                   'name with spaces': {
                     'properties': {
                       'name_with_underscores': {
-                        'default': true
+                        'default': true,
+                        'format': 'boolean'
                       }
                     }
                   }

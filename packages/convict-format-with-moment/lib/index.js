@@ -18,13 +18,12 @@ const duration = {
     let split = v.split(' ')
     if (split.length == 1) {
       // It must be an integer in string form.
-      v = parseInt(v, 10)
+      return parseInt(v, 10)
     } else {
       // Add an "s" as the unit of measurement used in Moment
       if (!split[1].match(/s$/)) split[1] += 's'
-      v = moment.duration(parseInt(split[0], 10), split[1]).valueOf()
+      return moment.duration(parseInt(split[0], 10), split[1]).valueOf()
     }
-    return v
   },
   validate: function(x) {
     let err_msg = 'must be a positive integer or human readable string (e.g. 3000, "5 days")'

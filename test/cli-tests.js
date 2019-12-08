@@ -110,7 +110,7 @@ function run(name, done) {
         got = m.error.trim();
         // EOL for new line and windows support:
         expected = expected.split(require('os').EOL).join('\n');
-        require('assert').strictEqual(expected, got, `must be pass ${name}`);
+        require('assert').strictEqual(got, expected, `must be pass ${name}`);
         return done();
       }
     } catch(e) {

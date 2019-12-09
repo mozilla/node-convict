@@ -162,7 +162,7 @@ function validate(instance, schema, strictValidation) {
     if (!(typeof schemaItem.default === 'undefined' &&
           instanceItem === schemaItem.default)) {
       try {
-        schemaItem._format(instanceItem);
+        schemaItem._cvtFormat(instanceItem);
       } catch (err) {
         errors.invalid_type.push(err);
       }
@@ -180,12 +180,6 @@ function validate(instance, schema, strictValidation) {
   }
 
   return errors;
-}
-
-// helper for asserting that a value is in the list of valid options
-function contains(options, x) {
-  assert(options.indexOf(x) !== -1, 'must be one of the possible values: ' +
-         JSON.stringify(options));
 }
 
 const BUILT_INS_BY_NAME = {
@@ -247,18 +241,19 @@ function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive)
   }
 
   // store original format function
-  const format = schema.format;
-  let newFormat = (() => {
+  let format = schema.format;
+  const newFormat = (() => {
     if (BUILT_INS.indexOf(format) >= 0 || BUILT_IN_NAMES.indexOf(format) >= 0) {
       // if the format property is a built-in JavaScript constructor,
       // assert that the value is of that type
       const Format = typeof format === 'string' ? BUILT_INS_BY_NAME[format] : format;
       const formatFormat = Object.prototype.toString.call(new Format());
       const myFormat = Format.name;
-      schema.format = myFormat.toLowerCase();
-      return function(value) {
-        const valueFormat = Object.prototype.toString.call(value);
-        assert(valueFormat === formatFormat, 'must be of type ' + myFormat);
+      schema.format = format = myFormat.toLowerCase();
+      return (value) => {
+        if (formatFormat !== Object.prototype.toString.call(value)) {
+          throw new Error('must be of type ' + myFormat);
+        }
       };
     } else if (typeof format === 'string') {
       // store declared type
@@ -268,27 +263,40 @@ function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive)
       // use a predefined type
       return types[format];
     } else if (Array.isArray(format)) {
-      // assert that the value is a valid option
+      // assert that the value is in the whitelist, example: ['a', 'b', 'c'].include(value)
+      const contains = (whitelist, value) => {
+        if (!whitelist.includes(value)) {
+          throw new Error('must be one of the possible values: ' + JSON.stringify(whitelist));
+        }
+      }
       return contains.bind(null, format);
     } else if (typeof format === 'function') {
       return format;
     } else if (format && typeof format !== 'function') {
-      throw new Error("'" + fullName +
-        "': `format` must be a function or a known format type.");
+      throw new Error("'" + fullName + "': `format` must be a function or a known format type.");
     } else { // !format
       // default format is the typeof the default value
       const defaultFormat = Object.prototype.toString.call(schema.default);
       const myFormat = defaultFormat.replace(/\[.* |]/g, '');
       // magic coerceing
-      schema.format = myFormat.toLowerCase();
-      return function(value) {
-        const valueFormat = Object.prototype.toString.call(value);
-        assert(valueFormat === defaultFormat, 'must be of type ' + myFormat);
+      schema.format = format = myFormat.toLowerCase();
+      return (value) => {
+        if (defaultFormat !== Object.prototype.toString.call(value)) {
+          throw new Error('must be of type ' + myFormat);
+        }
       };
     }
   })();
 
-  schema._format = function(x) {
+  schema._cvtCoerce = (() => {
+    if (typeof format === 'string') {
+      return getCoerceMethod(schema.format);
+    } else {
+      return (v) => v;
+    }
+  })();
+  
+  schema._cvtFormat = function(x) {
     try {
       newFormat(x, schema); // schema = this
     } catch (e) {
@@ -304,9 +312,9 @@ function importEnvironment(o) {
   const env = o.getEnv();
   Object.keys(o._env).forEach(function(envStr) {
     if (env[envStr] !== undefined) {
-      let ks = o._env[envStr];
-      ks.forEach(function(k) {
-        o.set(k, env[envStr]);
+      let fullpaths = o._env[envStr];
+      fullpaths.forEach(function(fullpath) {
+        o.set(fullpath, env[envStr]);
       });
     }
   });
@@ -319,9 +327,9 @@ function importArguments(o) {
     }
   });
   Object.keys(o._argv).forEach(function(argStr) {
-    let k = o._argv[argStr];
     if (argv[argStr] !== undefined) {
-      o.set(k, String(argv[argStr]));
+      const fullpath = o._argv[argStr];
+      o.set(fullpath, String(argv[argStr]));
     }
   });
 }
@@ -333,7 +341,8 @@ function addDefaultValues(schema, node) {
       node[name] = {}; // node[name] is always undefined because addDefaultValues is the first to run.
       addDefaultValues(mySchema, node[name]);
     } else {
-      node[name] = coerce(mySchema, cloneDeep(mySchema.default));
+      const coerce = (mySchema && mySchema._cvtCoerce) ? mySchema._cvtCoerce : (v) => v;
+      node[name] = coerce(cloneDeep(mySchema.default));
     }
   });
 }
@@ -345,7 +354,8 @@ function overlay(from, to, schema) {
     const mySchema = (schema && schema._cvtProperties) ? schema._cvtProperties[name] : null;
     // leaf
     if (Array.isArray(from[name]) || !isObj(from[name]) || !schema || schema.format === 'object') {
-      to[name] = coerce(mySchema, from[name]);
+      const coerce = (mySchema && mySchema._cvtCoerce) ? mySchema._cvtCoerce : (v) => v;
+      to[name] = coerce(from[name]);
     } else {
       if (!isObj(to[name])) to[name] = {};
       overlay(from[name], to[name], mySchema);
@@ -369,32 +379,37 @@ function traverseSchema(schema, path) {
   return o;
 }
 
-function coerce(schema, v) {
-  const format = (schema && typeof schema.format === 'string') ? schema.format : null;
+function isStr(value) {
+  return (typeof value === 'string');
+}
 
-  if (typeof v === 'string') {
-    if (converters.has(format)) {
-      return converters.get(format)(v);
-    }
-    switch (format) {
+function getCoerceMethod(format) {
+  if (converters.has(format)) {
+    return converters.get(format);
+  }
+  switch (format) {
     case 'port':
     case 'nat':
     case 'integer':
-    case 'int': return parseInt(v, 10);
-    case 'port_or_windows_named_pipe': return isWindowsNamedPipe(v) ? v : parseInt(v, 10);
-    case 'number': return parseFloat(v);
-    case 'boolean': return (String(v).toLowerCase() !== 'false');
-    case 'array': return v.split(',');
-    case 'object': return JSON.parse(v);
-    case 'regexp': return new RegExp(v);
+    case 'int':
+      return (v) => (isStr(v)) ? parseInt(v, 10) : v;
+    case 'port_or_windows_named_pipe':
+      return (v) => (isWindowsNamedPipe(v)) ? v : parseInt(v, 10);
+    case 'number':
+      return (v) => (isStr(v)) ? parseFloat(v) : v;
+    case 'boolean':
+      return (v) => (isStr(v)) ? (String(v).toLowerCase() !== 'false') : v;
+    case 'array':
+      return (v) => (isStr(v)) ? v.split(',') : v;
+    case 'object':
+      return (v) => (isStr(v)) ? JSON.parse(v) : v;
+    case 'regexp':
+      return (v) => (isStr(v)) ? new RegExp(v) : v;
     default:
-      // ?
-    }
-
-    // TODO: Should we throw an exception here?
+      // for eslint "Expected a default case"
   }
 
-  return v;
+  return (v) => v;
 }
 
 function loadFile(path) {
@@ -534,13 +549,19 @@ let convict = function convict(def, opts) {
      * nested values, e.g. "database.port". If objects in the chain don't yet
      * exist, they will be initialized to empty objects
      */
-    set: function(k, v) {
-      v = coerce(traverseSchema(this._schema, k), v);
-      let path = k.split('.');
-      let childKey = path.pop();
-      let parentKey = path.join('.');
-      let parent = walk(this._instance, parentKey, true);
-      parent[childKey] = v;
+    set: function(fullpath, value) {
+      const mySchema = traverseSchema(this._schema, fullpath);
+
+      // coercing
+      const coerce = (mySchema && mySchema._cvtCoerce) ? mySchema._cvtCoerce : (v) => v;
+      value = coerce(value);
+      // walk to the value
+      const path = fullpath.split('.');
+      const childKey = path.pop();
+      const parentKey = path.join('.');
+      const parent = walk(this._instance, parentKey, true);
+      parent[childKey] = value;
+
       return this;
     },
 

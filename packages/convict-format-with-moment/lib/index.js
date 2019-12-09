@@ -15,18 +15,22 @@ function assert(assertion, err_msg) {
 const duration = {
   name: 'duration',
   coerce: (v) => {
-    let split = v.split(' ')
-    if (split.length == 1) {
-      // It must be an integer in string form.
-      return parseInt(v, 10)
+    if (typeof v === 'string') {
+      const split = v.split(' ')
+      if (split.length == 1) {
+        // It must be an integer in string form.
+        return parseInt(v, 10)
+      } else {
+        // Add an "s" as the unit of measurement used in Moment
+        if (!split[1].match(/s$/)) split[1] += 's'
+        return moment.duration(parseInt(split[0], 10), split[1]).valueOf()
+      }
     } else {
-      // Add an "s" as the unit of measurement used in Moment
-      if (!split[1].match(/s$/)) split[1] += 's'
-      return moment.duration(parseInt(split[0], 10), split[1]).valueOf()
+      return v;
     }
   },
   validate: function(x) {
-    let err_msg = 'must be a positive integer or human readable string (e.g. 3000, "5 days")'
+    const err_msg = 'must be a positive integer or human readable string (e.g. 3000, "5 days")'
     if (Number.isInteger(x)) {
       assert(x >= 0, err_msg)
     } else {

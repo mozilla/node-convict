@@ -1,5 +1,10 @@
 'use strict';
 
+exports.formats = [
+  require('convict-format-with-moment'),
+  require('convict-format-with-validator')
+];
+
 exports.conf = {
   ip: {
     doc: 'The IP Address to bind.',

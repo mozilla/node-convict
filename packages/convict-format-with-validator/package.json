@@ -1,0 +1,44 @@
+{
+  "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
+  "name": "convict-format-with-validator",
+  "description": "Format 'email', 'ipaddress' and 'url' for convict",
+  "keywords": [
+    "convict",
+    "convict-format",
+    "email",
+    "ipaddress",
+    "url",
+    "validator"
+  ],
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/mozilla/node-convict",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mozilla/node-convict/tree/master/packages/convict-format-with-validator"
+  },
+  "bugs": "https://github.com/mozilla/node-convict/issues",
+  "engines": {
+    "node": ">=6"
+  },
+  "scripts": {
+    "posttest": "npm run lint",
+    "test": "mocha --check-leaks test/*-tests.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "version": "./assert_changelog_ready $npm_package_version"
+  },
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "dependencies": {
+    "validator": "11.1.0"
+  },
+  "devDependencies": {
+    "convict": "file:../convict",
+    "eslint": "6.5.1",
+    "mocha": "6.2.1",
+    "must": "0.13.4"
+  }
+}

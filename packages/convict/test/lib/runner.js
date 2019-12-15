@@ -8,8 +8,15 @@ const convict = require('../../lib/convict'),
 process.on('message', function(spec) {
   try {
     let s = require(path.join(__dirname, '../cases', spec.spec));
-    if (s.formats)
-      convict.addFormats(s.formats);
+    if (s.formats) {
+      if (Array.isArray(s.formats)) {
+        s.formats.forEach(function(formats) {
+          convict.addFormats(formats);
+        });
+      } else {
+        convict.addFormats(s.formats);
+      }
+    }
     let conf = convict(s.conf).loadFile(spec.config_files).validate();
     process.send({
       result: conf.get(),

@@ -4,6 +4,8 @@ const path = require('path');
 const http = require('http');
 const convict = require('../lib/convict.js');
 
+convict.addFormat(require('convict-format-with-validator').ipaddress);
+
 let conf = convict({
   ip: {
     doc: 'The IP Address to bind.',

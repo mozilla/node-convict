@@ -10,8 +10,8 @@
   },
   "devDependencies": {
     "convict": "file:./packages/convict/",
-    "convict-moment": "file:./packages/convict-moment/",
-    "convict-validator": "file:./packages/convict-validator/",
+    "convict-format-with-moment": "file:./packages/convict-format-with-moment/",
+    "convict-format-with-validator": "file:./packages/convict-format-with-validator/",
     "coveralls": "3.0.7",
     "deep-object-diff": "1.1.0",
     "eslint": "6.5.1",

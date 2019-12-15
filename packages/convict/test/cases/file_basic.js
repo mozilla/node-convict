@@ -1,8 +1,8 @@
 'use strict';
 
 exports.formats = [
-  require('convict-moment'),
-  require('convict-validator')
+  require('convict-format-with-moment'),
+  require('convict-format-with-validator')
 ];
 
 exports.conf = {

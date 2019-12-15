@@ -37,7 +37,7 @@ An example `config.js` file:
 ```javascript
 var convict = require('convict');
 
-convict.addFormat(require('convict-validator').ipaddress);
+convict.addFormat(require('convict-format-with-validator').ipaddress);
 
 // Define a schema
 var config = convict({
@@ -256,7 +256,7 @@ convict.addFormat({
   }
 });
 
-convict.addFormat(require('convict-validator').url);
+convict.addFormat(require('convict-format-with-validator').url);
 
 const schema = {
   sources: {

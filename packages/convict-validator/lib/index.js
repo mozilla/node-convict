@@ -1,5 +1,5 @@
 /**
- * convict-validator
+ * convict-format-with-validator
  * Format 'email', 'ipaddress' and 'url' for convict
  */
 'use strict'

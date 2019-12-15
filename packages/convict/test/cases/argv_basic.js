@@ -1,6 +1,6 @@
 'use strict';
 
-exports.formats = require('convict-validator');
+exports.formats = require('convict-format-with-validator');
 
 exports.conf = {
   ip: {

@@ -1,6 +1,6 @@
 'use strict';
 
-exports.formats = require('convict-moment')
+exports.formats = require('convict-format-with-moment')
 
 exports.conf = {
   env: {

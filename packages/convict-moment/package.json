@@ -1,6 +1,6 @@
 {
   "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
-  "name": "convict-moment",
+  "name": "convict-format-with-moment",
   "description": "Format 'duration' and 'timestamp' for convict",
   "keywords": [
     "convict",
@@ -14,7 +14,7 @@
   "homepage": "https://github.com/mozilla/node-convict",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mozilla/node-convict/tree/master/packages/convict-moment"
+    "url": "https://github.com/mozilla/node-convict/tree/master/packages/convict-format-with-moment"
   },
   "bugs": "https://github.com/mozilla/node-convict/issues",
   "engines": {

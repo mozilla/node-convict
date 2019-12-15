@@ -8,7 +8,7 @@ describe('convict formats', function() {
   const convict = require('convict');
   let conf;
 
-  it('must add "duration" and "timestamp" format with convict-moment', function() {
+  it('must add "duration" and "timestamp" format with convict-format-with-moment', function() {
     convict.addFormat(require('../').duration);
     convict.addFormat(require('../').timestamp);
   });

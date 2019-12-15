@@ -1,13 +1,13 @@
 # Convict-moment
 
-[![NPM version](http://img.shields.io/npm/v/convict-moment.svg)](https://www.npmjs.org/package/convict-moment)
+[![NPM version](http://img.shields.io/npm/v/convict-format-with-moment.svg)](https://www.npmjs.org/package/convict-format-with-moment)
 
 Format 'duration' and 'timestamp' for convict with momentjs.
 
 ## Install
 
 ```shell
-npm install convict-moment
+npm install convict-format-with-moment
 ```
 
 ## Usage
@@ -17,8 +17,8 @@ An example `config.js` file:
 ```javascript
 const convict = require('convict');
 
-convict.addFormat(require('convict-moment').duration);
-convict.addFormat(require('convict-moment').timestamp);
+convict.addFormat(require('convict-format-with-moment').duration);
+convict.addFormat(require('convict-format-with-moment').timestamp);
 
 // Define a schema
 var config = convict({

@@ -1,5 +1,5 @@
 /**
- * convict-moment
+ * convict-format-with-moment
  * Format 'duration' and 'timestamp' for convict
  */
 'use strict'

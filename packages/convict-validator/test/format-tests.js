@@ -6,7 +6,7 @@ describe('convict formats', function() {
   const convict = require('convict');
   let conf;
 
-  it('must add formats ("email", "ipaddress" and "url") with convict-validator', function() {
+  it('must add formats ("email", "ipaddress" and "url") with convict-format-with-validator', function() {
     convict.addFormats(require('../'));
   });
 

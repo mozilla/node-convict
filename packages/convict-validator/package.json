@@ -1,6 +1,6 @@
 {
   "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
-  "name": "convict-validator",
+  "name": "convict-format-with-validator",
   "description": "Format 'email', 'ipaddress' and 'url' for convict",
   "keywords": [
     "convict",
@@ -15,7 +15,7 @@
   "homepage": "https://github.com/mozilla/node-convict",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mozilla/node-convict/tree/master/packages/convict-validator"
+    "url": "https://github.com/mozilla/node-convict/tree/master/packages/convict-format-with-validator"
   },
   "bugs": "https://github.com/mozilla/node-convict/issues",
   "engines": {

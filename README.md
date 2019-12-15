@@ -15,10 +15,10 @@ This repository is a collection of packages.
 
   Main package.
 
- - [convict-moment](/packages/convict-moment/)
+ - [convict-format-with-moment](/packages/convict-format-with-moment/)
 
   Format 'duration' and 'timestamp'.
 
- - [convict-validator](/packages/convict-validator/)
+ - [convict-format-with-validator](/packages/convict-format-with-validator/)
 
   Format 'email', 'ipaddress' and 'url' for convict.

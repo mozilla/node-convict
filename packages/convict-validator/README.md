@@ -1,13 +1,13 @@
 # Convict-validator
 
-[![NPM version](http://img.shields.io/npm/v/convict-validator.svg)](https://www.npmjs.org/package/convict-validator)
+[![NPM version](http://img.shields.io/npm/v/convict-format-with-validator.svg)](https://www.npmjs.org/package/convict-format-with-validator)
 
 Format 'email', 'ipaddress' and 'url' for convict with validatorjs.
 
 ## Install
 
 ```shell
-npm install convict-validator
+npm install convict-format-with-validator
 ```
 
 ## Usage
@@ -17,11 +17,11 @@ An example `config.js` file:
 ```javascript
 const convict = require('convict');
 
-convict.addFormat(require('convict-validator').ipaddress);
-convict.addFormat(require('convict-validator').port);
+convict.addFormat(require('convict-format-with-validator').ipaddress);
+convict.addFormat(require('convict-format-with-validator').port);
 
 // or :
-// convict.addFormats(require('convict-validator'));
+// convict.addFormats(require('convict-format-with-validator'));
 
 // Define a schema
 var config = convict({

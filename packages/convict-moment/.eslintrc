@@ -1,0 +1,31 @@
+extends: eslint:recommended
+
+env:
+  es6: true
+  mocha: true
+  node: true
+
+rules:
+  strict: [2, "global"]
+
+  # JavaScript core
+  no-array-constructor: 2
+  no-unused-vars: [2, {"args": "none"}]
+  no-unreachable: 2
+  no-fallthrough: 2
+  default-case: 2
+  no-case-declarations: 2
+  consistent-return: 0
+
+  # Node.js specifics
+  no-process-exit: 2
+  no-sync: 2
+  no-path-concat: 2
+
+  # Presentation
+  indent: [2, 2]
+  quotes: [2, single, avoid-escape]
+  new-cap: 2
+  camelcase: 0
+  no-underscore-dangle: 0
+  space-before-function-paren: [1, "never"]

@@ -33,7 +33,7 @@
   ],
   "main": "lib/index.js",
   "dependencies": {
-    "validator": "10.11.0"
+    "validator": "11.1.0"
   },
   "devDependencies": {
     "convict": "file:../convict",

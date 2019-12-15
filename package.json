@@ -2,10 +2,9 @@
   "name": "node-convict",
   "private": true,
   "dependencies": {
-    "json5": "2.1.0",
     "lodash.clonedeep": "4.5.0",
     "moment": "2.24.0",
-    "validator": "10.11.0",
+    "validator": "11.1.0",
     "yargs-parser": "13.0.0"
   },
   "devDependencies": {
@@ -16,6 +15,7 @@
     "deep-object-diff": "1.1.0",
     "eslint": "6.5.1",
     "js-yaml": "3.13.1",
+    "json5": "2.1.0",
     "lerna": "3.16.4",
     "mocha": "6.2.1",
     "must": "0.13.4",

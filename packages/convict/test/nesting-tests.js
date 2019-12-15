@@ -4,6 +4,10 @@ describe('deep nested tree structure', function() {
   const convict = require('../');
   let conf;
 
+  it('must add formats of convict-format-with-validator', function() {
+    convict.addFormats(require('convict-format-with-validator'));
+  });
+
   it('must parse a deep nested config specification', function() {
     conf = convict({
       db: {

@@ -1,0 +1,50 @@
+{
+  "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
+  "name": "convict",
+  "description": "Featureful configuration management library for Node.js (nested structure, schema validation, etc.)",
+  "keywords": [
+    "configuration",
+    "config",
+    "key value store",
+    "schema",
+    "nested",
+    "validation"
+  ],
+  "version": "5.2.0",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/mozilla/node-convict",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mozilla/node-convict/tree/master/packages/convict"
+  },
+  "bugs": "https://github.com/mozilla/node-convict/issues",
+  "engines": {
+    "node": ">=6"
+  },
+  "scripts": {
+    "posttest": "npm run lint",
+    "test": "mocha --check-leaks test/*-tests.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "version": "./assert_changelog_ready $npm_package_version"
+  },
+  "files": [
+    "lib"
+  ],
+  "main": "lib/convict.js",
+  "dependencies": {
+    "lodash.clonedeep": "4.5.0",
+    "yargs-parser": "13.0.0"
+  },
+  "devDependencies": {
+    "convict-format-with-moment": "file:../convict-format-with-moment",
+    "convict-format-with-validator": "file:../convict-format-with-validator",
+    "deep-object-diff": "1.1.0",
+    "eslint": "6.5.1",
+    "js-yaml": "3.13.1",
+    "json5": "2.1.0",
+    "mocha": "6.2.1",
+    "must": "0.13.4",
+    "toml": "3.0.0"
+  }
+}

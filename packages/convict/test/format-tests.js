@@ -1,7 +1,6 @@
 'use strict';
 
 const expect = require('must');
-const moment = require('moment');
 const validator = require('validator');
 
 describe('convict formats', function() {
@@ -53,34 +52,6 @@ describe('convict formats', function() {
           format: ['foo', 'bar'],
           default: 'foo'
         },
-        date: {
-          format: 'timestamp',
-          default: '2013-05-05'
-        },
-        duration: {
-          format: 'duration',
-          default: 604800000
-        },
-        duration2: {
-          format: 'duration',
-          default: '5 minutes'
-        },
-        duration3: {
-          format: 'duration',
-          default: '12345'
-        },
-        duration4: {
-          format: 'duration',
-          default: '12345'
-        },
-        duration5: {
-          format: 'duration',
-          default: '12345'
-        },
-        host: {
-          format: 'ipaddress',
-          default: '127.0.0.1'
-        },
         port: {
           format: 'port',
           default: 8080
@@ -92,14 +63,6 @@ describe('convict formats', function() {
         pipe_port: {
           format: 'port_or_windows_named_pipe',
           default: '\\\\.\\pipe\\pipe_port',
-        },
-        email: {
-          format: 'email',
-          default: 'foo@bar.com'
-        },
-        url: {
-          format: 'url',
-          default: 'http://example.com'
         },
         nat: {
           format: 'nat',
@@ -159,34 +122,10 @@ describe('convict formats', function() {
   it('successfully fails to validate incorrect values', function() {
     conf.set('foo.primeNumber', 16);
     (function() { conf.validate(); }).must.throw();
-
-    conf.set('foo.duration4', '-7 days');
-    (function() { conf.validate(); }).must.throw(Error, /must be a positive integer or human readable string/);
-
-    conf.set('foo.duration5', 'zz-7zzdays');
-    (function() { conf.validate(); }).must.throw(Error, /must be a positive integer or human readable string/);
   });
 
   describe('predefined formats', function() {
-    it('must handle timestamp', function() {
-      let val = conf.get('foo.date');
-      val.must.be(moment('2013-05-05').valueOf());
-    });
-
-    it('must handle duration in milliseconds', function() {
-      conf.get('foo.duration').must.be(604800000);
-    });
-
-    it('must handle duration in a human readable string', function() {
-      conf.get('foo.duration2').must.be(60 * 5 * 1000);
-    });
-
-    it('must handle duration in milliseconds as a string', function() {
-      conf.get('foo.duration3').must.be(12345);
-    });
-
     describe('port_or_windows_named_pipe', function() {
-
       let conf = convict({
         port: {
           format: 'port_or_windows_named_pipe',
@@ -225,7 +164,6 @@ describe('convict formats', function() {
       });
 
       it('must throw for invalid ports', function() {
-
         let conf = convict({
           invalid: {
             format: 'port_or_windows_named_pipe',
@@ -234,7 +172,6 @@ describe('convict formats', function() {
         });
 
         (function() { conf.validate() }).must.throw(Error, /must be a windows named pipe or a number within range/);
-
       });
 
       it('must throw for invalid pipes', function() {
@@ -247,11 +184,8 @@ describe('convict formats', function() {
         });
 
         (function() { conf.validate() }).must.throw(Error, /must be a windows named pipe or a number within range/);
-
       });
-
     });
-
   });
 
   it('must throw with unknown format', function() {

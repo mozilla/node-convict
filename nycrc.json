@@ -2,7 +2,7 @@
   "all": true,
   "exclude": [
     "example",
-    "test"
+    "packages/*/test"
   ],
   "reporter": [
     "text-summary",

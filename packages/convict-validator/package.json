@@ -38,7 +38,7 @@
   "devDependencies": {
     "convict": "file:../convict",
     "eslint": "6.5.1",
-    "mocha": "6.1.4",
+    "mocha": "6.2.1",
     "must": "0.13.4"
   }
 }

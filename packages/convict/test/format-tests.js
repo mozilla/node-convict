@@ -204,7 +204,7 @@ describe('convict formats', function() {
     expect(val).to.be(undefined);
   });
 
-  it('must return schema in second argument', function() {
+  describe('must return schema in second argument', function() {
     const schema = {
       sources: {
         doc: 'A collection of data sources.',
@@ -268,11 +268,11 @@ describe('convict formats', function() {
     });
 
     it('must validate children value without throw an Error', function() {
-      (() => convict(schema).load(config).validate()).must.not.throw();
+      (function() { convict(schema).load(config).validate() }).must.not.throw();
     });
 
     it('successfully fails to validate incorrect children values', function() {
-      (() => convict(schema).load(configWithError).validate()).must.throw(Error, /url: must be a URL: value was "https:\/\(è_é\)\/github\.com\/mozilla\/node-convict\.git"/);
+      (function() { convict(schema).load(configWithError).validate() }).must.throw(Error, /url: must be a URL: value was "https:\/\(è_é\)\/github\.com\/mozilla\/node-convict\.git"/);
     });
   });
 });

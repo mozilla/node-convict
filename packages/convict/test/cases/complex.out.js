@@ -7,9 +7,7 @@ module.exports = {
   'var_path': '/home/browserid/var',
   'database': {
     'driver': 'mysql',
-    'user': 'browserid',
-    'create_schema': true,
-    'may_write': false
+    'user': 'browserid'
   },
   'statsd': {
     'enabled': true

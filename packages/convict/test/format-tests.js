@@ -200,7 +200,7 @@ describe('convict formats', function() {
       }
     };
 
-    expect(() => convict(schema)).to.throw("'foo' uses an unknown format type: unknow");
+    expect(() => convict(schema)).to.throw('foo: uses an unknown format type (actual: "unknown")');
   });
 
   it('must accept undefined as a default', function() {

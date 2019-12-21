@@ -214,7 +214,7 @@ describe('schema contains an object property with a custom format', function() {
   };
 
   it('must throw if a nested object property has an undeclared format', function() {
-    expect(() => convict(schemaWithFoo22Format)).to.throw("'object' uses an unknown format type: foo22");
+    expect(() => convict(schemaWithFoo22Format)).to.throw('object: uses an unknown format type (actual: "foo22")');
   });
 
   it('must not throw if an object property has a nested value and a custom format and after set a object property with a custom format', function() {
@@ -243,5 +243,29 @@ describe('schema contains an object property with a custom format', function() {
     const conf = convict(schema);
 
     expect(() => conf.validate()).to.not.throw();
+  });
+
+  it('must throw because unexpected error (-> convict internal error)', function() {
+    const message = 'this is a hack to make a fake convict internal error';
+
+    convict.addFormat('hack', function(name, schema) {
+      // we prevent that error : will be catch in original _cvtFormat function
+      //                     and will be convert to FORMAT_INVALID Error.
+      schema._cvtFormat = function(value) {
+        throw new Error(message);
+      };
+    });
+    const conf = convict({
+      object: {
+        format: 'hack',
+        default: ''
+      }
+    });
+
+    // init the hack (replace _cvtFormat by our own function)
+    expect(() => conf.validate(strictMode)).not.to.throw();
+
+    // run the hack function
+    expect(() => conf.validate(strictMode)).to.throw(message + ' \x1b[33;1m[/!\\ this is probably convict internal error]\x1b[0m');
   });
 });

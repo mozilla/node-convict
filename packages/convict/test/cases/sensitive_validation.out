@@ -1,2 +1,2 @@
 public: must be a positive integer: value was -1
-private: must be a positive integer
+private: must be a positive integer: value was [Sensitive]

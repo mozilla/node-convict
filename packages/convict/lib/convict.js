@@ -8,14 +8,22 @@
 const fs        = require('fs');
 const parseArgs = require('yargs-parser');
 const cloneDeep = require('lodash.clonedeep');
+const cvtError  = require('./convicterror.js');
 
-function assert(assertion, err_msg) {
-  if (!assertion) {
-    throw new Error(err_msg);
-  }
-}
+// 1
+const CONVICT_ERROR = cvtError.CONVICT_ERROR;
+const PARSING_ERROR = cvtError.PARSING_ERROR;
+// 2
+const SCHEMA_INVALID = cvtError.SCHEMA_INVALID;
+const CUSTOMISE_FAILED = cvtError.CUSTOMISE_FAILED;
+const PATH_INVALID = cvtError.PATH_INVALID;
+// 3
+const VALUE_INVALID = cvtError.VALUE_INVALID;
+const FORMAT_INVALID = cvtError.FORMAT_INVALID;
 
-// format can be a:
+
+//>>>> format can be a:
+
 // - predefine type, as seen below
 // - an array of enumerated values, e.g. ["production", "development", "testing"]
 // - built-in JavaScript type, i.e. Object, Array, String, Number, Boolean, RegExp
@@ -42,6 +50,13 @@ function isWindowsNamedPipe(x) {
   return String(x).includes('\\\\.\\pipe\\');
 }
 
+function assert(assertion, err_msg) {
+  if (!assertion) {
+    throw new Error(err_msg);
+    //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
+  }
+}
+
 const types = {
   '*': function() { },
   int: function(x) {
@@ -64,6 +79,8 @@ const types = {
 };
 // alias
 types.integer = types.int;
+
+//<<<< endformat
 
 const converters = new Map();
 
@@ -136,11 +153,11 @@ function validate(instance, schema, strictValidation) {
           // pull it unflattened from the config instance for type validation
           instanceItem = walk(instance, name);
         } else {
-          throw new Error('missing');
+          throw new PARSING_ERROR('missing');
         }
       } catch (e) {
-        const err = new Error("configuration param '" + name
-          + "' missing from config, did you override its parent?");
+        const msg = 'configuration param "' + name + '" missing from config, did you override its parent?';
+        const err = new PARSING_ERROR(msg);
         errors.missing.push(err);
         return;
       }
@@ -171,8 +188,7 @@ function validate(instance, schema, strictValidation) {
 
   if (strictValidation) {
     Object.keys(flatInstance).forEach(function(name) {
-      const err = new Error("configuration param '" + name
-        + "' not declared in the schema");
+      const err = new VALUE_INVALID("configuration param '" + name + "' not declared in the schema");
       errors.undeclared.push(err);
     });
   }
@@ -228,7 +244,7 @@ function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive)
   // associate this property with a command-line argument
   if (schema.arg) {
     if (argv[schema.arg]) {
-      throw new Error("'" + fullName + "' reuses a command-line argument: " + schema.arg);
+      throw new SCHEMA_INVALID(fullName, 'reuses a command-line argument', schema.arg);
     }
     argv[schema.arg] = fullName;
   }
@@ -251,12 +267,13 @@ function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive)
       return (value) => {
         if (formatFormat !== Object.prototype.toString.call(value)) {
           throw new Error('must be of type ' + myFormat);
+          //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
         }
       };
     } else if (typeof format === 'string') {
       // store declared type
       if (!types[format]) {
-        throw new Error("'" + fullName + "' uses an unknown format type: " + format);
+        throw new SCHEMA_INVALID(fullName, 'uses an unknown format type', format);
       }
       // use a predefined type
       return types[format];
@@ -265,13 +282,15 @@ function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive)
       const contains = (whitelist, value) => {
         if (!whitelist.includes(value)) {
           throw new Error('must be one of the possible values: ' + JSON.stringify(whitelist));
+          //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
         }
       }
       return contains.bind(null, format);
     } else if (typeof format === 'function') {
       return format;
     } else if (format && typeof format !== 'function') {
-      throw new Error("'" + fullName + "': `format` must be a function or a known format type.");
+      const errorMessage = 'uses an invalid format, it must be a format name, a function, an array or a known format type';
+      throw new SCHEMA_INVALID(fullName, errorMessage, (format || '').toString() || 'is a ' + typeof format);
     } else { // !format
       // default format is the typeof the default value
       const defaultFormat = Object.prototype.toString.call(schema.default);
@@ -281,6 +300,7 @@ function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive)
       return (value) => {
         if (defaultFormat !== Object.prototype.toString.call(value)) {
           throw new Error('must be of type ' + myFormat);
+          //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
         }
       };
     }
@@ -294,14 +314,12 @@ function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive)
     }
   })();
   
-  schema._cvtFormat = function(x) {
+  schema._cvtFormat = function(value) {
     try {
-      newFormat(x, schema); // schema = this
-    } catch (e) {
+      newFormat(value, schema); // schema = this
+    } catch (err) {
       // attach the value and the property's fullName to the error
-      e.fullName = fullName;
-      e.value = x;
-      throw e;
+      throw new FORMAT_INVALID(fullName, err.message, value);
     }
   };
 }
@@ -431,7 +449,7 @@ function walk(obj, path, initializeMissing) {
       } else if (k in obj) {
         obj = obj[k];
       } else {
-        throw new Error("cannot find configuration param '" + path + "'");
+        throw new PATH_INVALID('cannot find configuration param: ' + path);
       }
     }
   }
@@ -445,7 +463,7 @@ function walk(obj, path, initializeMissing) {
 const convict = function convict(def, opts) {
 
   // TODO: Rename this `rv` variable (supposedly "return value") into something
-  // more meaningful.
+  // more meaningful.   ^^ --> rv != convict (-> rv is local & convict is global)
   const rv = {
     /**
      * Gets the array of process arguments, using the override passed to the
@@ -601,32 +619,52 @@ const convict = function convict(def, opts) {
       options.allowed = options.allowed || ALLOWED_OPTION_WARN;
 
       if (options.output && typeof options.output !== 'function') {
-        throw new Error('options.output is optionnal and must be a function.');
+        throw new CUSTOMISE_FAILED('options.output is optionnal and must be a function.');
       }
 
       const output_function = options.output || global.console.log;
 
       const errors = validate(this._instance, this._schema, options.allowed);
 
+      // Write 'Warning:' in bold and in yellow
+      const BOLD_YELLOW_TEXT = '\x1b[33;1m';
+      const RESET_TEXT = '\x1b[0m';
+
       if (errors.invalid_type.length + errors.undeclared.length + errors.missing.length) {
         const sensitive = this._sensitive;
 
         const fillErrorBuffer = function(errors) {
           let err_buf = '';
-          for (let i = 0; i < errors.length; i++) {
-
-            if (err_buf.length) err_buf += '\n';
-
-            const e = errors[i];
-
-            if (e.fullName) {
-              err_buf += e.fullName + ': ';
+          errors.forEach(function(err) {
+            if (err_buf.length) {
+              err_buf += '\n';
             }
-            if (e.message) err_buf += e.message;
-            if (e.value && !sensitive.has(e.fullName)) {
-              err_buf +=  ': value was ' + JSON.stringify(e.value);
+
+            /*if (err.type) {
+              err_buf += '[' + err.type + '] ';
+            }*/
+            if (err.fullName) {
+              err_buf += err.fullName + ': ';
             }
-          }
+            if (err.message) {
+              err_buf += err.message;
+            }
+
+            const hidden = !!sensitive.has(err.fullName);
+            const value = (hidden) ? '[Sensitive]' : JSON.stringify(err.value);
+
+            if (err.value) {
+              err_buf +=  ': value was ' + value;
+            }
+
+            if (!(err instanceof CONVICT_ERROR)) {
+              let warning = '[/!\\ this is probably convict internal error]';
+              if (process.stdout.isTTY) {
+                warning = BOLD_YELLOW_TEXT + warning + RESET_TEXT;
+              }
+              err_buf += ' ' + warning;
+            }
+          });
           return err_buf;
         };
 
@@ -639,10 +677,7 @@ const convict = function convict(def, opts) {
         if (options.allowed === ALLOWED_OPTION_WARN && params_err_buf.length) {
           let warning = 'Warning:';
           if (process.stdout.isTTY) {
-            // Write 'Warning:' in bold and in yellow
-            const SET_BOLD_YELLOW_TEXT = '\x1b[33;1m';
-            const RESET_ALL_ATTRIBUTES = '\x1b[0m';
-            warning = SET_BOLD_YELLOW_TEXT + warning + RESET_ALL_ATTRIBUTES;
+            warning = BOLD_YELLOW_TEXT + warning + RESET_TEXT;
           }
           output_function(warning + ' ' + params_err_buf);
         } else if (options.allowed === ALLOWED_OPTION_STRICT) {
@@ -653,8 +688,8 @@ const convict = function convict(def, opts) {
           .filter(function(str) { return str.length; })
           .join('\n');
 
-        if(output.length) {
-          throw new Error(output);
+        if (output.length) {
+          throw new VALUE_INVALID(output);
         }
 
       }
@@ -701,10 +736,10 @@ convict.addFormat = function(name, validate, coerce) {
     name = name.name;
   }
   if (typeof validate !== 'function') {
-    throw new Error('Validation function for ' + name + ' must be a function.');
+    throw new CUSTOMISE_FAILED('Validation function for "' + name + '" must be a function.');
   }
   if (coerce && typeof coerce !== 'function') {
-    throw new Error('Coerce function for ' + name + ' must be a function.');
+    throw new CUSTOMISE_FAILED('Coerce function for "' + name + '" must be a function.');
   }
   types[name] = validate;
   if (coerce) converters.set(name, coerce);
@@ -726,15 +761,15 @@ convict.addParser = function(parsers) {
   if (!Array.isArray(parsers)) parsers = [parsers];
 
   parsers.forEach(function(parser) {
-    if (!parser) throw new Error('Invalid parser');
-    if (!parser.extension) throw new Error('Missing parser.extension');
-    if (!parser.parse) throw new Error('Missing parser.parse function');
+    if (!parser) throw new CUSTOMISE_FAILED('Invalid parser');
+    if (!parser.extension) throw new CUSTOMISE_FAILED('Missing parser.extension');
+    if (!parser.parse) throw new CUSTOMISE_FAILED('Missing parser.parse function');
 
-    if (typeof parser.parse !== 'function') throw new Error('Invalid parser.parse function');
+    if (typeof parser.parse !== 'function') throw new CUSTOMISE_FAILED('Invalid parser.parse function');
 
     const extensions = !Array.isArray(parser.extension) ? [parser.extension] : parser.extension;
     extensions.forEach(function(extension) {
-      if (typeof extension !== 'string') throw new Error('Invalid parser.extension');
+      if (typeof extension !== 'string') throw new CUSTOMISE_FAILED('Invalid parser.extension');
       parsers_registry[extension] = parser.parse;
     });
   });

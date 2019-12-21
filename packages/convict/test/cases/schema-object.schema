@@ -1,7 +1,7 @@
 {
   "properties": {
     "shorthand": {
-      "defa(è_é)ult": "value"
+      "default": "value"
     },
     "basic": {
       "default": true

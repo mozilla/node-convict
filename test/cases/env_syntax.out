@@ -1,1 +1,1 @@
-foo.bar: must be one of the possible values: ["a","b"]: value was "c"
+foo.bar[BAR]: must be one of the possible values: ["a","b"]: value was "c"

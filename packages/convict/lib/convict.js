@@ -350,7 +350,14 @@ function applyGetters(schema, node) {
       }
       applyGetters.call(this, mySchema, node[name]);
     } else {
+      const actualOrigin = mySchema._cvtGetOrigin && mySchema._cvtGetOrigin();
+      const actualLevel = (actualOrigin) ? getters.order.indexOf(actualOrigin) : 0;
+
       for (let i = getters.order.length - 1; i >= 0; i--) {
+        if (i < actualLevel) {
+          break; // stop if the current getter is highter 
+        }
+
         const getterName = getters.order[i]; // getterName
         const getterObj = getters.list[getterName];
         let propagationAsked = false; // #224 accept undefined

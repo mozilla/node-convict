@@ -5,12 +5,13 @@ const expect = chai.expect;
 
 const validator = require('validator');
 
+const new_require = require('./new_require.js');
+const convict = new_require('../');
+
 describe('convict formats', function() {
-  const convict = require('../');
   let conf;
 
-  it('must parse a config specification', function() {
-
+  it('must init and parse a schema', function() {
     convict.addFormat({
       name: 'float-percent',
       validate: function(val) {
@@ -270,6 +271,10 @@ describe('convict formats', function() {
           })
         }
       });
+    });
+
+    it('must add url format of convict-format-with-validator', function() {
+      convict.addFormat(require('convict-format-with-validator')['url']);
     });
 
     it('must validate children value without throw an Error', function() {

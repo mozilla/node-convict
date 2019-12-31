@@ -9,9 +9,10 @@ const strictMode = {
   allowed: 'strict'
 };
 
-describe('configuration files contain properties not declared in the schema', function() {
-  const convict = require('../');
+const new_require = require('./new_require.js');
+const convict = new_require('../');
 
+describe('configuration files contain properties not declared in the schema', function() {
   let conf = convict({
     foo: {
       doc: 'testing',

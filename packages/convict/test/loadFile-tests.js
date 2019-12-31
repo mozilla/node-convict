@@ -8,8 +8,10 @@ const json5 = require('json5');
 const yaml = require('js-yaml');
 const toml = require('toml');
 
-describe('convict', function() {
-  const convict = require('../');
+const new_require = require('./new_require.js');
+const convict = new_require('../');
+
+describe('convict loadFile & addParser functions', function() {
   const schema = require('./cases/formats/schema');
   const expected_output = require('./cases/formats/out');
 

@@ -3,19 +3,21 @@
 const chai = require('chai');
 const expect = chai.expect;
 
+const new_require = require('./new_require.js');
+const convict = new_require('../');
+
 const strictMode = {
   allowed: 'strict'
 };
 
 describe('deep nested tree structure', function() {
-  const convict = require('../');
   let conf;
 
   it('must add formats of convict-format-with-validator', function() {
     convict.addFormats(require('convict-format-with-validator'));
   });
 
-  it('must parse a deep nested config specification', function() {
+  it('must parse a deep nested schema', function() {
     conf = convict({
       db: {
         name: {

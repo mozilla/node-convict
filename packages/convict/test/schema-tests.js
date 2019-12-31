@@ -4,9 +4,10 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const path = require('path');
+const new_require = require('./new_require.js');
+const convict = new_require('../');
 
 describe('convict schema', function() {
-  const convict = require('../');
   let myOwnConf; // init in beforeEach
   const conf2 = convict({
     foo: {

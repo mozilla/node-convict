@@ -6,6 +6,7 @@ const expect = chai.expect;
 
 const fs = require('fs');
 const path = require('path');
+const new_require = require('./new_require.js');
 
 // This test finds its cases in /test/cases
 const cases_dir_path = path.join(__dirname, 'cases');
@@ -118,22 +119,3 @@ describe('CLI tests', function() {
     });
   });
 });
-
-function new_require(packageName) {
-  const path = require.resolve(packageName);
-  const before = require.cache[path] || false;
-
-  if (before) {
-    delete require.cache[path];
-  }
-
-  const newModule = require(packageName);
-
-  delete require.cache[path];
-
-  if (before) {
-    require.cache[path] = before;
-  }
-
-  return newModule;
-}

@@ -3,11 +3,13 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-describe('convict', function() {
-  const convict = require('../');
+const new_require = require('./new_require.js');
+const convict = new_require('../');
+
+describe('convict get function', function() {
   let conf;
 
-  it('must parse a config specification', function() {
+  it('must parse a schema', function() {
     conf = convict({
       env: {
         format: ['bar', 'baz', 'foo'],

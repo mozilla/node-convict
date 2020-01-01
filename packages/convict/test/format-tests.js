@@ -1,6 +1,8 @@
 'use strict';
 
-const expect = require('must');
+const chai = require('chai');
+const expect = chai.expect;
+
 const validator = require('validator');
 
 describe('convict formats', function() {
@@ -106,22 +108,24 @@ describe('convict formats', function() {
   });
 
   it('validates default schema', function() {
-    (function() { conf.validate(); }).must.not.throw();
+    expect(() => conf.validate()).to.not.throw();
   });
 
   it('validates non-coerced correct values', function() {
     conf.set('foo.primeNumber', 7);
-    (function() { conf.validate(); }).must.not.throw();
+
+    expect(() => conf.validate()).to.not.throw();
   });
 
   it('validates coerced correct values', function() {
     conf.set('foo.primeNumber', '11');
-    (function() { conf.validate(); }).must.not.throw();
+
+    expect(() => conf.validate()).to.not.throw();
   });
 
   it('successfully fails to validate incorrect values', function() {
     conf.set('foo.primeNumber', 16);
-    (function() { conf.validate(); }).must.throw();
+    expect(() => conf.validate()).to.throw('foo.primeNumber: must be a prime number: value was 16');
   });
 
   describe('predefined formats', function() {
@@ -146,21 +150,21 @@ describe('convict formats', function() {
       });
 
       it('must coerce ports to integers', function() {
-        conf.get('port').must.be(1234);
+        expect(conf.get('port')).to.equal(1234);
       });
 
       it('must not coerce pipes to integers', function() {
-        conf.get('pipe').must.be('\\\\.\\pipe\\test');
+        expect(conf.get('pipe')).to.equal('\\\\.\\pipe\\test');
       });
 
       it('must handle switching from port to pipe', function() {
         conf.set('to_pipe', '\\\\.\\pipe\\changed');
-        conf.get('to_pipe').must.be('\\\\.\\pipe\\changed');
+        expect(conf.get('to_pipe')).to.equal('\\\\.\\pipe\\changed');
       });
 
       it('must handle switching from pipe to port', function() {
         conf.set('to_port', '8080');
-        conf.get('to_port').must.be(8080);
+        expect(conf.get('to_port')).to.equal(8080);
       });
 
       it('must throw for invalid ports', function() {
@@ -171,7 +175,7 @@ describe('convict formats', function() {
           },
         });
 
-        (function() { conf.validate() }).must.throw(Error, /must be a windows named pipe or a number within range/);
+        expect(() => conf.validate()).to.throw('must be a windows named pipe or a number within rang');
       });
 
       it('must throw for invalid pipes', function() {
@@ -183,25 +187,26 @@ describe('convict formats', function() {
           },
         });
 
-        (function() { conf.validate() }).must.throw(Error, /must be a windows named pipe or a number within range/);
+        expect(() => conf.validate()).to.throw('must be a windows named pipe or a number within rang');
       });
     });
   });
 
   it('must throw with unknown format', function() {
-    (function() {
-      convict({
-        foo: {
-          format: 'unknown',
-          default: 'bar'
-        }
-      });
-    }).must.throw();
+    const schema = {
+      foo: {
+        format: 'unknown',
+        default: 'bar'
+      }
+    };
+
+    expect(() => convict(schema)).to.throw("'foo' uses an unknown format type: unknow");
   });
 
   it('must accept undefined as a default', function() {
     let val = conf.get('foo.optional');
-    expect(val).to.be(undefined);
+
+    expect(val).to.be.undefined;
   });
 
   describe('must return schema in second argument', function() {
@@ -268,11 +273,11 @@ describe('convict formats', function() {
     });
 
     it('must validate children value without throw an Error', function() {
-      (function() { convict(schema).load(config).validate() }).must.not.throw();
+      expect(() => convict(schema).load(config).validate()).to.not.throw();
     });
 
     it('successfully fails to validate incorrect children values', function() {
-      (function() { convict(schema).load(configWithError).validate() }).must.throw(Error, /url: must be a URL: value was "https:\/\(è_é\)\/github\.com\/mozilla\/node-convict\.git"/);
+      expect(() => convict(schema).load(configWithError).validate()).to.throw('url: must be a URL: value was "https:/(è_é)/github.com/mozilla/node-convict.git');
     });
   });
 });

@@ -1,6 +1,7 @@
 'use strict';
 
-require('must');
+const chai = require('chai');
+const expect = chai.expect;
 
 describe('convict formats', function() {
   const convict = require('convict');
@@ -30,11 +31,11 @@ describe('convict formats', function() {
   });
 
   it('validates default schema', function() {
-    (function() { conf.validate(); }).must.not.throw();
+    expect(() => conf.validate()).to.not.throw();
   });
 
   it('successfully fails to validate incorrect values', function() {
     conf.set('foo.email', ';aaaa;');
-    (function() { conf.validate(); }).must.throw(Error, /must be an email address: value was ";aaaa;"/);
+    expect(() => conf.validate()).to.throw('must be an email address: value was ";aaaa;"');
   });
 });

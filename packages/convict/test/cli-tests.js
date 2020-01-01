@@ -35,7 +35,6 @@ Object.keys(config_files).forEach(function(name) {
 let toRun = Object.keys(config_files);
 
 describe('CLI tests', function() {
-  //const name = 'env_types';
   toRun.forEach(function(name) {
     describe(name, function() {
       const output = {};
@@ -53,7 +52,7 @@ describe('CLI tests', function() {
       const state = (typeof expectedOutput === 'string') ? 'throw' : 'not throw';
       let conf;
 
-      it('Convict should ' + state, function() {
+      it('Convict must ' + state, function() {
         function init() {
           const convict = new_require('../');
           const settings = require(path.join(__dirname, 'cases', name + '.js'));
@@ -104,6 +103,7 @@ describe('CLI tests', function() {
       it('convert to string', function() {
         if (files.indexOf(name + '.string') !== -1) {
           const expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path, name + '.string')));
+
           expect(JSON.parse(conf.toString())).to.deep.equal(expected);
         }
       });
@@ -111,6 +111,7 @@ describe('CLI tests', function() {
       it('check schema', function() {
         if (files.indexOf(name + '.schema') !== -1) {
           const expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path, name + '.schema')));
+
           expect(conf.getSchema()).to.deep.equal(expected);
         }
       });

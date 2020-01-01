@@ -1,6 +1,7 @@
 'use strict';
 
-require('must');
+const chai = require('chai');
+const expect = chai.expect;
 
 const moment = require('moment');
 
@@ -42,37 +43,35 @@ describe('convict formats', function() {
         }
       }
     });
-
   });
 
   it('validates default schema', function() {
-    (function() { conf.validate(); }).must.not.throw();
+    expect(() => conf.validate()).to.not.throw();
   });
 
   it('successfully fails to validate incorrect values', function() {
     conf.set('foo.duration4', '-7 days');
-    (function() { conf.validate(); }).must.throw(Error, /must be a positive integer or human readable string/);
+    expect(() => conf.validate()).to.throw('must be a positive integer or human readable string');
 
     conf.set('foo.duration5', 'zz-7zzdays');
-    (function() { conf.validate(); }).must.throw(Error, /must be a positive integer or human readable string/);
+    expect(() => conf.validate()).to.throw('must be a positive integer or human readable string');
   });
 
   describe('predefined formats', function() {
     it('must handle timestamp', function() {
-      let val = conf.get('foo.date');
-      val.must.be(moment('2013-05-05').valueOf());
+      expect(conf.get('foo.date')).to.equal(moment('2013-05-05').valueOf());
     });
 
     it('must handle duration in milliseconds', function() {
-      conf.get('foo.duration').must.be(604800000);
+      expect(conf.get('foo.duration')).to.equal(604800000);
     });
 
     it('must handle duration in a human readable string', function() {
-      conf.get('foo.duration2').must.be(60 * 5 * 1000);
+      expect(conf.get('foo.duration2')).to.equal(60 * 5 * 1000);
     });
 
     it('must handle duration in milliseconds as a string', function() {
-      conf.get('foo.duration3').must.be(12345);
+      expect(conf.get('foo.duration3')).to.equal(12345);
     });
   });
 });

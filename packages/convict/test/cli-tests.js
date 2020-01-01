@@ -94,13 +94,13 @@ describe('CLI tests', function() {
         }
       });
 
-      it('output is expected', function() {
+      it('must return the expected configuration object', function() {
         if (!output.error) {
           expect(conf.get()).to.deep.equal(expectedOutput);
         }
       });
 
-      it('convert to string', function() {
+      it('stringify configuration object', function() {
         if (files.indexOf(name + '.string') !== -1) {
           const expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path, name + '.string')));
 

@@ -327,15 +327,14 @@ function importArguments(o) {
   });
 }
 
-function addDefaultValues(schema, c) {
+function addDefaultValues(schema, node) {
   Object.keys(schema.properties).forEach(function(name) {
-    let p = schema.properties[name];
-    if (p.properties) {
-      let kids = c[name] || {};
-      addDefaultValues(p, kids);
-      c[name] = kids;
+    const mySchema = schema.properties[name];
+    if (mySchema.properties) {
+      node[name] = {}; // node[name] is always undefined because addDefaultValues is the first to run.
+      addDefaultValues(mySchema, node[name]);
     } else {
-      c[name] = coerce(name, cloneDeep(p.default), schema);
+      node[name] = coerce(mySchema, cloneDeep(mySchema.default));
     }
   });
 }
@@ -343,13 +342,14 @@ function addDefaultValues(schema, c) {
 function isObj(o) { return (typeof o === 'object' && o !== null); }
 
 function overlay(from, to, schema) {
-  Object.keys(from).forEach(function(k) {
+  Object.keys(from).forEach(function(name) {
+    const mySchema = (schema && schema.properties) ? schema.properties[name] : null;
     // leaf
-    if (Array.isArray(from[k]) || !isObj(from[k]) || !schema || schema.format === 'object') {
-      to[k] = coerce(k, from[k], schema);
+    if (Array.isArray(from[name]) || !isObj(from[name]) || !schema || schema.format === 'object') {
+      to[name] = coerce(mySchema, from[name]);
     } else {
-      if (!isObj(to[k])) to[k] = {};
-      overlay(from[k], to[k], schema.properties[k]);
+      if (!isObj(to[name])) to[name] = {};
+      overlay(from[name], to[name], mySchema);
     }
   });
 }
@@ -370,17 +370,18 @@ function traverseSchema(schema, path) {
   return o;
 }
 
-function getFormat(schema, path) {
-  let o = traverseSchema(schema, path);
-  if (o == null) return null;
-  if (typeof o.format === 'string') return o.format;
-  if (o.default != null) return typeof o.default;
-  return null;
-}
-
-function coerce(k, v, schema) {
-  // magic coerceing
-  let format = getFormat(schema, k);
+function coerce(schema, v) {
+  const format = (() => {
+    if (schema) {
+      if (typeof schema.format === 'string') {
+        return schema.format;
+      } else if (schema.default != null) {
+        // magic coerceing
+        return typeof schema.default;
+      }
+    }  
+    return null;
+  })();
 
   if (typeof v === 'string') {
     if (converters.has(format)) {
@@ -543,7 +544,7 @@ let convict = function convict(def, opts) {
      * exist, they will be initialized to empty objects
      */
     set: function(k, v) {
-      v = coerce(k, v, this._schema);
+      v = coerce(traverseSchema(this._schema, k), v);
       let path = k.split('.');
       let childKey = path.pop();
       let parentKey = path.join('.');

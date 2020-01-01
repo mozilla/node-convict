@@ -341,10 +341,16 @@ convict.addParser({extension: 'json', parse: require('json5').parse});
 
 ## API
 
-### var config = convict(schema)
+### var config = convict(schema[, opts])
 
 `convict()` takes a schema object or a path to a schema JSON file and returns a
 convict configuration object.
+
+**opts:** Optional object:
+
+  - **opts.env**: Override `process.env` if specified using an object `{'NODE_ENV': 'production'}`.
+  - **opts.args**: Override `process.argv` if specified using an array `['--argname', 'value']` or
+  a string `--argname value`.
 
 The configuration object has an API for getting and setting values, described
 below.

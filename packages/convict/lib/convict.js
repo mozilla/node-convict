@@ -355,7 +355,7 @@ function applyGetters(schema, node) {
 
       for (let i = getters.order.length - 1; i >= 0; i--) {
         if (i < actualLevel) {
-          break; // stop if the current getter is highter 
+          break; // stop if the current getter is higher 
         }
 
         const getterName = getters.order[i]; // getterName
@@ -560,7 +560,7 @@ const convict = function convict(def, opts) {
     },
 
     /**
-     * @returns the current getter name of the value origin. name can use dot
+     * @returns the current getter name of the name value origin. name can use dot
      *     notation to reference nested values
      */
     getOrigin: function(path) {
@@ -862,7 +862,7 @@ function sortGetters(currentOrder, newOrder) {
 /**
  * Gets array with getter name in the current order of priority
  */
-convict.getGettersOrder = function(path) {
+convict.getGettersOrder = function() {
   return cloneDeep(getters.order);
 };
 

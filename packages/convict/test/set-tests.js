@@ -48,7 +48,7 @@ describe('convict set function', function() {
     expect(get('color')).to.deep.equal(result('blue', 'env'));
   });
 
-  it('must respect priority because force is the hightest level', function() {
+  it('must respect priority because force is the highest level', function() {
     conf.set('color', 'green', true, true);
     ['default', 'value', 'env', 'arg'].forEach((priority) => {
       conf.set('color', 'orange', priority, true);
@@ -69,7 +69,7 @@ describe('convict set function', function() {
     expect(get('color')).to.deep.equal(result('chartreuse', 'default'));
   });
 
-  it('must change value with load if we use highter getter level', function() {
+  it('must change value with load if we use higher getter level', function() {
     conf.load({color: 'green'});
     expect(get('color')).to.deep.equal(result('green', 'value'));
   });

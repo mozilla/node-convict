@@ -201,101 +201,96 @@ const BUILT_INS = BUILT_IN_NAMES.map(function(name) {
   return BUILT_INS_BY_NAME[name];
 });
 
-function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
+function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive) {
   if (name === '_cvtProperties') {
     throw new Error("'" + fullName + "': '_cvtProperties' is reserved word of convict.");
   }
 
-  // If the current schema node is not a config property (has no "default"), recursively normalize it.
-  if (typeof node === 'object' && node !== null && !Array.isArray(node) &&
-    Object.keys(node).length > 0 && !('default' in node)) {
+  // If the current schema rawSchema is not a config property (has no "default"), recursively normalize it.
+  if (typeof rawSchema === 'object' && rawSchema !== null && !Array.isArray(rawSchema) &&
+        Object.keys(rawSchema).length > 0 && !('default' in rawSchema)) {
     props[name] = {
       _cvtProperties: {}
     };
-    Object.keys(node).forEach(function(k) {
-      normalizeSchema(k, node[k], props[name]._cvtProperties, fullName + '.' +
-                      k, env, argv, sensitive);
+    Object.keys(rawSchema).forEach(function(key) {
+      const path = fullName + '.' + key;
+      normalizeSchema(key, rawSchema[key], props[name]._cvtProperties, path, env, argv, sensitive);
     });
     return;
-  } else if (typeof node !== 'object' || Array.isArray(node) ||
-    node === null || Object.keys(node).length == 0) {
+  } else if (typeof rawSchema !== 'object' || Array.isArray(rawSchema) ||
+    rawSchema === null || Object.keys(rawSchema).length == 0) {
     // Normalize shorthand "value" config properties
-    node = { default: node };
+    rawSchema = { default: rawSchema };
   }
 
-  let o = cloneDeep(node);
-  props[name] = o;
+  const schema = cloneDeep(rawSchema);
+  props[name] = schema;
   // associate this property with an environmental variable
-  if (o.env) {
-    if (!env[o.env]) {
-      env[o.env] = [];
+  if (schema.env) {
+    if (!env[schema.env]) {
+      env[schema.env] = [];
     }
-    env[o.env].push(fullName);
+    env[schema.env].push(fullName);
   }
 
   // associate this property with a command-line argument
-  if (o.arg) {
-    if (argv[o.arg]) {
-      throw new Error("'" + fullName + "' reuses a command-line argument: " +
-        o.arg);
+  if (schema.arg) {
+    if (argv[schema.arg]) {
+      throw new Error("'" + fullName + "' reuses a command-line argument: " + schema.arg);
     }
-    argv[o.arg] = fullName;
+    argv[schema.arg] = fullName;
   }
 
   // mark this property as sensitive
-  if (o.sensitive === true) {
+  if (schema.sensitive === true) {
     sensitive.add(fullName);
   }
 
   // store original format function
-  let format = o.format;
-  let newFormat;
-
-  if (BUILT_INS.indexOf(format) >= 0 || BUILT_IN_NAMES.indexOf(format) >= 0) {
-    // if the format property is a built-in JavaScript constructor,
-    // assert that the value is of that type
-    let Format = typeof format === 'string' ? BUILT_INS_BY_NAME[format] : format;
-    newFormat = function(x) {
-      assert(Object.prototype.toString.call(x) ==
-        Object.prototype.toString.call(new Format()),
-      'must be of type ' + Format.name);
-    };
-    o.format = Format.name.toLowerCase();
-
-  } else if (typeof format === 'string') {
-    // store declared type
-    if (!types[format]) {
-      throw new Error("'" + fullName + "' uses an unknown format type: " +
-        format);
+  const format = schema.format;
+  let newFormat = (() => {
+    if (BUILT_INS.indexOf(format) >= 0 || BUILT_IN_NAMES.indexOf(format) >= 0) {
+      // if the format property is a built-in JavaScript constructor,
+      // assert that the value is of that type
+      const Format = typeof format === 'string' ? BUILT_INS_BY_NAME[format] : format;
+      const formatFormat = Object.prototype.toString.call(new Format());
+      const myFormat = Format.name;
+      schema.format = myFormat.toLowerCase();
+      return function(value) {
+        const valueFormat = Object.prototype.toString.call(value);
+        assert(valueFormat === formatFormat, 'must be of type ' + myFormat);
+      };
+    } else if (typeof format === 'string') {
+      // store declared type
+      if (!types[format]) {
+        throw new Error("'" + fullName + "' uses an unknown format type: " + format);
+      }
+      // use a predefined type
+      return types[format];
+    } else if (Array.isArray(format)) {
+      // assert that the value is a valid option
+      return contains.bind(null, format);
+    } else if (typeof format === 'function') {
+      return format;
+    } else if (format && typeof format !== 'function') {
+      throw new Error("'" + fullName +
+        "': `format` must be a function or a known format type.");
+    } else { // !format
+      // default format is the typeof the default value
+      const defaultFormat = Object.prototype.toString.call(schema.default);
+      const myFormat = defaultFormat.replace(/\[.* |]/g, '');
+      // magic coerceing
+      schema.format = myFormat.toLowerCase();
+      return function(value) {
+        const valueFormat = Object.prototype.toString.call(value);
+        assert(valueFormat === defaultFormat, 'must be of type ' + myFormat);
+      };
     }
+  })();
 
-    // use a predefined type
-    newFormat = types[format];
-
-  } else if (Array.isArray(format)) {
-    // assert that the value is a valid option
-    newFormat = contains.bind(null, format);
-
-  } else if (typeof format === 'function') {
-    newFormat = format;
-
-  } else if (format && typeof format !== 'function') {
-    throw new Error("'" + fullName +
-      "': `format` must be a function or a known format type.");
-  }
-
-  if (!newFormat && !format) {
-    // default format is the typeof the default value
-    let type = Object.prototype.toString.call(o.default);
-    newFormat = function(x) {
-      assert(Object.prototype.toString.call(x) == type,
-        ' should be of type ' + type.replace(/\[.* |]/g, ''));
-    };
-  }
-
-  o._format = function(x) {
+  schema._format = function(x) {
     try {
-      newFormat(x, this);
+      newFormat(x, schema); // schema = this
     } catch (e) {
       // attach the value and the property's fullName to the error
       e.fullName = fullName;
@@ -331,15 +326,14 @@ function importArguments(o) {
   });
 }
 
-function addDefaultValues(schema, c, instance) {
+function addDefaultValues(schema, node) {
   Object.keys(schema._cvtProperties).forEach(function(name) {
-    let p = schema._cvtProperties[name];
-    if (p._cvtProperties) {
-      let kids = c[name] || {};
-      addDefaultValues(p, kids, instance);
-      c[name] = kids;
+    const mySchema = schema._cvtProperties[name];
+    if (mySchema._cvtProperties) {
+      node[name] = {}; // node[name] is always undefined because addDefaultValues is the first to run.
+      addDefaultValues(mySchema, node[name]);
     } else {
-      c[name] = coerce(name, cloneDeep(p.default), schema, instance);
+      node[name] = coerce(mySchema, cloneDeep(mySchema.default));
     }
   });
 }
@@ -347,13 +341,14 @@ function addDefaultValues(schema, c, instance) {
 function isObj(o) { return (typeof o === 'object' && o !== null); }
 
 function overlay(from, to, schema) {
-  Object.keys(from).forEach(function(k) {
+  Object.keys(from).forEach(function(name) {
+    const mySchema = (schema && schema._cvtProperties) ? schema._cvtProperties[name] : null;
     // leaf
-    if (Array.isArray(from[k]) || !isObj(from[k]) || !schema || schema.format === 'object') {
-      to[k] = coerce(k, from[k], schema);
+    if (Array.isArray(from[name]) || !isObj(from[name]) || !schema || schema.format === 'object') {
+      to[name] = coerce(mySchema, from[name]);
     } else {
-      if (!isObj(to[k])) to[k] = {};
-      overlay(from[k], to[k], schema._cvtProperties[k]);
+      if (!isObj(to[name])) to[name] = {};
+      overlay(from[name], to[name], mySchema);
     }
   });
 }
@@ -374,36 +369,29 @@ function traverseSchema(schema, path) {
   return o;
 }
 
-function getFormat(schema, path) {
-  let o = traverseSchema(schema, path);
-  if (o == null) return null;
-  if (typeof o.format === 'string') return o.format;
-  if (o.default != null) return typeof o.default;
-  return null;
-}
-
-function coerce(k, v, schema, instance) {
-  // magic coerceing
-  let format = getFormat(schema, k);
+function coerce(schema, v) {
+  const format = (schema && typeof schema.format === 'string') ? schema.format : null;
 
   if (typeof v === 'string') {
     if (converters.has(format)) {
-      return converters.get(format)(v, instance, k);
+      return converters.get(format)(v);
     }
     switch (format) {
     case 'port':
     case 'nat':
     case 'integer':
-    case 'int': v = parseInt(v, 10); break;
-    case 'port_or_windows_named_pipe': v = isWindowsNamedPipe(v) ? v : parseInt(v, 10); break;
-    case 'number': v = parseFloat(v); break;
-    case 'boolean': v = (String(v).toLowerCase() !== 'false'); break;
-    case 'array': v = v.split(','); break;
-    case 'object': v = JSON.parse(v); break;
-    case 'regexp': v = new RegExp(v); break;
+    case 'int': return parseInt(v, 10);
+    case 'port_or_windows_named_pipe': return isWindowsNamedPipe(v) ? v : parseInt(v, 10);
+    case 'number': return parseFloat(v);
+    case 'boolean': return (String(v).toLowerCase() !== 'false');
+    case 'array': return v.split(',');
+    case 'object': return JSON.parse(v);
+    case 'regexp': return new RegExp(v);
     default:
-        // TODO: Should we throw an exception here?
+      // ?
     }
+
+    // TODO: Should we throw an exception here?
   }
 
   return v;
@@ -547,7 +535,7 @@ let convict = function convict(def, opts) {
      * exist, they will be initialized to empty objects
      */
     set: function(k, v) {
-      v = coerce(k, v, this._schema, this);
+      v = coerce(traverseSchema(this._schema, k), v);
       let path = k.split('.');
       let childKey = path.pop();
       let parentKey = path.join('.');
@@ -678,7 +666,7 @@ let convict = function convict(def, opts) {
   });
 
   rv._instance = {};
-  addDefaultValues(rv._schema, rv._instance, rv);
+  addDefaultValues(rv._schema, rv._instance);
   importEnvironment(rv);
   importArguments(rv);
 
@@ -708,8 +696,8 @@ convict.addFormat = function(name, validate, coerce) {
  * Adds new custom formats
  */
 convict.addFormats = function(formats) {
-  Object.keys(formats).forEach(function(type) {
-    convict.addFormat(type, formats[type].validate, formats[type].coerce);
+  Object.keys(formats).forEach(function(name) {
+    convict.addFormat(name, formats[name].validate, formats[name].coerce);
   });
 };
 

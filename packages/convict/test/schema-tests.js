@@ -112,17 +112,20 @@ describe('convict schema', function() {
         'foo': {
           '_cvtProperties': {
             'bar': {
-              'default': 7
+              'default': 7,
+              'format': 'number'
             },
             'baz': {
               '_cvtProperties': {
                 'bing': {
-                  'default': 'foo'
+                  'default': 'foo',
+                  'format': 'string'
                 },
                 'name with spaces': {
                   '_cvtProperties': {
                     'name_with_underscores': {
-                      'default': true
+                      'default': true,
+                      'format': 'boolean'
                     }
                   }
                 }

@@ -302,17 +302,26 @@ For instance, values with the format `int`, `nat`, `port`, or `Number` will beco
 
 ### Precedence order
 
-When merging configuration values from different sources, Convict follows precedence rules.
-The order, from lowest to highest, for `config.loadFile(file)` and `config.load(json)` is:
+When merging configuration values from different sources, Convict follows precedence rules depending of the getters order.
+The default getters order, from lowest to highest:
 
-1. Default value
-2. File or json set in function argument
-3. Environment variables (only used when `env` property is set in schema)
-4. Command line arguments (only used when `arg` property is set in schema)
+```javascript
+convict.getGettersOrder();
+// ['default', 'value', 'env', 'arg', 'force']
+```
 
-This order means that if schema defines parameter to be taken from an environment variable
-and environment variable is set then you cannot override it with `config.loadFile(file)`
-or `config.load(json)`.
+1. Use `default` property set in schema
+2. **Value** used with:
+    - `config.loadFile(file)` and `config.load(json)` ;
+    - `config.set(name, value, false, true)`.
+3. Use the environment variable (only used when `env` property is set in schema)
+4. Use the commandline arguments (only used when `arg` property is set in schema)
+5. **Force** used with:
+    - With: `config.set(name, value, true)` (permanent) ;
+    - With: `config.set(name, value)` (can be undo with `config.refreshGetters()`).
+
+This order means that if schema defines parameter to be taken from an environment variable and environment variable is set
+then you cannot override it with `config.loadFile(file)` or `config.load(json)`.
 
 ```javascript
 process.env.PORT = 8080; // environment variable is set
@@ -379,50 +388,22 @@ If you want to allow comments in your JSON file, use [JSON5](https://www.npmjs.c
 convict.addParser({extension: 'json', parse: require('json5').parse});
 ```
 
+## API convict (global)
 
-## API
-
-### var config = convict(schema[, opts])
-
-`convict()` takes a schema object or a path to a schema JSON file and returns a
-convict configuration object.
-
-**opts:** Optional object:
-
-  - **opts.env**: Override `process.env` if specified using an object `{'NODE_ENV': 'production'}`.
-  - **opts.args**: Override `process.argv` if specified using an array `['--argname', 'value']` or
-  a string `--argname value`.
-
-The configuration object has an API for getting and setting values, described
-below.
-
-```javascript
-var config = convict({
-  env: {
-    doc: 'The application environment.',
-    format: ['production', 'development', 'test'],
-    default: 'development',
-    env: 'NODE_ENV'
-  },
-  log_file_path: {
-    'doc': 'Log file path',
-    'format': String,
-    'default': '/tmp/app.log'
-  }
-});
-
-// or
-config = convict('/some/path/to/a/config-schema.json');
-```
+Some function are only global, like : addParser, addFormat, addGetter...
 
 ### convict.addParser(parser or parserArray)
 
-Adds new parsers for custom file extensions
+Adds new parsers for custom file extensions. Parser should be an Object :
+```javascript
+// Allow comments in JSON file (with JSON5)
+convict.addParser({ extension: 'json5', parse: require('json5').parse });
+```
 
-### convict.addFormat(format) or convict.addFormat(name, validate, coerce)
+### convict.addFormat(format) or convict.addFormat(name, validate, coerce[, rewrite = false])
 
-Adds a new custom format, `format` being an object, see example below.
-
+Adds a new custom format, `format` being an object, see example below. `rewrite = true`
+will let you rewrite an existing format.
 ```javascript
 convict.addFormat({
   name: 'float-percent',
@@ -441,7 +422,6 @@ convict.addFormat({
 
 Adds new custom formats, `formats` being an object whose keys are the new custom
 format names, see example below.
-
 ```javascript
 convict.addFormats({
   prime: {
@@ -462,11 +442,120 @@ convict.addFormats({
   'hex-string': {
     validate: function(val) {
       if (/^[0-9a-fA-F]+$/.test(val)) {
-        throw new Error('must be a hexadecimal string');
+        throw new Error('must be a hexidecimal string');
       }
     }
   }
 });
+```
+
+### convict.addGetter(getter) or convict.addGetter(property, getter[, usedOnlyOnce = false, rewrite = false])
+
+Adds a new custom getter, `getter` being an object, see example below. `rewrite = true`
+will let you rewrite an existing getter.
+
+The third argument of getter callback function lets catch `undefined` value. By default, convict
+will try to call each getter function to get a value (different of `undefined`), then `stopPropagation()`
+stops the getter calling loop.
+```javascript
+convict.addGetter({
+  name: 'file',
+  getter: (value, schema, stopPropagation) => fs.readFileSync(value, 'utf-8').toString(),
+  usedOnlyOnce: true // use file only once
+});
+
+convict.addGetter({
+  property: 'accept-undefined',
+  getter: (value, schema, stopPropagation) => {
+    stopPropagation();
+    return undefined;
+  }
+});
+```
+
+### convict.addGetters(getters)
+
+Adds new custom getter, `getter` being an object whose keys are the new custom
+getter names, see example below.
+```javascript
+convict.addGetters([
+  /* example to rewrite 'env' getter: */
+  { name: 'env', getter: (val) => schema._cvtCoerce(this.getEnv()[val]), usedOnlyOnce: false, rewrite: true },
+  { name: 'getter2', getter: (val) => val }
+]);
+```
+
+### convict.getGettersOrder()
+
+Returns array containing getter names sorted by priority (ascending order).
+```javascript
+convict.getGettersOrder();
+// ['default', 'value', 'env', 'arg', 'force']
+```
+
+Also see: [`config.getGettersOrder()`](#TEMP_LINK)
+
+### convict.sortGetters(newOrder)
+
+Sort getter depending of array order, priority uses ascending order. You have
+to sort getters before create configuration object instance (before `config = convict({})`)
+because global getters config is cloned to a local getters config. Also see:
+[`config.refreshGetters()`](#TEMP_LINK)
+
+```javascript
+convict.getGettersOrder();
+// ['default', 'value', 'env', 'arg', 'force']
+
+// two ways to do:
+convict.setGettersOrder(['default', 'value', 'arg', 'env', 'force']);
+convict.setGettersOrder(['default', 'value', 'arg', 'env']); // force is optional and must be the last one
+
+convict.getGettersOrder();
+// ['default', 'value', 'arg', 'env', 'force']
+```
+
+Also see: [`config.sortGetters()`](#TEMP_LINK)
+
+
+## API config instance (local, inherited configuration object)
+
+Inherited config object created by `var config = convict(schema)`.
+
+### var config = convict(schema[, opts])
+
+`convict()` takes a schema object or a path to a schema JSON file and returns a
+convict configuration object.
+
+**opts:** Optional object:
+
+  - **opts.env**: Override `process.env` if specified using an object `{'NODE_ENV': 'production'}`.
+  - **opts.args**: Override `process.argv` if specified using an array `['--argname', 'value']` or
+  a string `--argname value`.
+
+The configuration object has an API for getting and setting values, described
+below.
+
+The global getter config will be cloned to local config. You must
+[refresh getters configs](#config.refreshGetters_TEMP_LINK) if you apply global change
+to local (configuration instance).
+
+```javascript
+var config = convict({
+  env: {
+    doc: 'The applicaton environment.',
+    format: ['production', 'development', 'test'],
+    default: 'development',
+    env: 'NODE_ENV'
+  },
+  log_file_path: {
+    'doc': 'Log file path',
+    'format': String,
+    'default': '/tmp/app.log'
+  }
+});
+
+// or
+config = convict('/some/path/to/a/config-schema.json');
 ```
 
 ### config.get(name)
@@ -477,6 +566,47 @@ config.get('db.host');
 
 // or
 config.get('db').host;
+```
+
+### config.getOrigin(name)
+
+Returns the current getter name of the `name` value origin. `name` can use dot notation to reference nested values. E.g.:
+```javascript
+config.getOrigin('db.host');
+```
+
+### config.getGettersOrder()
+
+Local (configuration instance) version of : [`convict.getGettersOrder()`](#TEMP_LINK)
+
+### config.sortGetters(newOrder)
+
+Local (configuration instance) version of : [`convict.sortGetters()`](#TEMP_LINK)
+
+Sort getter depending of array order, priority uses ascending order.
+
+### config.refreshGetters()
+
+Reclone global getters config to local getters config and update configuration object value depending
+of new getters order.
+
+`value` set with `.load()`/`.set()` will be replaced by schema/getter value depending
+of Origin priority. (See: [`getter-tests.js#L304`](#TEMP_LINK))
+```javascript
+convict.getGettersOrder();
+// ['default', 'value', 'env', 'arg', 'force']
+
+const conf = convict(schema); // will clone: ['default', 'value', 'env', 'arg', 'force']
+
+// two ways to do:
+convict.setGettersOrder(['value', 'default', 'arg', 'env', 'force']);
+
+conf.getGettersOrder(); // ['default', 'value', 'env', 'arg', 'force']
+convict.getGettersOrder(); // ['value', 'default', 'arg', 'env', 'force']
+
+conf.refreshGetters(); // refresh and apply global change to local
+
+conf.getGettersOrder(); // ['value', 'default', 'arg', 'env', 'force']
 ```
 
 ### config.default(name)
@@ -502,20 +632,48 @@ if (config.has('some.property')) {
 }
 ```
 
-### config.set(name, value)
+### config.set(name, value[, priority = false, respectPriority = false])
 
 Sets the value of `name` to value. `name` can use dot notation to reference
 nested values, e.g. `"db.port"`. If objects in the chain don't yet exist,
 they will be initialized to empty objects.
+
+**priority**: Optional, can be a boolean or getter name (a string). You must
+declare this property in the schema to use this option. `set` will change
+the property getter origin depending of `priority` value:
+ - `false`: priority set to `value`.
+ - `true`: priority set to `force`, can be only changed if you do another
+ `.set(name, value)`. Make sure that `.refreshGetters()` will not overwrite
+ your value.
+ - a `String`: must be a getter name (like: `default`, `env`, `arg`).
+
+**respectPriority**: Optional, if this argument is `true` this function will change the value
+only if `priority` is higher than or equal to the property getter origin.
+
 E.g.:
 ```javascript
 config.set('property.that.may.not.exist.yet', 'some value');
 config.get('property.that.may.not.exist.yet');
-// Returns "some value"
-```
+// "some value"
 
-If you call `config.load` or `config.loadFile` after `config.set` then value provided by `config.set`
-will be overridden in case of conflict.
+config.set('color', 'green', true); // getter: 'force'
+// .get('color') --> 'green'
+
+config.set('color', 'orange', false, true); // getter: 'value' and respectPriority = true
+// value will be not change because  ^^^^ respectPriority = true and value priority < force priority
+// .get('color') --> 'green'
+
+config.set('color', 'pink', false); // getter: 'value'
+// value will change because respectPriority is not active.
+// .get('color') --> 'pink'
+
+config.set('color', 'green', true); // getter: 'force'
+// .get('color') --> 'green'
+
+config.load({color: 'blue'}); // getter: 'value'
+// value will not change because value priority < force priority
+// .get('color') --> 'green'
+```
 
 ### config.load(object)
 

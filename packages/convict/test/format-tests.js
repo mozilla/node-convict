@@ -164,7 +164,11 @@ describe('convict formats', function() {
       });
 
       it('must handle switching from pipe to port', function() {
+        // before change origin is default
+        expect(conf.getOrigin('to_port')).to.equal('default');
         conf.set('to_port', '8080');
+        // after change origin is value
+        expect(conf.getOrigin('to_port')).to.equal('value');
         expect(conf.get('to_port')).to.equal(8080);
       });
 

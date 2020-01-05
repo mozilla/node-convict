@@ -18,6 +18,11 @@ describe('convict schema', function() {
     }
   });
 
+  it('must have the default getters order', function() {
+    const order = ['default', 'value', 'env', 'arg', 'force'];
+    expect(convict.getGettersOrder()).to.be.deep.equal(order);
+  });
+
   it('must parse a config specification from a file', function() {
     const filepath = path.join(__dirname, 'schema.json');
 
@@ -42,7 +47,7 @@ describe('convict schema', function() {
       }
     };
 
-    expect(() => convict(schema)).to.throw('bar: reuses a command-line argument (actual: "BAZ")');
+    expect(() => convict(schema)).to.throw('bar: uses a already used value in "arg" getter (actual: "BAZ")');
   });
 
   it('conf2 must be valid', function() {
@@ -144,7 +149,7 @@ describe('convict schema', function() {
     it('must export the schema as a JSON string', function() {
       const expected = JSON.stringify(expectedSchema, null, 2);
 
-      expect(myOwnConf.getSchemaString()).to.equal(expected);
+      expect(myOwnConf.getSchemaString()).to.deep.equal(expected);
     });
 
     describe('.has()', function() {
@@ -160,6 +165,11 @@ describe('convict schema', function() {
     describe('.get()', function() {
       it('must find a nested value', function() {
         expect(myOwnConf.get('foo.bar')).to.equal(7);
+      });
+
+      it('must be not accept an array with magicoerce', function() {
+        myOwnConf.set('foo.bar', ['7']);
+        expect(() => myOwnConf.validate()).to.throw('foo.bar: must be of type Number: value was ["7"], getter was `value`');
       });
 
       it('must handle three levels of nesting', function() {
@@ -195,7 +205,7 @@ describe('convict schema', function() {
       });
 
       it('must throw if key doesn\'t exist', function() {
-
+        expect(() => myOwnConf.default('foo.no')).to.throw('cannot find configuration param: foo._cvtProperties.no.default');
       });
 
       describe('when acting on an Object property', function() {
@@ -214,14 +224,14 @@ describe('convict schema', function() {
           myOwnConf.set('someObject.five', 5);
 
           expect(myOwnConf.default('someObject')).to.deep.equal({});
-
+          expect(() => myOwnConf.default('someObject.five')).to.throw('cannot find configuration param: someObject._cvtProperties.five.default');
         });
 
         it('must not be altered by calls to .load()', function() {
           myOwnConf.load({someObject: {five: 5}});
 
           expect(myOwnConf.default('someObject')).to.deep.equal({});
-
+          expect(() => myOwnConf.default('someObject.five')).to.throw('cannot find configuration param: someObject._cvtProperties.five.default');
         });
       });
     });
@@ -239,14 +249,16 @@ describe('convict schema', function() {
 
       it('must reset the property to its default value', function() {
         expect(myOwnConf.get('foo.bar')).to.equal(8); // Modified
+        expect(myOwnConf.getOrigin('foo.bar')).to.equal('value');
 
         myOwnConf.reset('foo.bar');
 
         expect(myOwnConf.get('foo.bar')).to.equal(7);
+        expect(myOwnConf.getOrigin('foo.bar')).to.equal('default');
       });
 
       it('must throw if key doesn\'t exist', function() {
-
+        expect(() => myOwnConf.reset('foo.no')).to.throw('cannot find configuration param: foo._cvtProperties.no.default');
       });
     });
 

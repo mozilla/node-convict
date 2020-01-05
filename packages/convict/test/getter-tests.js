@@ -1,21 +1,29 @@
 'use strict';
 
-require('must');
+const expect = require('must');
 
 describe('convict getters', function() {
   const convict = require('../');
   let conf;
 
   it('must set custom getters', function() {
+    convict.addGetters({
+      'answer': {
+        getter: (value, schema, stopPropagation) => 'Yes, you can.',
+        usedOnlyOnce: true
+      }
+    });
+
     convict.addGetter({
       property: 'answer_no',
       getter: (value, schema, stopPropagation) => 'No, you cannot.'
     });
 
-    convict.addGetters({
-      'answer': {
-        getter: (value, schema, stopPropagation) => 'Yes, you can.',
-        usedOnlyOnce: true
+    convict.addGetter({
+      property: 'ghost',
+      getter: (value, schema, stopPropagation) => {
+        stopPropagation();
+        return undefined;
       }
     });
 
@@ -28,10 +36,22 @@ describe('convict getters', function() {
         default: 'foo',
         answer: 'Can I swim?',
         answer_no: 'Can I swim?'
+      },
+      ghost: {
+        default: 'foo',
+        format: (v) => {
+          if (typeof v !== 'undefined') {
+            throw new Error('not undefined');
+          }
+        },
+        answer: 'Too scared to ask',
+        answer_no: 'Too scared to ask',
+        ghost: 'ooooh!'
       }
     });
 
     conf.load({
+      default: 'foo',
       plane: 'airbus'
     })
   });
@@ -40,19 +60,31 @@ describe('convict getters', function() {
     (function() { conf.validate(); }).must.not.throw();
   });
 
-  it('must be equals to getter value', function() {
-    it('plane can fly', function() {
-      conf.get('plane').must.be('Yes, you can.');
-    });
-    it('bird cannot swim', function() {
-      conf.get('bird').must.be('No, you cannot.');
-    });
+  it('plane can fly', function() {
+    conf.get('plane').must.be('Yes, you can.');
+    conf.getOrigin('plane').must.be('answer');
+  });
+
+  it('bird cannot swim', function() {
+    conf.get('bird').must.be('No, you cannot.');
+    conf.getOrigin('bird').must.be('answer_no');
+  });
+
+  it('getter are affraid of ghost !', function() {
+    expect(conf.get('ghost')).to.be(undefined);
+    conf.getOrigin('ghost').must.be('ghost');
+  });
+
+  it('must change origin', function() {
+    conf.set('bird', 'ok');
+    conf.getOrigin('bird').must.be('value');
   });
 
   it('must not rewrite an existing getter', function() {
-    (function() {
-      convict.addGetter('answer', (value, schema, stopPropagation) => 'Yes, you can.');
-    }).must.throw('The getter property name "answer" is already registered. Set the 4th arguments (rewrite) of `addGetter` at true to skip this error.');
+    const expected = 'The getter property name "answer" is already registered. Set the 4th argument (rewrite) of `addGetter` at true to skip this error.';
+    const getter = (value, schema, stopPropagation) => 'Yes, you can.';
+
+    expect(() => convict.addGetter('answer', getter)).to.throw(expected);
   });
 
   it('must accept only fonction', function() {
@@ -74,29 +106,11 @@ describe('convict getters', function() {
   });
 
   it('getter with `usedOnlyOnce = true` must not have similar value', function() {
-    (function() {
-      conf = convict({
-        plane: {
-          default: 'foo',
-          answer: 'Can I fly?'
-        },
-        bird: {
-          default: 'foo',
-          answer: 'Can I fly?'
-        }
-      });
-    }).must.throw("'bird' use the same getter value for 'answer': Can I fly?");
+
   });
 
   it('must not rewrite an existing getter because I ask to force', function() {
-    (function() {
-      const fct = (value, schema, fullName, getterName) => {
-        if (value !== 'Can I fly?') {
-          throw new Error('Stop asking!');
-        }
-      };
-      convict.addGetter('answer', (value, schema, stopPropagation) => 'Yes, you can.', fct, true);
-    }).must.not.throw();
+
   });
 
   it('I can ask "Can I fly?" several time', function() {

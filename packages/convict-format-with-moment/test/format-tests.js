@@ -64,6 +64,7 @@ describe('convict formats', function() {
 
     it('must handle duration in milliseconds', function() {
       expect(conf.get('foo.duration')).to.equal(604800000);
+      expect(conf.getOrigin('foo.duration')).to.equal('default');
     });
 
     it('must handle duration in a human readable string', function() {

@@ -88,8 +88,8 @@ describe('configuration files contain properties not declared in the schema', fu
 
     expect(() => conf.load(param)).to.not.throw();
 
-    const expected = 'foo: must be of type String: value was 58'
-      + '\nbar: must be of type String: value was 98'
+    const expected = 'foo: must be of type String: value was 58, getter was `value`'
+      + '\nbar: must be of type String: value was 98, getter was `value`'
       + "\nconfiguration param 'undeclared' not declared in the schema"
       + "\nconfiguration param 'nested.level1_1' not declared in the schema";
 
@@ -229,6 +229,15 @@ describe('schema contains an object property with a custom format', function() {
 
     // must validate after set
     expect(() => conf.validate(strictMode)).to.not.throw();
+  });
+
+  it('must throw if a custom format foo is existing and if rewrite = false', function() {
+    expect(() => 
+      convict.addFormat('foo22', function() {})
+    ).to.throw('The format name "foo22" is already registered. Set the 4th argument (rewrite) of `addFormat` at true to skip this error.');
+    expect(() => 
+      convict.addFormat('foo22', function() {}, null, true) // true = rewrite = throw
+    ).to.not.throw();
   });
 
   it.skip("must not throw if an object's default value property name contains a period", function() {

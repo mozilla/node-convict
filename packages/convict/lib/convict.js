@@ -56,7 +56,6 @@ function assert(assertion, err_msg) {
     //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
   }
 }
-
 const types = {
   '*': function() { },
   int: function(x) {
@@ -252,7 +251,7 @@ function normalizeSchema(name, rawSchema, props, fullName, getter, sensitive) {
           if (typeof usedOnlyOnce === 'function') {
             return usedOnlyOnce(value, schema, fullName, getterName);
           } else {
-            throw new Error("'" + fullName + "' use the same getter value for '" + getterName + "': " + value);
+            throw new SCHEMA_INVALID(fullName, 'uses a already used value in "' + getterName + '" getter', value);
           }
         }
 
@@ -331,7 +330,10 @@ function normalizeSchema(name, rawSchema, props, fullName, getter, sensitive) {
       newFormat(value, schema); // schema = this
     } catch (err) {
       // attach the value and the property's fullName to the error
-      throw new FORMAT_INVALID(fullName, err.message, value);
+      const hasOrigin = !!schema._cvtGetOrigin;
+      const getter = (hasOrigin) ? schema._cvtGetOrigin() : false;
+      const getterValue = (hasOrigin && schema[getter]) ? schema[getter] : '';
+      throw new FORMAT_INVALID(fullName, err.message, getter, getterValue, value);
     }
   };
 }
@@ -546,6 +548,16 @@ const convict = function convict(def, opts) {
     },
 
     /**
+     * @returns the current getter name of the value origin. name can use dot
+     *     notation to reference nested values
+     */
+    getOrigin: function(path) {
+      path = (path.split('.').join('._cvtProperties.')) + '._cvtGetOrigin';
+      const o = walk(this._schema._cvtProperties, path);
+      return o ? o() : null;
+    },
+
+    /**
      * @returns the default value of the name property. name can use dot
      *     notation to reference nested values
      */
@@ -593,7 +605,11 @@ const convict = function convict(def, opts) {
       const childKey = path.pop();
       const parentKey = path.join('.');
       const parent = walk(this._instance, parentKey, true);
+
       parent[childKey] = value;
+      if (mySchema) {
+        mySchema._cvtGetOrigin = () => 'value';
+      }
 
       return this;
     },
@@ -663,9 +679,14 @@ const convict = function convict(def, opts) {
 
             const hidden = !!sensitive.has(err.fullName);
             const value = (hidden) ? '[Sensitive]' : JSON.stringify(err.value);
+            const getterValue = (hidden) ? '[Sensitive]' : JSON.stringify(err.getterValue);
 
             if (err.value) {
               err_buf +=  ': value was ' + value;
+              if (err.getter) {
+                err_buf += ', getter was `' + err.getter;
+                err_buf += (err.getter !== 'value') ? '=' + getterValue + '`' : '`';
+              }
             }
 
             if (!(err instanceof CONVICT_ERROR)) {
@@ -761,7 +782,9 @@ convict.addGetter = function(property, getter, usedOnlyOnce, rewrite) {
     usedOnlyOnce = !!usedOnlyOnce;
   }
 
-  getters.order.push(property);
+  if (!getters.list[property]) {
+    getters.order.push(property);
+  }
   getters.list[property] = {
     usedOnlyOnce: usedOnlyOnce,
     getter: getter

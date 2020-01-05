@@ -84,6 +84,11 @@ types.integer = types.int;
 
 const converters = new Map();
 
+const getters = {
+  order: [],
+  list: {}
+}
+
 const parsers_registry = { '*': JSON.parse };
 
 const ALLOWED_OPTION_STRICT = 'strict';
@@ -725,6 +730,49 @@ const convict = function convict(def, opts) {
 
   return rv;
 };
+
+/**
+ * Adds a new custom getter
+ */
+convict.addGetter = function(property, getter, usedOnlyOnce, rewrite) {
+  if (typeof property === 'object') {
+    getter = property.getter;
+    usedOnlyOnce = property.usedOnlyOnce;
+    rewrite = property.rewrite;
+    property = property.property;
+  }
+  if (typeof getter !== 'function') {
+    throw new CUSTOMISE_FAILED('Getter function for "' + property + '" must be a function.');
+  }
+  if (['value', 'force'].includes(property)) {
+    throw new CUSTOMISE_FAILED('Getter name use a reservated word: ' + property);
+  }
+  if (getters.list[property] && !rewrite) {
+    const advice = ' Set the 4th argument (rewrite) of `addGetter` at true to skip this error.';
+    throw new CUSTOMISE_FAILED('The getter property name "' + property + '" is already registered.' + advice);
+  }
+
+  if (typeof usedOnlyOnce !== 'function') {
+    usedOnlyOnce = !!usedOnlyOnce;
+  }
+
+  getters.order.push(property);
+  getters.list[property] = {
+    usedOnlyOnce: usedOnlyOnce,
+    getter: getter
+  };
+};
+
+/**
+ * Adds new custom getters
+ */
+convict.addGetters = function(getters) {
+  Object.keys(getters).forEach(function(property) {
+    const child = getters[property];
+    convict.addGetter(property, child.getter, child.usedOnlyOnce, child.rewrite);
+  });
+};
+
 
 /**
  * Adds a new custom format

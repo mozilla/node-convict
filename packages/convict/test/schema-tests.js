@@ -249,10 +249,12 @@ describe('convict schema', function() {
 
       it('must reset the property to its default value', function() {
         expect(myOwnConf.get('foo.bar')).to.equal(8); // Modified
+        expect(myOwnConf.getOrigin('foo.bar')).to.equal('value');
 
         myOwnConf.reset('foo.bar');
 
         expect(myOwnConf.get('foo.bar')).to.equal(7);
+        expect(myOwnConf.getOrigin('foo.bar')).to.equal('default');
       });
 
       it('must throw if key doesn\'t exist', function() {

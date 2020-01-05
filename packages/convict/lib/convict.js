@@ -602,7 +602,7 @@ const convict = function convict(def, opts) {
      * Resets a property to its default value as defined in the schema
      */
     reset: function(prop_name) {
-      this.set(prop_name, this.default(prop_name));
+      this.set(prop_name, this.default(prop_name), 'default', false);
     },
 
     /**
@@ -623,8 +623,19 @@ const convict = function convict(def, opts) {
      * nested values, e.g. "database.port". If objects in the chain don't yet
      * exist, they will be initialized to empty objects
      */
-    set: function(fullpath, value) {
+    set: function(fullpath, value, priority, respectPriority) {
       const mySchema = traverseSchema(this._schema, fullpath);
+
+      if (!priority) {
+        priority = 'value';
+      } else if (typeof priority !== 'string') {
+        priority = 'force';
+      } else if (!this._getters.list[priority] && !['value', 'force'].includes(priority)) {
+        throw new INCORRECT_USAGE('unknown getter: ' + priority);
+      } else if (!mySchema) { // no schema and custom priority = impossible
+        const errorMsg = 'you cannot set priority because "' + fullpath + '" not declared in the schema';
+        throw new INCORRECT_USAGE(errorMsg);
+      }
 
       // coercing
       const coerce = (mySchema && mySchema._cvtCoerce) ? mySchema._cvtCoerce : (v) => v;
@@ -635,9 +646,29 @@ const convict = function convict(def, opts) {
       const parentKey = path.join('.');
       const parent = walk(this._instance, parentKey, true);
 
-      parent[childKey] = value;
-      if (mySchema) {
-        mySchema._cvtGetOrigin = () => 'value';
+      // respect priority 
+      const canIChangeValue = (() => {
+        if (!respectPriority) // -> false or not declared -> always change
+          return true;
+
+        const gettersOrder = this._getters.order;
+
+        const bool = mySchema && mySchema._cvtGetOrigin;
+        const lastG = bool && mySchema._cvtGetOrigin();
+
+        if (lastG && gettersOrder.indexOf(priority) < gettersOrder.indexOf(lastG)) {
+          return false;
+        }
+
+        return true;
+      })();
+
+      // change the value
+      if (canIChangeValue) {
+        parent[childKey] = value;
+        if (mySchema) {
+          mySchema._cvtGetOrigin = () => priority;
+        } 
       }
 
       return this;

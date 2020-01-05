@@ -133,7 +133,7 @@ describe('configuration files contain properties not declared in the schema', fu
   });
 
   it('must use the user output function when it was declared', function() {
-    const expected = "\u001b[33;1mWarning:\u001b[0m configuration param '0' not declared in the schema";
+    const expected = "\u001b[33;1mWarning:\u001b[0m configuration param '[0]' not declared in the schema";
 
     expect(message).to.equal(expected);
   });
@@ -245,7 +245,7 @@ describe('schema contains an object property with a custom format', function() {
     ).to.not.throw();
   });
 
-  it.skip("must not throw if an object's default value property name contains a period", function() {
+  it("must not throw if an object's default value property name contains a period", function() {
     const schema = {
       object: {
         doc: 'default value contains property name that contains a period',

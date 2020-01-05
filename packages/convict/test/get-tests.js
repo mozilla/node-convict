@@ -24,6 +24,16 @@ describe('convict get function', function() {
             name_with_underscores: true
           }
         }
+      },
+      'foo.bar': {
+        format: 'String',
+        default: 'air'
+      },
+      'foo.baz': {
+        bing: {
+          format: 'String',
+          default: 'bus'
+        }
       }
     });
   });
@@ -39,13 +49,15 @@ describe('convict get function', function() {
 
   describe('.get()', function() {
     it('must find a nested value', function() {
-      let val = conf.get('foo.bar');
-
-      expect(val).to.equal(7);
+      expect(conf.get('foo.bar')).to.equal(7);
+      expect(conf.get('["foo.bar"]')).to.equal('air');
     });
 
     it('must handle three levels of nesting', function() {
       expect(conf.get('foo.baz.bing')).to.equal('foo');
+      expect(conf.get('["foo.baz"].bing')).to.equal('bus');
+      conf.set('["foo.baz"].bing', 'plane');
+      expect(conf.get('["foo.baz"].bing')).to.equal('plane');
     });
 
     it('must handle names with spaces and underscores', function() {

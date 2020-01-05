@@ -4,6 +4,7 @@
   "dependencies": {
     "lodash.clonedeep": "4.5.0",
     "moment": "2.24.0",
+    "objectpath": "1.2.2",
     "validator": "11.1.0",
     "yargs-parser": "13.0.0"
   },

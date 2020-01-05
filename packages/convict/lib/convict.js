@@ -8,6 +8,7 @@
 const fs        = require('fs');
 const parseArgs = require('yargs-parser');
 const cloneDeep = require('lodash.clonedeep');
+const parsePath = require('objectpath').parse;
 const cvtError  = require('./convicterror.js');
 
 // 1
@@ -95,43 +96,47 @@ const ALLOWED_OPTION_STRICT = 'strict';
 const ALLOWED_OPTION_WARN = 'warn';
 
 function flatten(obj, useProperties) {
-  const stack = Object.keys(obj);
+  const stack = Object.keys(obj).map((path) => [ path ]);
   const entries = [];
 
   while (stack.length) {
-    let key = stack.shift();
-    let val = walk(obj, key);
-    if (typeof val === 'object' && !Array.isArray(val) && val != null) {
+    let path = stack.shift();
+    let node = walk(obj, path);
+    if (typeof node === 'object' && !Array.isArray(node) && node != null) {
       if (useProperties) {
-        if ('_cvtProperties' in val) {
-          val = val._cvtProperties;
-          key = key + '._cvtProperties';
+        if ('_cvtProperties' in node) {
+          node = node._cvtProperties;
+          path.push('_cvtProperties');
         } else {
-          entries.push([key, val]);
+          entries.push([path, node]);
           continue;
         }
       }
-      const subkeys = Object.keys(val);
+      const children = Object.keys(node);
 
       // Don't filter out empty objects
-      if (subkeys.length > 0) {
-        subkeys.forEach(function(subkey) {
-          stack.push(key + '.' + subkey);
+      if (children.length > 0) {
+        children.forEach(function(child) {
+          stack.push(path.concat(child));
         });
         continue;
       }
     }
-    entries.push([key, val]);
+    entries.push([path, node]);
   }
 
   const flattened = {};
   entries.forEach(function(entry) {
-    let key = entry[0];
-    if (useProperties) {
-      key = key.replace(/\._cvtProperties/g, '');
-    }
+    let path = entry[0];
     const val = entry[1];
-    flattened[key] = val;
+
+    if (Array.isArray(path) === false) throw new Error('errror : ' + path);
+
+    if (useProperties) {
+      path = path.filter((property) => property !== '_cvtProperties');
+    }
+
+    flattened[stringifyPath(path)] = val;
   });
 
   return flattened;
@@ -411,7 +416,7 @@ function applyValues(from, to, schema) {
 }
 
 function traverseSchema(schema, path) {
-  const ar = path.split('.');
+  const ar = parsePath(path);
   let o = schema;
   while (ar.length > 0) {
     const k = ar.shift();
@@ -469,18 +474,52 @@ function loadFile(path) {
   return parse(fs.readFileSync(path, 'utf-8'));
 }
 
+function pathToSchemaPath(path, addKey) {
+  const schemaPath = [];
+
+  path = parsePath(path);
+  path.forEach((property) => {
+    schemaPath.push(property);
+    schemaPath.push('_cvtProperties');
+  });
+  schemaPath.splice(-1);
+
+  if (addKey)
+    schemaPath.push(addKey);
+
+  return schemaPath;
+}
+
+function stringifyPath(arr, quote, forceQuote) {
+  quote = (quote === '"') ? '"' : "'";
+  const regexp = new RegExp('(\\\\|' + quote + ')', 'g'); // regex => /(\\|')/g
+
+  return arr.map(function(value, key) {
+    let property = value.toString();
+    if (!forceQuote && /^[A-z_]\w*$/.exec(property)) { // str with only A-z0-9_ chars will display `foo.bar`
+      return (key !== 0) ? '.' + property : property;
+    } else if (!forceQuote && /^\d+$/.exec(property)) { // str with only numbers will display `foo[0]`
+      return '[' + property + ']';
+    } else {
+      property = property.replace(regexp, '\\$1');
+      return '[' + quote + property + quote + ']';
+    }
+  }).join('');
+}
+
 function walk(obj, path, initializeMissing) {
   if (path) {
-    const ar = path.split('.');
-    while (ar.length) {
-      const k = ar.shift();
-      if (initializeMissing && obj[k] == null) {
-        obj[k] = {};
-        obj = obj[k];
-      } else if (k in obj) {
-        obj = obj[k];
+    path = Array.isArray(path) ? path : parsePath(path);
+    const sibling = path.slice(0);
+    while (sibling.length) {
+      const key = sibling.shift();
+      if (initializeMissing && obj[key] == null) {
+        obj[key] = {};
+        obj = obj[key];
+      } else if (key in obj) {
+        obj = obj[key];
       } else {
-        throw new PATH_INVALID('cannot find configuration param: ' + path);
+        throw new PATH_INVALID('cannot find configuration param: ' + stringifyPath(path)); 
       }
     }
   }
@@ -526,10 +565,10 @@ const convict = function convict(def, opts) {
      */
     toString: function() {
       const clone = cloneDeep(this._instance);
-      this._sensitive.forEach(function(key) {
-        const path = key.split('.');
+      this._sensitive.forEach(function(fullpath) {
+        const path = parsePath(fullpath);
         const childKey = path.pop();
-        const parentKey = path.join('.');
+        const parentKey = stringifyPath(path);
         const parent = walk(clone, parentKey);
         parent[childKey] = '[Sensitive]';
       });
@@ -564,7 +603,7 @@ const convict = function convict(def, opts) {
      *     notation to reference nested values
      */
     getOrigin: function(path) {
-      path = (path.split('.').join('._cvtProperties.')) + '._cvtGetOrigin';
+      path = pathToSchemaPath(path, '_cvtGetOrigin');
       const o = walk(this._schema._cvtProperties, path);
       return o ? o() : null;
     },
@@ -600,7 +639,7 @@ const convict = function convict(def, opts) {
     default: function(path) {
       // The default value for FOO.BAR.BAZ is stored in `_schema._cvtProperties` at:
       //   FOO._cvtProperties.BAR._cvtProperties.BAZ.default
-      path = (path.split('.').join('._cvtProperties.')) + '.default';
+      path = pathToSchemaPath(path, 'default');
       const o = walk(this._schema._cvtProperties, path);
       return cloneDeep(o);
     },
@@ -648,9 +687,9 @@ const convict = function convict(def, opts) {
       const coerce = (mySchema && mySchema._cvtCoerce) ? mySchema._cvtCoerce : (v) => v;
       value = coerce(value);
       // walk to the value
-      const path = fullpath.split('.');
+      const path = parsePath(fullpath);
       const childKey = path.pop();
-      const parentKey = path.join('.');
+      const parentKey = stringifyPath(path);
       const parent = walk(this._instance, parentKey, true);
 
       // respect priority 

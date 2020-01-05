@@ -51,4 +51,4 @@ Use [validator.js](https://github.com/chriso/node-validator#list-of-validation-m
 
 ### Coercion
 
-Convict will automatically coerce environmental variables from strings to their proper types when importing them.
+Convict will automatically coerce strings variables to their proper types when importing them.

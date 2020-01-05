@@ -295,18 +295,59 @@ convict(schema).load({
 
 ### Coercion
 
-Convict will automatically coerce environmental variables from strings to their proper types when importing them. For instance, values with the format `int`, `nat`, `port`, or `Number` will become numbers after a straight forward `parseInt` or `parseFloat`.
+Convict will automatically coerce environmental variables from strings to their proper types when importing them.
+For instance, values with the format `int`, `nat`, `port`, or `Number` will become numbers after a straight forward
+`parseInt` or `parseFloat`.
 
 
-### Precendence order
+### Precedence order
 
-When merging configuration values from different sources, Convict follows precedence rules. The order, from lowest to highest, is:
+When merging configuration values from different sources, Convict follows precedence rules.
+The order, from lowest to highest, for `config.loadFile(file)` and `config.load(json)` is:
 
 1. Default value
-2. File (`config.loadFile()`)
-3. Environment variables (only used when `env` property is set in schema; can be overridden using the `env` option of the convict function)
-4. Command line arguments (only used when `arg` property is set in schema; can be overridden using the `args` option of the convict function)
-5. Set and load calls (`config.set()` and `config.load()`)
+2. File or json set in function argument
+3. Environment variables (only used when `env` property is set in schema)
+4. Command line arguments (only used when `arg` property is set in schema)
+
+This order means that if schema defines parameter to be taken from an environment variable
+and environment variable is set then you cannot override it with `config.loadFile(file)`
+or `config.load(json)`.
+
+```javascript
+process.env.PORT = 8080; // environment variable is set
+const config = convict({
+  port: {
+    default: 3000,
+    env: 'PORT'
+  }
+});
+config.load({ port: 9000 });
+console.log(config.get('port')); // still 8080 from env
+```
+
+### Overriding Environment variables and Command line arguments
+
+Convict allows to override Environment variables and Command line arguments.
+It can be helpful for testing purposes.
+
+When creating a config object pass an object with two optional properties as the 2nd parameter:
+
+- `env: Object` - this object will be used instead of `process.env`
+- `args: Array<string>` - this array will be used instead of `process.argv`
+
+```javascript
+var config = convict({
+  // configuration schema
+}, {
+  env: {
+    // Environment variables
+  },
+  args: [
+    // Command line arguments
+  ]
+});
+```
 
 ### Configuration file additional types support
 
@@ -352,7 +393,7 @@ below.
 ```javascript
 var config = convict({
   env: {
-    doc: 'The applicaton environment.',
+    doc: 'The application environment.',
     format: ['production', 'development', 'test'],
     default: 'development',
     env: 'NODE_ENV'
@@ -415,7 +456,7 @@ convict.addFormats({
   'hex-string': {
     validate: function(val) {
       if (/^[0-9a-fA-F]+$/.test(val)) {
-        throw new Error('must be a hexidecimal string');
+        throw new Error('must be a hexadecimal string');
       }
     }
   }
@@ -466,6 +507,9 @@ config.set('property.that.may.not.exist.yet', 'some value');
 config.get('property.that.may.not.exist.yet');
 // Returns "some value"
 ```
+
+If you call `config.load` or `config.loadFile` after `config.set` then value provided by `config.set`
+will be overridden in case of conflict.
 
 ### config.load(object)
 

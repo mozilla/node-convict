@@ -1,5 +1,5 @@
 {
-  "properties": {
+  "_cvtProperties": {
     "shorthand": {
       "default": "value"
     },
@@ -39,7 +39,7 @@
       "sensitive": false
     },
     "nested": {
-      "properties": {
+      "_cvtProperties": {
         "child": {
           "default": "ababa"
         }

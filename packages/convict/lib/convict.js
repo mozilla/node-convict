@@ -214,7 +214,7 @@ const BUILT_INS = BUILT_IN_NAMES.map(function(name) {
   return BUILT_INS_BY_NAME[name];
 });
 
-function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive) {
+function normalizeSchema(name, rawSchema, props, fullName, getter, sensitive) {
   if (name === '_cvtProperties') {
     throw new Error("'" + fullName + "': '_cvtProperties' is reserved word of convict.");
   }
@@ -227,7 +227,7 @@ function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive)
     };
     Object.keys(rawSchema).forEach(function(key) {
       const path = fullName + '.' + key;
-      normalizeSchema(key, rawSchema[key], props[name]._cvtProperties, path, env, argv, sensitive);
+      normalizeSchema(key, rawSchema[key], props[name]._cvtProperties, path, getter, sensitive);
     });
     return;
   } else if (typeof rawSchema !== 'object' || Array.isArray(rawSchema) ||
@@ -238,21 +238,28 @@ function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive)
 
   const schema = cloneDeep(rawSchema);
   props[name] = schema;
-  // associate this property with an environmental variable
-  if (schema.env) {
-    if (!env[schema.env]) {
-      env[schema.env] = [];
-    }
-    env[schema.env].push(fullName);
-  }
 
-  // associate this property with a command-line argument
-  if (schema.arg) {
-    if (argv[schema.arg]) {
-      throw new SCHEMA_INVALID(fullName, 'reuses a command-line argument', schema.arg);
+  Object.keys(schema).forEach(function(getterName) {
+    if (getters.list[getterName]) {
+      const usedOnlyOnce = getters.list[getterName].usedOnlyOnce;
+      if (usedOnlyOnce) {
+        if (!getter.alreadyUse[getterName]) {
+          getter.alreadyUse[getterName] = [];
+        }
+
+        const value = schema[getterName];
+        if (getter.alreadyUse[getterName].indexOf(value) !== -1) {
+          if (typeof usedOnlyOnce === 'function') {
+            return usedOnlyOnce(value, schema, fullName, getterName);
+          } else {
+            throw new Error("'" + fullName + "' use the same getter value for '" + getterName + "': " + value);
+          }
+        }
+
+        getter.alreadyUse[getterName].push(schema[getterName]);
+      }
     }
-    argv[schema.arg] = fullName;
-  }
+  });
 
   // mark this property as sensitive
   if (schema.sensitive === true) {
@@ -313,7 +320,7 @@ function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive)
 
   schema._cvtCoerce = (() => {
     if (typeof format === 'string') {
-      return getCoerceMethod(schema.format);
+      return getCoerceMethod(format);
     } else {
       return (v) => v;
     }
@@ -329,41 +336,36 @@ function normalizeSchema(name, rawSchema, props, fullName, env, argv, sensitive)
   };
 }
 
-function importEnvironment(o) {
-  const env = o.getEnv();
-  Object.keys(o._env).forEach(function(envStr) {
-    if (env[envStr] !== undefined) {
-      const fullpaths = o._env[envStr];
-      fullpaths.forEach(function(fullpath) {
-        o.set(fullpath, env[envStr]);
-      });
-    }
-  });
-}
-
-function importArguments(o) {
-  const argv = parseArgs(o.getArgs(), {
-    configuration: {
-      'dot-notation': false
-    }
-  });
-  Object.keys(o._argv).forEach(function(argStr) {
-    if (argv[argStr] !== undefined) {
-      const fullpath = o._argv[argStr];
-      o.set(fullpath, String(argv[argStr]));
-    }
-  });
-}
-
-function addDefaultValues(schema, node) {
-  Object.keys(schema._cvtProperties).forEach(function(name) {
+function applyGetters(schema, node) {
+  Object.keys(schema._cvtProperties).forEach((name) => {
     const mySchema = schema._cvtProperties[name];
     if (mySchema._cvtProperties) {
-      node[name] = {}; // node[name] is always undefined because addDefaultValues is the first to run.
-      addDefaultValues(mySchema, node[name]);
+      if (!node[name]) {
+        node[name] = {};
+      }
+      applyGetters.call(this, mySchema, node[name]);
     } else {
-      const coerce = (mySchema && mySchema._cvtCoerce) ? mySchema._cvtCoerce : (v) => v;
-      node[name] = coerce(cloneDeep(mySchema.default));
+      for (let i = getters.order.length - 1; i >= 0; i--) {
+        const getterName = getters.order[i]; // getterName
+        const getterObj = getters.list[getterName];
+        let propagationAsked = false; // #224 accept undefined
+
+        if (!getterObj || !(getterName in mySchema)) {
+          continue;
+        }
+        const getter = getterObj.getter;
+        const value = cloneDeep(mySchema[getterName]);
+        const stopPropagation = () => propagationAsked = true;
+
+        // call getter
+        node[name] = getter.call(this, value, mySchema, stopPropagation);
+
+        if (typeof node[name] !== 'undefined' || propagationAsked) {
+          // We use function because function are not saved/exported in schema
+          mySchema._cvtGetOrigin = () => getterName;
+          break;
+        }
+      }
     }
   });
 }
@@ -371,12 +373,22 @@ function addDefaultValues(schema, node) {
 function isObj(o) { return (typeof o === 'object' && o !== null); }
 
 function overlay(from, to, schema) {
+  const indexVal = getters.order.indexOf('value');
   Object.keys(from).forEach(function(name) {
     const mySchema = (schema && schema._cvtProperties) ? schema._cvtProperties[name] : null;
     // leaf
     if (Array.isArray(from[name]) || !isObj(from[name]) || !schema || schema.format === 'object') {
+      const bool = mySchema && mySchema._cvtGetOrigin;
+      const lastG = bool && mySchema._cvtGetOrigin();
+
+      if (lastG && indexVal < getters.order.indexOf(lastG)) {
+        return;
+      }
       const coerce = (mySchema && mySchema._cvtCoerce) ? mySchema._cvtCoerce : (v) => v;
       to[name] = coerce(from[name]);
+      if (lastG) {
+        mySchema._cvtGetOrigin = () => 'value';
+      }
     } else {
       if (!isObj(to[name])) to[name] = {};
       overlay(from[name], to[name], mySchema);
@@ -413,7 +425,7 @@ function getCoerceMethod(format) {
     case 'nat':
     case 'integer':
     case 'int':
-      return (v) => (isStr(v)) ? parseInt(v, 10) : v;
+      return (v) => (typeof v !== 'undefined') ? parseInt(v, 10) : v;
     case 'port_or_windows_named_pipe':
       return (v) => (isWindowsNamedPipe(v)) ? v : parseInt(v, 10);
     case 'number':
@@ -591,9 +603,6 @@ const convict = function convict(def, opts) {
      */
     load: function(conf) {
       overlay(conf, this._instance, this._schema);
-      // environment and arguments always overrides config files
-      importEnvironment(rv);
-      importArguments(rv);
       return this;
     },
 
@@ -609,9 +618,6 @@ const convict = function convict(def, opts) {
           overlay(result, this._instance, this._schema);
         }
       });
-      // environment and arguments always overrides config files
-      importEnvironment(rv);
-      importArguments(rv);
       return this;
     },
 
@@ -714,19 +720,18 @@ const convict = function convict(def, opts) {
     _cvtProperties: {}
   };
 
-  rv._env = {};
-  rv._argv = {};
+  rv._getter = {
+    alreadyUse: {}
+  };
   rv._sensitive = new Set();
 
   Object.keys(rv._def).forEach(function(k) {
-    normalizeSchema(k, rv._def[k], rv._schema._cvtProperties, k, rv._env, rv._argv,
-      rv._sensitive);
+
   });
 
+  // config instance
   rv._instance = {};
-  addDefaultValues(rv._schema, rv._instance);
-  importEnvironment(rv);
-  importArguments(rv);
+  applyGetters.call(rv, rv._schema, rv._instance);
 
   return rv;
 };
@@ -762,6 +767,20 @@ convict.addGetter = function(property, getter, usedOnlyOnce, rewrite) {
     getter: getter
   };
 };
+
+convict.addGetter('default', (value, schema, stopPropagation) => schema._cvtCoerce(value));
+getters.order.push('value');
+convict.addGetter('env', function(value, schema, stopPropagation) {
+  return schema._cvtCoerce(this.getEnv()[value]);
+});
+convict.addGetter('arg', function(value, schema, stopPropagation) {
+  const argv = parseArgs(this.getArgs(), {
+    configuration: {
+      'dot-notation': false
+    }
+  });
+  return schema._cvtCoerce(argv[value]);
+}, true);
 
 /**
  * Adds new custom getters

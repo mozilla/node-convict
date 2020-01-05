@@ -28,6 +28,11 @@ describe('convict get function', function() {
     });
   });
 
+  it('must have the default getters order', function() {
+    const order = ['default', 'value', 'env', 'arg', 'force'];
+    expect(convict.getGettersOrder()).to.be.deep.equal(order);
+  });
+
   it('must be valid', function() {
     expect(() => conf.validate()).to.not.throw();
   });

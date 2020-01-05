@@ -16,6 +16,7 @@ const PARSING_ERROR = cvtError.PARSING_ERROR;
 // 2
 const SCHEMA_INVALID = cvtError.SCHEMA_INVALID;
 const CUSTOMISE_FAILED = cvtError.CUSTOMISE_FAILED;
+const INCORRECT_USAGE = cvtError.INCORRECT_USAGE;
 const PATH_INVALID = cvtError.PATH_INVALID;
 // 3
 const VALUE_INVALID = cvtError.VALUE_INVALID;
@@ -84,7 +85,7 @@ types.integer = types.int;
 const converters = new Map();
 
 const getters = {
-  order: [],
+  order: [ 'value', 'force' ],
   list: {}
 }
 
@@ -213,7 +214,7 @@ const BUILT_INS = BUILT_IN_NAMES.map(function(name) {
   return BUILT_INS_BY_NAME[name];
 });
 
-function normalizeSchema(name, rawSchema, props, fullName, getter, sensitive) {
+function normalizeSchema(name, rawSchema, props, fullName) {
   if (name === '_cvtProperties') {
     throw new Error("'" + fullName + "': '_cvtProperties' is reserved word of convict.");
   }
@@ -224,9 +225,9 @@ function normalizeSchema(name, rawSchema, props, fullName, getter, sensitive) {
     props[name] = {
       _cvtProperties: {}
     };
-    Object.keys(rawSchema).forEach(function(key) {
+    Object.keys(rawSchema).forEach((key) => {
       const path = fullName + '.' + key;
-      normalizeSchema(key, rawSchema[key], props[name]._cvtProperties, path, getter, sensitive);
+      normalizeSchema.call(this, key, rawSchema[key], props[name]._cvtProperties, path);
     });
     return;
   } else if (typeof rawSchema !== 'object' || Array.isArray(rawSchema) ||
@@ -238,16 +239,16 @@ function normalizeSchema(name, rawSchema, props, fullName, getter, sensitive) {
   const schema = cloneDeep(rawSchema);
   props[name] = schema;
 
-  Object.keys(schema).forEach(function(getterName) {
-    if (getters.list[getterName]) {
-      const usedOnlyOnce = getters.list[getterName].usedOnlyOnce;
+  Object.keys(schema).forEach((getterName) => {
+    if (this._getters.list[getterName]) {
+      const usedOnlyOnce = this._getters.list[getterName].usedOnlyOnce;
       if (usedOnlyOnce) {
-        if (!getter.alreadyUse[getterName]) {
-          getter.alreadyUse[getterName] = [];
+        if (!this._getterAlreadyUsed[getterName]) {
+          this._getterAlreadyUsed[getterName] = new Set();
         }
 
         const value = schema[getterName];
-        if (getter.alreadyUse[getterName].indexOf(value) !== -1) {
+        if (this._getterAlreadyUsed[getterName].has(value)) {
           if (typeof usedOnlyOnce === 'function') {
             return usedOnlyOnce(value, schema, fullName, getterName);
           } else {
@@ -255,14 +256,14 @@ function normalizeSchema(name, rawSchema, props, fullName, getter, sensitive) {
           }
         }
 
-        getter.alreadyUse[getterName].push(schema[getterName]);
+        this._getterAlreadyUsed[getterName].add(schema[getterName]);
       }
     }
   });
 
   // mark this property as sensitive
   if (schema.sensitive === true) {
-    sensitive.add(fullName);
+    this._sensitive.add(fullName);
   }
 
   // store original format function
@@ -339,6 +340,8 @@ function normalizeSchema(name, rawSchema, props, fullName, getter, sensitive) {
 }
 
 function applyGetters(schema, node) {
+  const getters = this._getters;
+
   Object.keys(schema._cvtProperties).forEach((name) => {
     const mySchema = schema._cvtProperties[name];
     if (mySchema._cvtProperties) {
@@ -375,8 +378,10 @@ function applyGetters(schema, node) {
 function isObj(o) { return (typeof o === 'object' && o !== null); }
 
 function applyValues(from, to, schema) {
+  const getters = this._getters;
+
   const indexVal = getters.order.indexOf('value');
-  Object.keys(from).forEach(function(name) {
+  Object.keys(from).forEach((name) => {
     const mySchema = (schema && schema._cvtProperties) ? schema._cvtProperties[name] : null;
     // leaf
     if (Array.isArray(from[name]) || !isObj(from[name]) || !schema || schema.format === 'object') {
@@ -393,7 +398,7 @@ function applyValues(from, to, schema) {
       }
     } else {
       if (!isObj(to[name])) to[name] = {};
-      applyValues(from[name], to[name], mySchema);
+      applyValues.call(this, from[name], to[name], mySchema);
     }
   });
 }
@@ -558,6 +563,30 @@ const convict = function convict(def, opts) {
     },
 
     /**
+     * Gets array with getter name in the current order of priority
+     */
+    getGettersOrder: function(path) {
+      return cloneDeep(this._getters.order);
+    },
+
+    /**
+     * sorts getters
+     */
+    sortGetters: function(newOrder) {
+      const sortFilter = sortGetters(this._getters.order, newOrder);
+
+      this._getters.order.sort(sortFilter);
+    },
+
+    /**
+     * Update local getters config with global config
+     */
+    refreshGetters: function() {
+      this._getters = cloneDeep(getters);
+      applyGetters.call(this, this._schema, this._instance);
+    },
+
+    /**
      * @returns the default value of the name property. name can use dot
      *     notation to reference nested values
      */
@@ -617,8 +646,8 @@ const convict = function convict(def, opts) {
     /**
      * Loads and merges a JavaScript object into config
      */
-    load: function(conf) {
-      applyValues(conf, this._instance, this._schema);
+    load: function(obj) {
+      applyValues.call(this, obj, this._instance, this._schema);
       return this;
     },
 
@@ -629,9 +658,9 @@ const convict = function convict(def, opts) {
       if (!Array.isArray(paths)) paths = [paths];
       paths.forEach((path) => {
         // Support empty config files #253
-        const result = loadFile(path);
-        if (result) {
-          applyValues(result, this._instance, this._schema);
+        const json = loadFile(path);
+        if (json) {
+          this.load(json);
         }
       });
       return this;
@@ -741,13 +770,14 @@ const convict = function convict(def, opts) {
     _cvtProperties: {}
   };
 
-  rv._getter = {
-    alreadyUse: {}
-  };
+  rv._getterAlreadyUsed = {};
   rv._sensitive = new Set();
 
-  Object.keys(rv._def).forEach(function(k) {
+  // inheritance (own getter)
+  rv._getters = cloneDeep(getters);
 
+  Object.keys(rv._def).forEach((key) => {
+    normalizeSchema.call(rv, key, rv._def[key], rv._schema._cvtProperties, key);
   });
 
   // config instance
@@ -755,6 +785,56 @@ const convict = function convict(def, opts) {
   applyGetters.call(rv, rv._schema, rv._instance);
 
   return rv;
+};
+
+/**
+ * @returns sorted function which sorts array to newOrder
+ */
+function sortGetters(currentOrder, newOrder) {
+  if (!Array.isArray(newOrder)) {
+    throw new INCORRECT_USAGE('Invalid argument: newOrder must be an array.');
+  }
+
+  // 'force' must be at the end or not given
+  const forceOrder = newOrder.indexOf('force');
+  if (forceOrder !== -1 && forceOrder !== newOrder.length - 1) {
+    throw new INCORRECT_USAGE('Invalid order: force cannot be sorted.');
+  } else if (forceOrder !== newOrder.length - 1) {
+    newOrder.push('force');
+  }
+
+  // exact number of getter name (not less & not more)
+  const checkKey = cloneDeep(currentOrder);
+  for (let i = newOrder.length - 1; i >= 0; i--) {
+    let index = checkKey.indexOf(newOrder[i]);
+    if (index !== -1) {
+      checkKey.splice(index, 1);
+    } else {
+      throw new INCORRECT_USAGE('Invalid order: unknown getter: ' + newOrder[i]);
+    }
+  }
+  if (checkKey.length !== 0) {
+    const message = (checkKey.length <= 1) ? 'a getter is ' : 'several getters are ';
+    throw new INCORRECT_USAGE('Invalid order: '+ message + 'missed: ' + checkKey.join(', '));
+  }
+
+  return (a, b) => newOrder.indexOf(a) - newOrder.indexOf(b);
+}
+
+/**
+ * Gets array with getter name in the current order of priority
+ */
+convict.getGettersOrder = function(path) {
+  return cloneDeep(getters.order);
+};
+
+/**
+ * Orders getters
+ */
+convict.sortGetters = function(newOrder) {
+  const sortFilter = sortGetters(getters.order, newOrder);
+
+  getters.order.sort(sortFilter);
 };
 
 /**
@@ -783,7 +863,8 @@ convict.addGetter = function(property, getter, usedOnlyOnce, rewrite) {
   }
 
   if (!getters.list[property]) {
-    getters.order.push(property);
+    // add before the last key (= force), force must always be the last key
+    getters.order.splice(getters.order.length - 1, 0, property);
   }
   getters.list[property] = {
     usedOnlyOnce: usedOnlyOnce,
@@ -792,7 +873,7 @@ convict.addGetter = function(property, getter, usedOnlyOnce, rewrite) {
 };
 
 convict.addGetter('default', (value, schema, stopPropagation) => schema._cvtCoerce(value));
-getters.order.push('value');
+convict.sortGetters(['default', 'value']); // set default before value
 convict.addGetter('env', function(value, schema, stopPropagation) {
   return schema._cvtCoerce(this.getEnv()[value]);
 });

@@ -18,6 +18,11 @@ describe('convict schema', function() {
     }
   });
 
+  it('must have the default getters order', function() {
+    const order = ['default', 'value', 'env', 'arg', 'force'];
+    expect(convict.getGettersOrder()).to.be.deep.equal(order);
+  });
+
   it('must parse a config specification from a file', function() {
     const filepath = path.join(__dirname, 'schema.json');
 

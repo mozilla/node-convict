@@ -62,7 +62,16 @@ class CUSTOMISE_FAILED extends CONVICT_ERROR {
   constructor(message) {
     super(message);
     this.type = 'CUSTOMISE_FAILED';
-    this.doc = 'You try to add/modify a getter/format/parser but you failed, fix your javascript code to continue.';
+    this.doc = 'You try to add a getter/format/parser but you failed, fix your javascript code to continue.';
+    return this;
+  }
+}
+
+class INCORRECT_USAGE extends CONVICT_ERROR {
+  constructor(message) {
+    super(message);
+    this.type = 'INCORRECT_USAGE';
+    this.doc = 'Incorrect usage of convict function, maybe wrong parameter, fix your javascript code to continue.';
     return this;
   }
 }
@@ -113,6 +122,7 @@ module.exports = {
   // 2
   SCHEMA_INVALID: SCHEMA_INVALID,
   CUSTOMISE_FAILED: CUSTOMISE_FAILED,
+  INCORRECT_USAGE: INCORRECT_USAGE,
   PATH_INVALID: PATH_INVALID,
   // 3
   VALUE_INVALID: VALUE_INVALID,

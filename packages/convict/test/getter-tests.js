@@ -6,7 +6,20 @@ describe('convict getters', function() {
   const convict = require('../');
   let conf;
 
-  it('must set custom getters', function() {
+  it('must have the default getters order', function() {
+    const order = ['default', 'value', 'env', 'arg', 'force'];
+    expect(convict.getGettersOrder()).to.be.deep.equal(order);
+  });
+
+  it('must init and set custom getters', function() {
+    convict.addGetter({
+      property: 'ghost',
+      getter: (value, schema, stopPropagation) => {
+        stopPropagation();
+        return undefined;
+      }
+    });
+
     convict.addGetters({
       'answer': {
         getter: (value, schema, stopPropagation) => 'Yes, you can.',
@@ -18,15 +31,9 @@ describe('convict getters', function() {
       property: 'answer_no',
       getter: (value, schema, stopPropagation) => 'No, you cannot.'
     });
+  });
 
-    convict.addGetter({
-      property: 'ghost',
-      getter: (value, schema, stopPropagation) => {
-        stopPropagation();
-        return undefined;
-      }
-    });
-
+  it('must parse a schema with custom getters', function() {
     conf = convict({
       plane: {
         default: 'foo',
@@ -49,11 +56,57 @@ describe('convict getters', function() {
         ghost: 'ooooh!'
       }
     });
+  });
 
+  it('must failed because custom getter order', function() {
     conf.load({
       default: 'foo',
       plane: 'airbus'
-    })
+    });
+    expect(() => conf.validate()).to.throw('ghost: not undefined: value was "No, you cannot.", getter was `answer_no="Too scared to ask"`');
+  });
+
+  const wrongOrder = ['default', 'value', 'env', 'arg', 'ghost', 'answer', 'answer_no', 'force'];
+  const perfectOrder = ['default', 'value', 'env', 'arg', 'answer', 'answer_no', 'ghost', 'force'];
+
+  it('must throw with an incorrect getter order', function() {
+    expect(() => convict.sortGetters('bad')).to.throw('Invalid argument: newOrder must be an array.');
+    expect(() => convict.sortGetters(['default', 'value', 'force', 'env'])).to.throw('Invalid order: force cannot be sorted');
+    expect(() => convict.sortGetters(['default', 'env'])).to.throw('Invalid order: several getters are missed: value, arg, ghost, answer, answer_no');
+    const wrongOrder = ['default', 'value', 'env', 'arg', 'ghost', 'answer', 'answer_no', 'charlie'];
+    expect(() => convict.sortGetters(wrongOrder)).to.throw('Invalid order: unknown getter: charlie');
+  });
+
+  it('must change the current order', function() {
+    expect(convict.getGettersOrder()).to.be.deep.equal(wrongOrder);
+    convict.sortGetters(perfectOrder);
+    expect(convict.getGettersOrder()).to.be.deep.equal(perfectOrder);
+    expect(conf.getGettersOrder()).to.be.deep.equal(wrongOrder);
+
+    const testOrder = ['default', 'value', 'arg', 'env', 'ghost', 'answer', 'answer_no', 'force'];
+    conf.sortGetters(testOrder);
+
+    expect(conf.getGettersOrder()).to.be.deep.equal(testOrder);
+    expect(convict.getGettersOrder()).to.be.deep.equal(perfectOrder);
+  });
+
+  it('must failed because custom getter order', function() {
+    conf.load({
+      default: 'foo',
+      plane: 'airbus'
+    });
+    expect(() => conf.validate()).to.throw('ghost: not undefined: value was "No, you cannot.", getter was `answer_no="Too scared to ask"`');
+  });
+
+  it('must refresh getters and cached values', function() {
+    expect(() => conf.refreshGetters()).to.not.throw();
+  });
+
+  it('must load with custom getters', function() {
+    conf.load({
+      default: 'foo',
+      plane: 'airbus'
+    });
   });
 
   it('validates conf', function() {
@@ -113,33 +166,33 @@ describe('convict getters', function() {
 
   });
 
-  it('I can ask "Can I fly?" several time', function() {
-    (function() {
-      conf = convict({
-        plane: {
-          default: 'foo',
-          answer: 'Can I fly?'
-        },
-        bird: {
-          default: 'foo',
-          answer: 'Can I fly?'
-        }
-      });
-    }).must.not.throw();
+  it('can ask "Can I fly?" several time', function() {
+    const schema = {
+      plane: {
+        default: 'foo',
+        answer: 'Can I fly?'
+      },
+      bird: {
+        default: 'foo',
+        answer: 'Can I fly?'
+      }
+    };
+
+    expect(() => convict(schema)).to.not.throw();
   });
 
-  it('I cannot ask "Can I leave?" several time', function() {
-    (function() {
-      conf = convict({
-        plane: {
-          default: 'foo',
-          answer: 'Can I leave?'
-        },
-        bird: {
-          default: 'foo',
-          answer: 'Can I leave?'
-        }
-      });
-    }).must.throw('Stop asking!');
+  it('cannot ask "Can I leave?" several time', function() {
+    const schema = {
+      plane: {
+        default: 'foo',
+        answer: 'Can I leave?'
+      },
+      bird: {
+        default: 'foo',
+        answer: 'Can I leave?'
+      }
+    };
+
+    expect(() => convict(schema)).to.throw('Stop asking!');
   });
 });

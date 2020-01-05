@@ -40,6 +40,11 @@ describe('configuration files contain properties not declared in the schema', fu
     }
   });
 
+  it('must have the default getters order', function() {
+    const order = ['default', 'value', 'env', 'arg', 'force'];
+    expect(convict.getGettersOrder()).to.be.deep.equal(order);
+  });
+
   it('must not throw, if properties in config file match with the schema', function() {
     conf.loadFile(path.join(__dirname, 'cases/validation_correct.json'));
 

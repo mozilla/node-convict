@@ -563,9 +563,14 @@ config = convict('/some/path/to/a/config-schema.json');
 Returns the current value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
 ```javascript
 config.get('db.host');
-
 // or
 config.get('db').host;
+// also
+config.get('db[0]');
+// with dot:
+config.get('db["www.airbus.com"]'); { 'db': { 'www.airbus.com': 'air company'} }
+// in the first level
+config.get("['foo.bar']"); // { 'foo.bar': 'baz' }
 ```
 
 ### config.getOrigin(name)

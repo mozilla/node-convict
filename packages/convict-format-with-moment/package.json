@@ -35,9 +35,9 @@
     "moment": "2.24.0"
   },
   "devDependencies": {
+    "chai": "4.2.0",
     "convict": "file:../convict",
     "eslint": "6.5.1",
-    "mocha": "6.2.1",
-    "must": "0.13.4"
+    "mocha": "6.2.2"
   }
 }

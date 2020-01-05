@@ -1,6 +1,6 @@
 {
-    "public": "public",
-    "privateString": "[Sensitive]",
-    "privateNat": "[Sensitive]",
-    "privateNull": "[Sensitive]"
+  "public": "public",
+  "privateString": "[Sensitive]",
+  "privateNat": "[Sensitive]",
+  "privateNull": "[Sensitive]"
 }

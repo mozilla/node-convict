@@ -1,0 +1,26 @@
+{
+  "URL": "https://browserid.org",
+  "authentication_duration": 1209600000,
+  "bcrypt_work_factor": 12,
+  "certificate_validity": 86400000,
+  "database": {
+    "create_schema": true,
+    "driver": "mysql",
+    "may_write": false,
+    "user": "browserid"
+  },
+  "default_lang": ["en-US"],
+  "disable_primary_support": false,
+  "enable_code_version": false,
+  "env": "production",
+  "express_log_format": "default",
+  "locale_directory": "locale",
+  "max_compute_duration": 10000,
+  "min_time_between_emails": 60000,
+  "statsd": {
+    "enabled": true
+  },
+  "supported_languages": ["en-US"],
+  "use_minified_resources": true,
+  "var_path": "/home/browserid/var"
+}

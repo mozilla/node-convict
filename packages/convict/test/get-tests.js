@@ -1,6 +1,7 @@
 'use strict';
 
-require('must');
+const chai = require('chai');
+const expect = chai.expect;
 
 describe('convict', function() {
   const convict = require('../');
@@ -26,30 +27,32 @@ describe('convict', function() {
   });
 
   it('must be valid', function() {
-    (function() { conf.validate(); }).must.not.throw();
+    expect(() => conf.validate()).to.not.throw();
   });
 
   describe('.get()', function() {
     it('must find a nested value', function() {
       let val = conf.get('foo.bar');
-      val.must.be(7);
+
+      expect(val).to.equal(7);
     });
 
     it('must handle three levels of nesting', function() {
-      conf.get('foo.baz.bing').must.be('foo');
+      expect(conf.get('foo.baz.bing')).to.equal('foo');
     });
 
     it('must handle names with spaces and underscores', function() {
-      conf.get('foo.baz.name with spaces.name_with_underscores').must.be(true);
+      expect(conf.get('foo.baz.name with spaces.name_with_underscores')).to.be.true;
     });
 
     it("must throw if conf doesn't exist", function() {
-      (function() { conf.get('foo.no'); }).must.throw();
+      expect(() => conf.get('foo.no')).to.throw("cannot find configuration param 'foo.no'");
     });
 
     it('must get env', function() {
       let val = conf.get('env');
-      val.must.be('bar');
+
+      expect(val).to.equal('bar');
     });
   });
 });

@@ -54,13 +54,13 @@ exports.conf = {
 };
 
 exports.env = {
-  BOOLTRUE: true,
-  BOOLFALSE: false,
-  INT: 77,
-  INTCOERCED: 3.1415,
-  NAT: 666,
-  NATCOERCED: 3.1415,
-  NUM: 789.1011,
+  BOOLTRUE: 'true',
+  BOOLFALSE: 'false',
+  INT: '77',
+  INTCOERCED: '3.1415',
+  NAT: '666',
+  NATCOERCED: '3.1415',
+  NUM: '789.1011',
   ARRAY: 'a,b,c',
   OBJECT: '{"foo": "bar"}',
   REGEXP: '^foo$'

@@ -1,128 +1,139 @@
 'use strict';
 /*eslint no-sync: 0*/
 
+const chai = require('chai');
+const expect = chai.expect;
+
 const fs = require('fs');
 const path = require('path');
-const cp = require('child_process');
-const diff = require('deep-object-diff').diff;
 
 // This test finds its cases in /test/cases
 const cases_dir_path = path.join(__dirname, 'cases');
 let files = fs.readdirSync(cases_dir_path);
 
-let tests = {};
-files.forEach(function(f) {
-  let m = /^([a-zA-Z_\-0-9]+)\.js$/.exec(f);
-  if (m) tests[m[1]] = {
-    spec: f,
-    output: m[1] + '.out',
-    outputString: m[1] + '.string',
-    outputSchema: m[1] + '.schema',
-    config_files: []
-  };
+const config_files = {};
+files.forEach(function(filename) {
+  let match = /^([a-zA-Z_\-0-9]+)\.js$/.exec(filename);
+  if (match) {
+    const name = match[1];
+    config_files[name] = [];
+  }
 });
 
 // now find all configuration files for all tests
-Object.keys(tests).forEach(function(test) {
-  let re = new RegExp('^' + test + '.*\\.json$');
-  files.forEach(function(f) {
-    if (re.test(f)) tests[test].config_files.push(path.join(cases_dir_path, f));
+Object.keys(config_files).forEach(function(name) {
+  let reg = new RegExp('^' + name + '.*\\.json$');
+  files.forEach(function(filename) {
+    if (reg.test(filename)) {
+      config_files[name].push(path.join(cases_dir_path, filename));
+    }
   });
-  tests[test].config_files.sort();
+  config_files[name].sort();
 });
 
-function diffObjects(a, b) {
-  let res = diff(a, b);
-  if (Object.keys(res).length) {
-    return 'mismatch: ' + JSON.stringify(res, null, 4);
-  }
-  return null;
-}
-
 // time to run!
-let toRun = Object.keys(tests);
-
-function run(name, done) {
-  let test = tests[name];
-
-  let kase = require(path.join(cases_dir_path, test.spec));
-
-  let env = kase.env || {};
-  let argv = kase.argv || [];
-  if (!Array.isArray(argv)) {
-    argv = argv.split(' ');
-  }
-  let exec = path.join(__dirname, 'lib/runner.js');
-  if (process.env.running_under_istanbul) {
-    argv = ['cover', '--report', 'none', '--print', 'none', '--include-pid',
-      exec, '--'].concat(argv);
-    exec = path.join(__dirname, '..', 'node_modules', '.bin', 'istanbul');
-  }
-
-  let n = cp.fork(exec, argv, {env: env});
-
-  n.on('message', function(m) {
-    if (m.ready) {
-      n.send(tests[name]);
-      return;
-    }
-
-    let expected;
-    let got;
-    let errs = [];
-    try {
-      if (!m.error) {
-        // let's read the expected output
-        expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path, test.output)));
-        got = m.result;
-
-        // check that configuration is what we expect
-        let err = diffObjects(expected, got);
-        if (err) {
-          errs.push(`get ${err}`);
-        }
-
-        if (fs.existsSync(path.join(cases_dir_path, test.outputString))) {
-          expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path, test.outputString)));
-          got = JSON.parse(m.string);
-          let err = diffObjects(expected, got);
-          if (err) {
-            errs.push(`toString ${err}`);
-          }
-        }
-
-        if (fs.existsSync(path.join(cases_dir_path, test.outputSchema))) {
-          expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path,
-            test.outputSchema)));
-          got = m.schema;
-          let err = diffObjects(expected, got);
-          if (err) {
-            errs.push(`getSchema ${err}`);
-          }
-        }
-
-        if(errs.length > 0) {
-          throw new Error(errs.join('\n'));
-        }
-        return done();
-      } else {
-        expected = fs.readFileSync(path.join(cases_dir_path, test.output)).toString().trim();
-        got = m.error.trim();
-        // EOL for new line and windows support:
-        expected = expected.split(require('os').EOL).join('\n');
-        require('assert').strictEqual(got, expected, `must be pass ${name}`);
-        return done();
-      }
-    } catch(e) {
-      return done(e);
-    }
-  });
-}
+let toRun = Object.keys(config_files);
 
 describe('CLI tests', function() {
   toRun.forEach(function(name) {
-    it(name, function(done) {
-      run(name, done);
+    describe(name, function() {
+      const output = {};
+
+      const expectedOutput = (() => {
+        if (files.indexOf(name + '.out.js') !== -1) {
+          return require(path.join(cases_dir_path, name + '.out.js'));
+        } else {
+          const expected = fs.readFileSync(path.join(cases_dir_path, name + '.out')).toString();
+          // EOL for new line and windows support:
+          return expected.trim().split(require('os').EOL).join('\n');
+        }
+      })();
+
+      const state = (typeof expectedOutput === 'string') ? 'throw' : 'not throw';
+      let conf;
+
+      it('Convict must ' + state, function() {
+        function init() {
+          const convict = new_require('../');
+          const settings = require(path.join(__dirname, 'cases', name + '.js'));
+
+          if (settings.formats) {
+            if (Array.isArray(settings.formats)) {
+              settings.formats.forEach(function(formats) {
+                convict.addFormats(formats);
+              });
+            } else {
+              convict.addFormats(settings.formats);
+            }
+          }
+
+          const opts = {};
+
+          if (settings.env) {
+            opts.env = settings.env;
+          }
+
+          if (settings.argv) {
+            opts.args = settings.argv;
+          }
+
+          conf = convict(settings.conf, opts);
+          conf.loadFile(config_files[name]);
+          conf.validate();
+        }
+
+        if (typeof expectedOutput === 'string') {
+          output.error = true;
+          expect(function() {
+            init();
+          }).to.throw(expectedOutput);
+        } else {
+          expect(function() {
+            init();
+          }).to.not.throw();
+        }
+      });
+
+      it('must return the expected configuration object', function() {
+        if (!output.error) {
+          expect(conf.get()).to.deep.equal(expectedOutput);
+        }
+      });
+
+      it('stringify configuration object', function() {
+        if (files.indexOf(name + '.string') !== -1) {
+          const expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path, name + '.string')));
+
+          expect(JSON.parse(conf.toString())).to.deep.equal(expected);
+        }
+      });
+
+      it('check schema', function() {
+        if (files.indexOf(name + '.schema') !== -1) {
+          const expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path, name + '.schema')));
+
+          expect(conf.getSchema()).to.deep.equal(expected);
+        }
+      });
     });
   });
 });
+
+function new_require(packageName) {
+  const path = require.resolve(packageName);
+  const before = require.cache[path] || false;
+
+  if (before) {
+    delete require.cache[path];
+  }
+
+  const newModule = require(packageName);
+
+  delete require.cache[path];
+
+  if (before) {
+    require.cache[path] = before;
+  }
+
+  return newModule;
+}

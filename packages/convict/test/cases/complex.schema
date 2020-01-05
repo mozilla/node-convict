@@ -1,0 +1,82 @@
+{
+  "_cvtProperties": {
+    "URL": {
+      "default": "https://browserid.org",
+      "env": "URL",
+      "format": "string"
+    },
+    "authentication_duration": {
+      "default": "2 weeks",
+      "format": "duration"
+    },
+    "bcrypt_work_factor": {
+      "default": 12,
+      "format": "nat"
+    },
+    "certificate_validity": {
+      "default": "1 day",
+      "format": "duration"
+    },
+    "database": {
+      "_cvtProperties": {
+        "create_schema": {
+          "default": true
+        },
+        "driver": {
+          "default": "mysql",
+          "format": ["json", "mysql"]
+        },
+        "may_write": {
+          "default": false
+        },
+        "user": {
+          "default": "browserid"
+        }
+      }
+    },
+    "default_lang": {
+      "default": ["en-US"]
+    },
+    "disable_primary_support": {
+      "default": false
+    },
+    "enable_code_version": {
+      "default": false
+    },
+    "env": {
+      "default": "production",
+      "env": "NODE_ENV",
+      "format": ["production", "local"]
+    },
+    "express_log_format": {
+      "default": "default"
+    },
+    "locale_directory": {
+      "default": "locale"
+    },
+    "max_compute_duration": {
+      "default": "10 seconds",
+      "format": "duration"
+    },
+    "min_time_between_emails": {
+      "default": "1 minute",
+      "format": "duration"
+    },
+    "statsd": {
+      "_cvtProperties": {
+        "enabled": {
+          "default": true
+        }
+      }
+    },
+    "supported_languages": {
+      "default": ["en-US"]
+    },
+    "use_minified_resources": {
+      "default": true
+    },
+    "var_path": {
+      "default": "/home/browserid/var"
+    }
+  }
+}

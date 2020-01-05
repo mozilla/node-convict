@@ -1,12 +1,14 @@
 'use strict';
 
+const chai = require('chai');
+const expect = chai.expect;
+
 const path = require('path');
-require('must');
 
 describe('convict schema', function() {
   const convict = require('../');
-  let conf;
-  let conf2 = convict({
+  let myOwnConf; // init in beforeEach
+  const conf2 = convict({
     foo: {
       none: {
         format: String,
@@ -16,22 +18,38 @@ describe('convict schema', function() {
   });
 
   it('must parse a config specification from a file', function() {
-    conf = convict(path.join(__dirname, 'schema.json'));
+    const filepath = path.join(__dirname, 'schema.json');
+
+    expect(() => convict(filepath)).to.not.throw();
   });
 
   it('must parse a specification with built-in formats', function() {
-    conf = convict(path.join(__dirname, 'cases/schema-built-in-formats.json'));
+    const filepath = path.join(__dirname, 'cases/schema-built-in-formats.json');
+
+    expect(() => convict(filepath)).to.not.throw();
   });
 
   it('must throw when parsing a specification that reuses a command-line argument', function() {
-    (function() { convict({
-      foo: {default: 'a', arg: 'BAZ'},
-      bar: {default: 'a', arg: 'BAZ'}
-    })}).must.throw();
+    const schema = {
+      foo: {
+        default: 'a',
+        arg: 'BAZ'
+      },
+      bar: {
+        default: 'a',
+        arg: 'BAZ'
+      }
+    };
+
+    expect(() => convict(schema)).to.throw("'bar' reuses a command-line argument: BAZ");
+  });
+
+  it('conf2 must be valid', function() {
+    expect(() => conf2.validate()).to.not.throw();
   });
 
   it('must accept process arguments and environment variables as parameters', function() {
-    conf = convict({
+    const conf = convict({
       foo: {
         format: String,
         default: 'DEFAULT',
@@ -45,86 +63,66 @@ describe('convict schema', function() {
         arg: 'bar'
       }
     }, { args: ['--bar', 'baz'], env: { FOO: 'foz' } });
-    conf.getArgs().must.eql(['--bar', 'baz'])
-    conf.getEnv().must.eql({ FOO: 'foz' })
-    conf.get('bar').must.be('baz');
-    conf.get('foo').must.be('foz');
+
+    expect(conf.getArgs()).to.deep.equal(['--bar', 'baz']);
+    expect(conf.getEnv()).to.deep.equal({ FOO: 'foz' });
+    expect(conf.get('bar')).to.equal('baz');
+    expect(conf.get('foo')).to.equal('foz');
   });
 
   describe('after being parsed', function() {
-
+    // >> init myOwnConf before each it
     beforeEach(function() {
-      conf = convict(path.join(__dirname, 'schema.json'));
+      myOwnConf = convict(path.join(__dirname, 'schema.json'));
     });
+    // <<
 
     it('must be valid', function() {
-      (function() { conf.validate(); }).must.not.throw();
+      expect(() => myOwnConf.validate()).to.not.throw();
     });
 
-    it('must be valid again', function() {
-      (function() { conf2.validate(); }).must.not.throw();
+    it('conf2 must be valid again', function() {
+      expect(() => conf2.validate()).to.not.throw();
     });
 
-    it('must export all its properties as JSON', function() {
-      let res = conf.getProperties();
-      res.must.eql({
-        'foo': {
-          'bar': 7,
-          'baz': {
-            'bing': 'foo',
-            'name with spaces': {
-              'name_with_underscores': true
-            }
+    const expectedProperties = {
+      'foo': {
+        'bar': 7,
+        'baz': {
+          'bing': 'foo',
+          'name with spaces': {
+            'name_with_underscores': true
           }
         }
-      });
+      }
+    };
+
+    it('must export all its properties as JSON', function() {
+      expect(myOwnConf.getProperties()).to.deep.equal(expectedProperties);
     });
 
     it('must export all its properties as a string', function() {
-      let res = conf.toString();
-      res.must.eql(JSON.stringify({
+      const expected = JSON.stringify(expectedProperties, null, 2);
+
+      expect(myOwnConf.toString()).to.equal(expected);
+    });
+
+    const expectedSchema = {
+      '_cvtProperties': {
         'foo': {
-          'bar': 7,
-          'baz': {
-            'bing': 'foo',
-            'name with spaces': {
-              'name_with_underscores': true
-            }
-          }
-        }
-      }, null, 2));
-    });
-
-    it('must throw if `_cvtProperties` (reserved keyword) is used', function() {
-      (function() {
-        conf = convict({
-          _cvtProperties: {
-            format: String,
-            default: 'DEFAULT'
-          }
-        });
-      }).must.throw();
-    });
-
-    it('must export the schema as JSON', function() {
-      let res = conf.getSchema();
-      res.must.eql({
-        '_cvtProperties': {
-          'foo': {
-            '_cvtProperties': {
-              'bar': {
-                'default': 7
-              },
-              'baz': {
-                '_cvtProperties': {
-                  'bing': {
-                    'default': 'foo'
-                  },
-                  'name with spaces': {
-                    '_cvtProperties': {
-                      'name_with_underscores': {
-                        'default': true
-                      }
+          '_cvtProperties': {
+            'bar': {
+              'default': 7
+            },
+            'baz': {
+              '_cvtProperties': {
+                'bing': {
+                  'default': 'foo'
+                },
+                'name with spaces': {
+                  '_cvtProperties': {
+                    'name_with_underscores': {
+                      'default': true
                     }
                   }
                 }
@@ -132,121 +130,119 @@ describe('convict schema', function() {
             }
           }
         }
-      });
+      }
+    };
+
+    it('must export the schema as JSON', function() {
+      expect(myOwnConf.getSchema()).to.deep.equal(expectedSchema);
     });
 
     it('must export the schema as a JSON string', function() {
-      let res = conf.getSchemaString();
-      res.must.eql(JSON.stringify({
-        '_cvtProperties': {
-          'foo': {
-            '_cvtProperties': {
-              'bar': {
-                'default': 7
-              },
-              'baz': {
-                '_cvtProperties': {
-                  'bing': {
-                    'default': 'foo'
-                  },
-                  'name with spaces': {
-                    '_cvtProperties': {
-                      'name_with_underscores': {
-                        'default': true
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }, null, 2));
+      const expected = JSON.stringify(expectedSchema, null, 2);
+
+      expect(myOwnConf.getSchemaString()).to.equal(expected);
     });
 
     describe('.has()', function() {
       it('must not have undefined properties', function() {
-        let val = conf.has('foo.bar.madeup');
-        val.must.be(false);
+        expect(myOwnConf.has('foo.bar.madeup')).to.be.false;
       });
 
       it('must not have properties specified with a default of undefined', function() {
-        let val = conf2.has('foo.none');
-        val.must.be(false);
+        expect(conf2.has('foo.none')).to.be.false;
       });
     });
 
     describe('.get()', function() {
       it('must find a nested value', function() {
-        let val = conf.get('foo.bar');
-        val.must.be(7);
+        expect(myOwnConf.get('foo.bar')).to.equal(7);
       });
 
       it('must handle three levels of nesting', function() {
-        conf.get('foo.baz.bing').must.be('foo');
+        expect(myOwnConf.get('foo.baz.bing')).to.equal('foo');
       });
 
       it('must handle names with spaces and underscores', function() {
-        conf.get('foo.baz.name with spaces.name_with_underscores').must.be(true);
+        const key = 'foo.baz.name with spaces.name_with_underscores';
+
+        expect(myOwnConf.get(key)).to.be.true;
       });
 
       it('must throw if conf doesn\'t exist', function() {
-        (function() { conf.get('foo.no'); }).must.throw();
+        expect(() => myOwnConf.get('foo.no')).to.throw("cannot find configuration param 'foo.no'");
       });
     });
 
     describe('.default()', function() {
+      // >> init myOwnConf before each it
       // Temporarily modify a property while testing default()
-      beforeEach(function() { conf.set('foo.bar', 8); });
-      afterEach(function() { conf.set('foo.bar', 7); });
+      beforeEach(function() {
+        myOwnConf.set('foo.bar', 8);
+      });
+      afterEach(function() {
+        myOwnConf.set('foo.bar', 7);
+      });
+      // <<
 
       it('must report the default value of a property', function() {
-        conf.get('foo.bar').must.be(8); // Modified
-        conf.default('foo.bar').must.be(7);
-        conf.get('foo.bar').must.be(8);
+        expect(myOwnConf.get('foo.bar')).to.equal(8); // Modified
+        expect(myOwnConf.default('foo.bar')).to.equal(7);
+        expect(myOwnConf.get('foo.bar')).to.equal(8);
       });
 
       it('must throw if key doesn\'t exist', function() {
-        (function() { conf.default('foo.no'); }).must.throw();
+        expect(() => myOwnConf.default('foo.no')).to.throw("cannot find configuration param 'foo._cvtProperties.no.default'");
       });
 
       describe('when acting on an Object property', function() {
+        // >> init myOwnConf before each it
         beforeEach(function() {
-          conf = convict(path.join(__dirname, 'cases/schema-built-in-formats.json'));
+          myOwnConf = convict(path.join(__dirname, 'cases/schema-built-in-formats.json'));
         });
+        // <<
 
         it('must report the default value of the property', function() {
-          conf.get('someObject').must.eql({});
-          conf.default('someObject').must.eql({});
+          expect(myOwnConf.get('someObject')).to.deep.equal({});
+          expect(myOwnConf.default('someObject')).to.deep.equal({});
         });
 
         it('must not be altered by calls to .set()', function() {
-          conf.set('someObject.five', 5);
-          conf.default('someObject').must.eql({});
-          (function() { conf.default('someObject.five'); }).must.throw();
+          myOwnConf.set('someObject.five', 5);
+
+          expect(myOwnConf.default('someObject')).to.deep.equal({});
+          expect(() => myOwnConf.default('someObject.five')).to.throw("cannot find configuration param 'someObject._cvtProperties.five.default'");
         });
 
         it('must not be altered by calls to .load()', function() {
-          conf.load({someObject: {five: 5}});
-          conf.default('someObject').must.eql({});
-          (function() { conf.default('someObject.five'); }).must.throw();
+          myOwnConf.load({someObject: {five: 5}});
+
+          expect(myOwnConf.default('someObject')).to.deep.equal({});
+          expect(() => myOwnConf.default('someObject.five')).to.throw("cannot find configuration param 'someObject._cvtProperties.five.default'");
         });
       });
     });
 
     describe('.reset()', function() {
+      // >> init myOwnConf before each it
       // Temporarily modify a property while testing default()
-      beforeEach(function() { conf.set('foo.bar', 8); });
-      afterEach(function() { conf.set('foo.bar', 7); });
+      beforeEach(function() {
+        myOwnConf.set('foo.bar', 8);
+      });
+      afterEach(function() {
+        myOwnConf.set('foo.bar', 7);
+      });
+      // <<
 
       it('must reset the property to its default value', function() {
-        conf.get('foo.bar').must.be(8); // Modified
-        conf.reset('foo.bar');
-        conf.get('foo.bar').must.be(7);
+        expect(myOwnConf.get('foo.bar')).to.equal(8); // Modified
+
+        myOwnConf.reset('foo.bar');
+
+        expect(myOwnConf.get('foo.bar')).to.equal(7);
       });
 
       it('must throw if key doesn\'t exist', function() {
-        (function() { conf.reset('foo.no'); }).must.throw();
+        expect(() => myOwnConf.reset('foo.no')).to.throw("cannot find configuration param 'foo._cvtProperties.no.default'");
       });
     });
 
@@ -262,8 +258,8 @@ describe('convict used multiple times on one schema', function() {
       default: 'localhost:5000'
     }
   };
-  (function() {
+  expect(function() {
     convict(schema);
     convict(schema);
-  }).must.not.throw();
+  }).to.not.throw();
 });

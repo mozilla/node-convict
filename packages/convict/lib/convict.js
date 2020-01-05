@@ -73,13 +73,11 @@ const ALLOWED_OPTION_STRICT = 'strict';
 const ALLOWED_OPTION_WARN = 'warn';
 
 function flatten(obj, useProperties) {
-  let stack = Object.keys(obj);
-  let key;
-
-  let entries = [];
+  const stack = Object.keys(obj);
+  const entries = [];
 
   while (stack.length) {
-    key = stack.shift();
+    let key = stack.shift();
     let val = walk(obj, key);
     if (typeof val === 'object' && !Array.isArray(val) && val != null) {
       if (useProperties) {
@@ -91,7 +89,7 @@ function flatten(obj, useProperties) {
           continue;
         }
       }
-      let subkeys = Object.keys(val);
+      const subkeys = Object.keys(val);
 
       // Don't filter out empty objects
       if (subkeys.length > 0) {
@@ -104,7 +102,7 @@ function flatten(obj, useProperties) {
     entries.push([key, val]);
   }
 
-  let flattened = {};
+  const flattened = {};
   entries.forEach(function(entry) {
     let key = entry[0];
     if (useProperties) {
@@ -118,7 +116,7 @@ function flatten(obj, useProperties) {
 }
 
 function validate(instance, schema, strictValidation) {
-  let errors = {
+  const errors = {
     undeclared: [],
     invalid_type: [],
     missing: []
@@ -312,7 +310,7 @@ function importEnvironment(o) {
   const env = o.getEnv();
   Object.keys(o._env).forEach(function(envStr) {
     if (env[envStr] !== undefined) {
-      let fullpaths = o._env[envStr];
+      const fullpaths = o._env[envStr];
       fullpaths.forEach(function(fullpath) {
         o.set(fullpath, env[envStr]);
       });
@@ -364,10 +362,10 @@ function overlay(from, to, schema) {
 }
 
 function traverseSchema(schema, path) {
-  let ar = path.split('.');
+  const ar = path.split('.');
   let o = schema;
   while (ar.length > 0) {
-    let k = ar.shift();
+    const k = ar.shift();
     if (o && o._cvtProperties && o._cvtProperties[k]) {
       o = o._cvtProperties[k];
     } else {
@@ -424,9 +422,9 @@ function loadFile(path) {
 
 function walk(obj, path, initializeMissing) {
   if (path) {
-    let ar = path.split('.');
+    const ar = path.split('.');
     while (ar.length) {
-      let k = ar.shift();
+      const k = ar.shift();
       if (initializeMissing && obj[k] == null) {
         obj[k] = {};
         obj = obj[k];
@@ -444,11 +442,11 @@ function walk(obj, path, initializeMissing) {
 /**
  * @returns a config object
  */
-let convict = function convict(def, opts) {
+const convict = function convict(def, opts) {
 
   // TODO: Rename this `rv` variable (supposedly "return value") into something
   // more meaningful.
-  let rv = {
+  const rv = {
     /**
      * Gets the array of process arguments, using the override passed to the
      * convict function or process.argv if no override was passed.
@@ -478,12 +476,12 @@ let convict = function convict(def, opts) {
      * even if they aren't set, to avoid revealing any information.
      */
     toString: function() {
-      let clone = cloneDeep(this._instance);
+      const clone = cloneDeep(this._instance);
       this._sensitive.forEach(function(key) {
-        let path = key.split('.');
-        let childKey = path.pop();
-        let parentKey = path.join('.');
-        let parent = walk(clone, parentKey);
+        const path = key.split('.');
+        const childKey = path.pop();
+        const parentKey = path.join('.');
+        const parent = walk(clone, parentKey);
         parent[childKey] = '[Sensitive]';
       });
       return JSON.stringify(clone, null, 2);
@@ -508,7 +506,7 @@ let convict = function convict(def, opts) {
      *     notation to reference nested values
      */
     get: function(path) {
-      let o = walk(this._instance, path);
+      const o = walk(this._instance, path);
       return cloneDeep(o);
     },
 
@@ -520,7 +518,7 @@ let convict = function convict(def, opts) {
       // The default value for FOO.BAR.BAZ is stored in `_schema._cvtProperties` at:
       //   FOO._cvtProperties.BAR._cvtProperties.BAZ.default
       path = (path.split('.').join('._cvtProperties.')) + '.default';
-      let o = walk(this._schema._cvtProperties, path);
+      const o = walk(this._schema._cvtProperties, path);
       return cloneDeep(o);
     },
 
@@ -536,7 +534,7 @@ let convict = function convict(def, opts) {
      */
     has: function(path) {
       try {
-        let r = this.get(path);
+        const r = this.get(path);
         // values that are set but undefined return false
         return typeof r !== 'undefined';
       } catch (e) {
@@ -580,13 +578,12 @@ let convict = function convict(def, opts) {
      * Loads and merges one or multiple JSON configuration files into config
      */
     loadFile: function(paths) {
-      let self = this;
       if (!Array.isArray(paths)) paths = [paths];
-      paths.forEach(function(path) {
+      paths.forEach((path) => {
         // Support empty config files #253
         const result = loadFile(path);
         if (result) {
-          overlay(result, self._instance, self._schema);
+          overlay(result, this._instance, this._schema);
         }
       });
       // environment and arguments always overrides config files
@@ -609,18 +606,18 @@ let convict = function convict(def, opts) {
 
       const output_function = options.output || global.console.log;
 
-      let errors = validate(this._instance, this._schema, options.allowed);
+      const errors = validate(this._instance, this._schema, options.allowed);
 
       if (errors.invalid_type.length + errors.undeclared.length + errors.missing.length) {
-        let sensitive = this._sensitive;
+        const sensitive = this._sensitive;
 
-        let fillErrorBuffer = function(errors) {
+        const fillErrorBuffer = function(errors) {
           let err_buf = '';
           for (let i = 0; i < errors.length; i++) {
 
             if (err_buf.length) err_buf += '\n';
 
-            let e = errors[i];
+            const e = errors[i];
 
             if (e.fullName) {
               err_buf += e.fullName + ': ';
@@ -637,7 +634,7 @@ let convict = function convict(def, opts) {
         const params_err_buf = fillErrorBuffer(errors.undeclared);
         const missing_err_buf = fillErrorBuffer(errors.missing);
 
-        let output_err_bufs = [types_err_buf, missing_err_buf];
+        const output_err_bufs = [types_err_buf, missing_err_buf];
 
         if (options.allowed === ALLOWED_OPTION_WARN && params_err_buf.length) {
           let warning = 'Warning:';
@@ -652,7 +649,7 @@ let convict = function convict(def, opts) {
           output_err_bufs.push(params_err_buf);
         }
 
-        let output = output_err_bufs
+        const output = output_err_bufs
           .filter(function(str) { return str.length; })
           .join('\n');
 

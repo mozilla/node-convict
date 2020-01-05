@@ -777,10 +777,11 @@ convict.addGetters = function(getters) {
 /**
  * Adds a new custom format
  */
-convict.addFormat = function(name, validate, coerce) {
+convict.addFormat = function(name, validate, coerce, rewrite) {
   if (typeof name === 'object') {
     validate = name.validate;
     coerce = name.coerce;
+    rewrite = name.rewrite;
     name = name.name;
   }
   if (typeof validate !== 'function') {
@@ -789,6 +790,12 @@ convict.addFormat = function(name, validate, coerce) {
   if (coerce && typeof coerce !== 'function') {
     throw new CUSTOMISE_FAILED('Coerce function for "' + name + '" must be a function.');
   }
+
+  if (types[name] && !rewrite) {
+    const advice = ' Set the 4th argument (rewrite) of `addFormat` at true to skip this error.';
+    throw new CUSTOMISE_FAILED('The format name "' + name + '" is already registered.' + advice);
+  }
+
   types[name] = validate;
   if (coerce) converters.set(name, coerce);
 };
@@ -798,7 +805,7 @@ convict.addFormat = function(name, validate, coerce) {
  */
 convict.addFormats = function(formats) {
   Object.keys(formats).forEach(function(name) {
-    convict.addFormat(name, formats[name].validate, formats[name].coerce);
+    convict.addFormat(name, formats[name].validate, formats[name].coerce, formats[name].rewrite);
   });
 };
 

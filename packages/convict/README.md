@@ -419,9 +419,10 @@ config = convict('/some/path/to/a/config-schema.json');
 
 Adds new parsers for custom file extensions
 
-### convict.addFormat(format) or convict.addFormat(name, validate, coerce)
+### convict.addFormat(format) or convict.addFormat(name, validate, coerce, rewrite)
 
-Adds a new custom format, `format` being an object, see example below.
+Adds a new custom format, `format` being an object, see example below. `rewrite = true`
+will let you add format with an existing name.
 
 ```javascript
 convict.addFormat({

@@ -216,7 +216,7 @@ const BUILT_INS = BUILT_IN_NAMES.map(function(name) {
 
 function normalizeSchema(name, rawSchema, props, fullName) {
   if (name === '_cvtProperties') {
-    throw new Error("'" + fullName + "': '_cvtProperties' is reserved word of convict.");
+    throw new SCHEMA_INVALID(fullName, "'_cvtProperties' is reserved word of convict, it can be used like property name.");
   }
 
   // If the current schema rawSchema is not a config property (has no "default"), recursively normalize it.

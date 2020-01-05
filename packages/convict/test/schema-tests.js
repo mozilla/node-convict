@@ -91,6 +91,17 @@ describe('convict schema', function() {
       expect(() => conf2.validate()).to.not.throw();
     });
 
+    it('must throw if `_cvtProperties` (reserved keyword) is used', function() {
+      const invalidSchema = {
+        _cvtProperties: {
+          format: String,
+          default: 'DEFAULT'
+        }
+      };
+
+      expect(() => convict(invalidSchema)).to.throw("_cvtProperties: '_cvtProperties' is reserved word of convict, it can be used like property name.");
+    });
+
     const expectedProperties = {
       'foo': {
         'bar': 7,

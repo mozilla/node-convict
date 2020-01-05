@@ -372,7 +372,7 @@ function applyGetters(schema, node) {
 
 function isObj(o) { return (typeof o === 'object' && o !== null); }
 
-function overlay(from, to, schema) {
+function applyValues(from, to, schema) {
   const indexVal = getters.order.indexOf('value');
   Object.keys(from).forEach(function(name) {
     const mySchema = (schema && schema._cvtProperties) ? schema._cvtProperties[name] : null;
@@ -391,7 +391,7 @@ function overlay(from, to, schema) {
       }
     } else {
       if (!isObj(to[name])) to[name] = {};
-      overlay(from[name], to[name], mySchema);
+      applyValues(from[name], to[name], mySchema);
     }
   });
 }
@@ -602,7 +602,7 @@ const convict = function convict(def, opts) {
      * Loads and merges a JavaScript object into config
      */
     load: function(conf) {
-      overlay(conf, this._instance, this._schema);
+      applyValues(conf, this._instance, this._schema);
       return this;
     },
 
@@ -615,7 +615,7 @@ const convict = function convict(def, opts) {
         // Support empty config files #253
         const result = loadFile(path);
         if (result) {
-          overlay(result, this._instance, this._schema);
+          applyValues(result, this._instance, this._schema);
         }
       });
       return this;

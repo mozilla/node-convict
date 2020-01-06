@@ -280,7 +280,7 @@ function normalizeSchema(name, rawSchema, props, fullName) {
       const Format = typeof format === 'string' ? BUILT_INS_BY_NAME[format] : format;
       const formatFormat = Object.prototype.toString.call(new Format());
       const myFormat = Format.name;
-      schema.format = format = myFormat.toLowerCase();
+      schema.format = format = myFormat;
       return (value) => {
         if (formatFormat !== Object.prototype.toString.call(value)) {
           throw new Error('must be of type ' + myFormat);
@@ -313,7 +313,7 @@ function normalizeSchema(name, rawSchema, props, fullName) {
       const defaultFormat = Object.prototype.toString.call(schema.default);
       const myFormat = defaultFormat.replace(/\[.* |]/g, '');
       // magic coerceing
-      schema.format = format = myFormat.toLowerCase();
+      schema.format = format = myFormat;
       return (value) => {
         if (defaultFormat !== Object.prototype.toString.call(value)) {
           throw new Error('must be of type ' + myFormat);
@@ -447,15 +447,15 @@ function getCoerceMethod(format) {
       return (v) => (typeof v !== 'undefined') ? parseInt(v, 10) : v;
     case 'port_or_windows_named_pipe':
       return (v) => (isWindowsNamedPipe(v)) ? v : parseInt(v, 10);
-    case 'number':
+    case 'Number':
       return (v) => (isStr(v)) ? parseFloat(v) : v;
-    case 'boolean':
+    case 'Boolean':
       return (v) => (isStr(v)) ? (String(v).toLowerCase() !== 'false') : v;
-    case 'array':
+    case 'Array':
       return (v) => (isStr(v)) ? v.split(',') : v;
-    case 'object':
+    case 'Object':
       return (v) => (isStr(v)) ? JSON.parse(v) : v;
-    case 'regexp':
+    case 'RegExp':
       return (v) => (isStr(v)) ? new RegExp(v) : v;
     default:
       // for eslint "Expected a default case"

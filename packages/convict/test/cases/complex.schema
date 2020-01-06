@@ -3,7 +3,7 @@
     "URL": {
       "default": "https://browserid.org",
       "env": "URL",
-      "format": "string"
+      "format": "String"
     },
     "authentication_duration": {
       "default": "2 weeks",
@@ -21,7 +21,7 @@
       "_cvtProperties": {
         "create_schema": {
           "default": true,
-          "format": "boolean"
+          "format": "Boolean"
         },
         "driver": {
           "default": "mysql",
@@ -29,25 +29,25 @@
         },
         "may_write": {
           "default": false,
-          "format": "boolean"
+          "format": "Boolean"
         },
         "user": {
           "default": "browserid",
-          "format": "string"
+          "format": "String"
         }
       }
     },
     "default_lang": {
       "default": ["en-US"],
-      "format": "array"
+      "format": "Array"
     },
     "disable_primary_support": {
       "default": false,
-      "format": "boolean"
+      "format": "Boolean"
     },
     "enable_code_version": {
       "default": false,
-      "format": "boolean"
+      "format": "Boolean"
     },
     "env": {
       "default": "production",
@@ -56,11 +56,11 @@
     },
     "express_log_format": {
       "default": "default",
-      "format": "string"
+      "format": "String"
     },
     "locale_directory": {
       "default": "locale",
-      "format": "string"
+      "format": "String"
     },
     "max_compute_duration": {
       "default": "10 seconds",
@@ -74,21 +74,21 @@
       "_cvtProperties": {
         "enabled": {
           "default": true,
-          "format": "boolean"
+          "format": "Boolean"
         }
       }
     },
     "supported_languages": {
       "default": ["en-US"],
-      "format": "array"
+      "format": "Array"
     },
     "use_minified_resources": {
       "default": true,
-      "format": "boolean"
+      "format": "Boolean"
     },
     "var_path": {
       "default": "/home/browserid/var",
-      "format": "string"
+      "format": "String"
     }
   }
 }

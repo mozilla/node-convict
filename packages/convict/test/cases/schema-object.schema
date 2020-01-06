@@ -2,15 +2,15 @@
   "_cvtProperties": {
     "shorthand": {
       "default": "value",
-      "format": "string"
+      "format": "String"
     },
     "basic": {
       "default": true,
-      "format": "boolean"
+      "format": "Boolean"
     },
     "doc": {
       "default": null,
-      "format": "null",
+      "format": "Null",
       "doc": "A value with a docstring"
     },
     "format": {
@@ -19,27 +19,27 @@
     },
     "typeFormat": {
       "default": true,
-      "format": "boolean"
+      "format": "Boolean"
     },
     "env": {
       "default": "",
-      "format": "string",
+      "format": "String",
       "env": "ENV"
     },
     "arg": {
       "default": false,
-      "format": "boolean",
+      "format": "Boolean",
       "arg": "arg"
     },
     "sensitive": {
       "default": "password",
-      "format": "string",
+      "format": "String",
       "sensitive": true
     },
     "combined": {
       "default": "hello",
       "doc": "A value with every property set",
-      "format": "string",
+      "format": "String",
       "env": "COMBINED",
       "arg": "combined",
       "sensitive": false
@@ -48,7 +48,7 @@
       "_cvtProperties": {
         "child": {
           "default": "ababa",
-          "format": "string"
+          "format": "String"
         }
       }
     }

@@ -110,8 +110,8 @@ describe('deep nested tree structure', function() {
 
   describe('missing chains', function() {
     it('must error when attempting to access a missing chain', function() {
-      expect(() => conf.get('invalid')).to.throw('cannot find configuration param: invalid');
-      expect(() => conf.get('invalid.child')).to.throw('cannot find configuration param: invalid.child');
+      expect(() => conf.get('invalid')).to.throw('invalid: cannot find "invalid" property because "invalid" is not defined.');
+      expect(() => conf.get('invalid.child')).to.throw('invalid.child: cannot find "invalid" property because "invalid" is not defined.');
     });
 
     it('must initialize an empty chain', function() {

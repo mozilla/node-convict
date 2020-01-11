@@ -66,8 +66,9 @@ describe('configuration files contain properties not declared in the schema', fu
   it('must throw, if properties in config file do not match the properties declared in the schema', function() {
     conf.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
 
-    const expected = "configuration param 'undeclared' not declared in the schema"
-      + "\nconfiguration param 'nested.level1_1' not declared in the schema";
+    const expected = 'Validate failed because wrong value(s):'
+    + "\n  - configuration param 'undeclared' not declared in the schema"
+    + "\n  - configuration param 'nested.level1_1' not declared in the schema";
 
     expect(() => conf.validate(strictMode)).to.throw(expected);
   });
@@ -93,10 +94,11 @@ describe('configuration files contain properties not declared in the schema', fu
 
     expect(() => conf.load(param)).to.not.throw();
 
-    const expected = 'foo: must be of type String: value was 58, getter was `value`'
-      + '\nbar: must be of type String: value was 98, getter was `value`'
-      + "\nconfiguration param 'undeclared' not declared in the schema"
-      + "\nconfiguration param 'nested.level1_1' not declared in the schema";
+    const expected = 'Validate failed because wrong value(s):'
+      + '\n  - foo: must be of type String: value was 58, getter was `value`'
+      + '\n  - bar: must be of type String: value was 98, getter was `value`'
+      + "\n  - configuration param 'undeclared' not declared in the schema"
+      + "\n  - configuration param 'nested.level1_1' not declared in the schema";
 
     expect(() => conf.validate(strictMode)).to.throw(expected);
   });
@@ -133,7 +135,7 @@ describe('configuration files contain properties not declared in the schema', fu
   });
 
   it('must use the user output function when it was declared', function() {
-    const expected = "\u001b[33;1mWarning:\u001b[0m configuration param '[0]' not declared in the schema";
+    const expected = "\u001b[33;1mWarning:\u001b[0m\n  - configuration param '[0]' not declared in the schema";
 
     expect(message).to.equal(expected);
   });
@@ -193,8 +195,9 @@ describe('setting specific values', function() {
     myOwnConf.set('parent.object', { foo: 'bar' });
     myOwnConf.set('parent_object', { foo: 'bar' });
 
-    const expected = "configuration param 'parent_object.foo' not declared in the schema"
-      + "\nconfiguration param 'parent.object.foo' not declared in the schema";
+    const expected = 'Validate failed because wrong value(s):'
+      + "\n  - configuration param 'parent_object.foo' not declared in the schema"
+      + "\n  - configuration param 'parent.object.foo' not declared in the schema";
 
     expect(() => myOwnConf.validate(strictMode)).to.throw(expected);
   });

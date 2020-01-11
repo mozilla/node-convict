@@ -11,16 +11,16 @@ const cloneDeep = require('lodash.clonedeep');
 const parsePath = require('objectpath').parse;
 const cvtError  = require('./convicterror.js');
 
-// 1
 const CONVICT_ERROR = cvtError.CONVICT_ERROR;
-const PARSING_ERROR = cvtError.PARSING_ERROR;
-// 2
+// 1
 const SCHEMA_INVALID = cvtError.SCHEMA_INVALID;
+// 2
 const CUSTOMISE_FAILED = cvtError.CUSTOMISE_FAILED;
 const INCORRECT_USAGE = cvtError.INCORRECT_USAGE;
 const PATH_INVALID = cvtError.PATH_INVALID;
-// 3
+// 2
 const VALUE_INVALID = cvtError.VALUE_INVALID;
+const VALIDATE_FAILED = cvtError.VALIDATE_FAILED;
 const FORMAT_INVALID = cvtError.FORMAT_INVALID;
 
 
@@ -102,7 +102,8 @@ function flatten(obj, useProperties) {
   while (stack.length) {
     let path = stack.shift();
     let node = walk(obj, path);
-    if (typeof node === 'object' && !Array.isArray(node) && node != null) {
+    // Is an object not null and not an array
+    if (isObjNotNull(node) && !Array.isArray(node)) {
       if (useProperties) {
         if ('_cvtProperties' in node) {
           node = node._cvtProperties;
@@ -157,18 +158,13 @@ function validate(instance, schema, strictValidation) {
     let instanceItem = flatInstance[name];
     if (!(name in flatInstance)) {
       try {
-        if (typeof schemaItem.default === 'object' &&
-          !Array.isArray(schemaItem.default)) {
-          // Missing item may be an object with undeclared children, so try to
-          // pull it unflattened from the config instance for type validation
-          instanceItem = walk(instance, name);
-        } else {
-          throw new PARSING_ERROR('missing');
+        instanceItem = walk(instance, name);
+      } catch (err) {
+        let message = 'config parameter "' + name + '" missing from config, did you override its parent?';
+        if (err.lastPosition && err.type === 'PATH_INVALID') {
+          message += ` Because ${err.why}.`;
         }
-      } catch (e) {
-        const msg = 'configuration param "' + name + '" missing from config, did you override its parent?';
-        const err = new PARSING_ERROR(msg);
-        errors.missing.push(err);
+        errors.missing.push(new VALUE_INVALID(message));
         return;
       }
     }
@@ -224,9 +220,15 @@ function normalizeSchema(name, rawSchema, props, fullName) {
     throw new SCHEMA_INVALID(fullName, "'_cvtProperties' is reserved word of convict, it can be used like property name.");
   }
 
-  // If the current schema rawSchema is not a config property (has no "default"), recursively normalize it.
-  if (typeof rawSchema === 'object' && rawSchema !== null && !Array.isArray(rawSchema) &&
-        Object.keys(rawSchema).length > 0 && !('default' in rawSchema)) {
+  const countChildren = (rawSchema) ? Object.keys(rawSchema).length : 0;
+  const isArray = (rawSchema) ? Array.isArray(rawSchema) : false;
+
+  // If the current schema (= rawSchema) :
+  //   - is an object not null and not an array ;
+  //   - is not a config property (= has no `.default`) ;
+  //   - has children.
+  // Then: recursively normalize it.
+  if (isObjNotNull(rawSchema) && !isArray && countChildren > 0 && !('default' in rawSchema)) {
     props[name] = {
       _cvtProperties: {}
     };
@@ -235,9 +237,9 @@ function normalizeSchema(name, rawSchema, props, fullName) {
       normalizeSchema.call(this, key, rawSchema[key], props[name]._cvtProperties, path);
     });
     return;
-  } else if (typeof rawSchema !== 'object' || Array.isArray(rawSchema) ||
-    rawSchema === null || Object.keys(rawSchema).length == 0) {
-    // Normalize shorthand "value" config properties
+  // Magic normalizer
+  } else if (typeof rawSchema !== 'object' || rawSchema === null || isArray || countChildren === 0) {
+    // Normalizes shorthand "value" to a config property
     rawSchema = { default: rawSchema };
   }
 
@@ -386,7 +388,10 @@ function applyGetters(schema, node) {
   });
 }
 
-function isObj(o) { return (typeof o === 'object' && o !== null); }
+// With 'in': Prevent error: 'Cannot use 'in' operator to search for {key} in {value}'
+function isObjNotNull(obj) {
+  return typeof obj === 'object' && obj !== null;
+}
 
 function applyValues(from, to, schema) {
   const getters = this._getters;
@@ -395,7 +400,7 @@ function applyValues(from, to, schema) {
   Object.keys(from).forEach((name) => {
     const mySchema = (schema && schema._cvtProperties) ? schema._cvtProperties[name] : null;
     // leaf
-    if (Array.isArray(from[name]) || !isObj(from[name]) || !schema || schema.format === 'object') {
+    if (Array.isArray(from[name]) || !isObjNotNull(from[name]) || !schema || schema.format === 'object') {
       const bool = mySchema && mySchema._cvtGetOrigin;
       const lastG = bool && mySchema._cvtGetOrigin();
 
@@ -408,7 +413,7 @@ function applyValues(from, to, schema) {
         mySchema._cvtGetOrigin = () => 'value';
       }
     } else {
-      if (!isObj(to[name])) to[name] = {};
+      if (!isObjNotNull(to[name])) to[name] = {};
       applyValues.call(this, from[name], to[name], mySchema);
     }
   });
@@ -510,15 +515,25 @@ function walk(obj, path, initializeMissing) {
   if (path) {
     path = Array.isArray(path) ? path : parsePath(path);
     const sibling = path.slice(0);
+    let historic = [];
     while (sibling.length) {
       const key = sibling.shift();
+
+      if (key !== '_cvtProperties') {
+        historic.push(key);
+      }
+
       if (initializeMissing && obj[key] == null) {
         obj[key] = {};
         obj = obj[key];
-      } else if (key in obj) {
+      } else if (isObjNotNull(obj) && key in obj) {
         obj = obj[key];
       } else {
-        throw new PATH_INVALID('cannot find configuration param: ' + stringifyPath(path)); 
+        const noCvtProp = (path) => path !== '_cvtProperties';
+        throw new PATH_INVALID(stringifyPath(path.filter(noCvtProp)), stringifyPath(historic), {
+          path: stringifyPath(historic.slice(0, -1)),
+          value: obj
+        }); 
       }
     }
   }
@@ -788,11 +803,9 @@ const convict = function convict(def, opts) {
         const sensitive = this._sensitive;
 
         const fillErrorBuffer = function(errors) {
-          let err_buf = '';
+          const messages = [];
           errors.forEach(function(err) {
-            if (err_buf.length) {
-              err_buf += '\n';
-            }
+            let err_buf = '  - ';
 
             /*if (err.type) {
               err_buf += '[' + err.type + '] ';
@@ -823,13 +836,15 @@ const convict = function convict(def, opts) {
               }
               err_buf += ' ' + warning;
             }
+
+            messages.push(err_buf);
           });
-          return err_buf;
+          return messages;
         };
 
-        const types_err_buf = fillErrorBuffer(errors.invalid_type);
-        const params_err_buf = fillErrorBuffer(errors.undeclared);
-        const missing_err_buf = fillErrorBuffer(errors.missing);
+        const types_err_buf = fillErrorBuffer(errors.invalid_type).join('\n');
+        const params_err_buf = fillErrorBuffer(errors.undeclared).join('\n');
+        const missing_err_buf = fillErrorBuffer(errors.missing).join('\n');
 
         const output_err_bufs = [types_err_buf, missing_err_buf];
 
@@ -838,7 +853,7 @@ const convict = function convict(def, opts) {
           if (process.stdout.isTTY) {
             warning = BOLD_YELLOW_TEXT + warning + RESET_TEXT;
           }
-          output_function(warning + ' ' + params_err_buf);
+          output_function(warning + '\n' + params_err_buf);
         } else if (options.allowed === ALLOWED_OPTION_STRICT) {
           output_err_bufs.push(params_err_buf);
         }
@@ -848,7 +863,7 @@ const convict = function convict(def, opts) {
           .join('\n');
 
         if (output.length) {
-          throw new VALUE_INVALID(output);
+          throw new VALIDATE_FAILED(output);
         }
 
       }

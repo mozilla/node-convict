@@ -65,7 +65,7 @@ describe('convict get function', function() {
     });
 
     it("must throw if conf doesn't exist", function() {
-      expect(() => conf.get('foo.no')).to.throw('cannot find configuration param: foo.no');
+      expect(() => conf.get('foo.no')).to.throw('foo.no: cannot find "foo.no" property because "foo.no" is not defined.');
     });
 
     it('must get env', function() {

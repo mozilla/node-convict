@@ -223,6 +223,12 @@ function normalizeSchema(name, rawSchema, props, fullName) {
   const countChildren = (rawSchema) ? Object.keys(rawSchema).length : 0;
   const isArray = (rawSchema) ? Array.isArray(rawSchema) : false;
 
+  const filterName = (name) => {
+    return (name === this._defaultSubstitute) ? 'default' : name;
+  }; //                   ^^^^^^^^^^^^^^^^^^ = '$~default'
+
+  name = filterName(name);
+
   // If the current schema (= rawSchema) :
   //   - is an object not null and not an array ;
   //   - is not a config property (= has no `.default`) ;
@@ -541,20 +547,23 @@ function walk(obj, path, initializeMissing) {
   return obj;
 }
 
-function convertSchema(nodeSchema) {
+function convertSchema(nodeSchema, convictProperties) {
   if (!nodeSchema || typeof nodeSchema !== 'object' || Array.isArray(nodeSchema)) {
     return nodeSchema;
   } else if (nodeSchema._cvtProperties) {
-    return convertSchema(nodeSchema._cvtProperties);
+    return convertSchema.call(this, nodeSchema._cvtProperties, true);
   } else {
     const schema = Array.isArray(nodeSchema) ? [] : {};
 
     Object.keys(nodeSchema).forEach((name) => {
+      let keyname = name;
       if (typeof nodeSchema[name] === 'function') {
         return;
+      } else if (name === 'default' && convictProperties) {
+        keyname = this._defaultSubstitute;
       }
 
-      schema[name] = convertSchema(nodeSchema[name]);
+      schema[keyname] = convertSchema.call(this, nodeSchema[name]);
     });
 
     return schema;
@@ -615,14 +624,14 @@ const convict = function convict(def, opts) {
     getSchema: function(debug) {
       const schema = cloneDeep(this._schema);
 
-      return (debug) ? cloneDeep(schema) : convertSchema(schema);
+      return (debug) ? cloneDeep(schema) : convertSchema.call(this, schema);
     },
 
     /**
      * Exports the schema as a JSON string
      */
     getSchemaString: function(debug) {
-      return JSON.stringify(convertSchema(this._schema), null, 2);
+      return JSON.stringify(this.getSchema(debug), null, 2);
     },
 
     /**
@@ -877,6 +886,11 @@ const convict = function convict(def, opts) {
   } else {
     rv._def = def;
   }
+
+  // The key `$~default` will be replaced by `default` during the schema parsing that allow
+  // to use default key for config properties.
+  const optsDefSub = (opts) ? opts.defaultSubstitute : false;
+  rv._defaultSubstitute = (typeof optsDefSub !== 'string') ? '$~default' : optsDefSub;
 
   // build up current config from definition
   rv._schema = {

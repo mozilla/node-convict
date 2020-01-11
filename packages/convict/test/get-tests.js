@@ -22,6 +22,23 @@ describe('convict get function', function() {
           bing: 'foo',
           'name with spaces': {
             name_with_underscores: true
+          },
+          // foo.baz.default
+          '$~default': {
+            default: 'google',
+            format: 'String'
+          }
+        },
+        // foo.default
+        '$~default': {
+          'sky': {
+            format: 'String',
+            default: 'cloud'
+          },
+          // foo.default.default
+          '$~default': {
+            format: 'String',
+            default: 'both'
           }
         }
       },
@@ -48,6 +65,12 @@ describe('convict get function', function() {
   });
 
   describe('.get()', function() {
+    it('must find value with default key (= "$~default")', function() {
+      expect(conf.get('foo.baz.default')).to.equal('google');
+      expect(conf.get('foo.default.sky')).to.equal('cloud');
+      expect(conf.get('foo.default.default')).to.equal('both');
+    });
+
     it('must find a nested value', function() {
       expect(conf.get('foo.bar')).to.equal(7);
       expect(conf.get('["foo.bar"]')).to.equal('air');
@@ -72,6 +95,40 @@ describe('convict get function', function() {
       let val = conf.get('env');
 
       expect(val).to.equal('bar');
+    });
+
+    it('must parse with custom default substitute', function() {
+      conf = convict({
+        // default
+        '[cvt]default': {
+          default: 'myDefaultValue',
+          format: 'String'
+        }
+      }, {
+        defaultSubstitute: '[cvt]default'
+      });
+
+      const expected = {
+        '[cvt]default': {
+          'default': 'myDefaultValue',
+          'format': 'String'
+        }
+      };
+
+      const nodeSchemaExpected = {
+        '_cvtProperties': {
+          'default': {
+            'default': 'myDefaultValue',
+            'format': 'String'
+          }
+        }
+      };
+
+      conf.validate();
+
+      expect(conf.has('default')).to.be.true;
+      expect(conf.getSchemaString()).to.equal(JSON.stringify(expected, null, 2));
+      expect(conf.getSchemaString(true)).to.equal(JSON.stringify(nodeSchemaExpected, null, 2));
     });
   });
 });

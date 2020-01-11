@@ -149,7 +149,7 @@ Each setting in the schema has the following possible properties, each aiding in
 convict's goal of being more robust and collaborator friendly.
 
 * **Type information**: the `format` property specifies either a built-in convict format (`ipaddress`, `port`, `int`, etc.), or it can be a function to check a custom format. During validation, if a format check fails it will be added to the error report.
-* **Default values**:  Every setting *must* have a default value.
+* **Default values**: Every setting *must* have a default value. If you want to use `default` property name like a config property in your schema use `$~default`. `$~default` will be replaced by `default` during the schema parsing.
 * **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value. An environment variable may not be mapped to more than one setting.
 * **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
 * **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `config.getSchemaString()` and have it displayed in the output.
@@ -531,6 +531,8 @@ convict configuration object.
   - **opts.env**: Override `process.env` if specified using an object `{'NODE_ENV': 'production'}`.
   - **opts.args**: Override `process.argv` if specified using an array `['--argname', 'value']` or
   a string `--argname value`.
+  - **opts.defaultSubstitute**: Override `'$~default'`, this value will be replaced by `'default'`
+  during the schema parsing.
 
 The configuration object has an API for getting and setting values, described
 below.

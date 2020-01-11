@@ -737,9 +737,9 @@ Exports all the properties (that is the keys and their current values) as a JSON
 string, with sensitive values masked. Sensitive values are masked even if they
 aren't set, to avoid revealing any information.
 
-### config.getSchema()
+### config.getSchema(debug)
 
-Exports the schema as JSON.
+Exports the schema as JSON. When debug is true, returns data schema (copy of convict storage).
 
 ### config.getSchemaString()
 

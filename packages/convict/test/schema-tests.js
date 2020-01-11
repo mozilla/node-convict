@@ -125,24 +125,54 @@ describe('convict schema', function() {
     });
 
     const expectedSchema = {
+      'foo': {
+        'bar': {
+          'default': 7,
+          'format': 'Number'
+        },
+        'baz': {
+          'bing': {
+            'default': 'foo',
+            'format': 'String'
+          },
+          'name with spaces': {
+            'name_with_underscores': {
+              'default': true,
+              'format': 'Boolean'
+            }
+          }
+        }
+      }
+    };
+
+    const expectedDataSchema = {
       '_cvtProperties': {
         'foo': {
           '_cvtProperties': {
             'bar': {
               'default': 7,
-              'format': 'Number'
+              'format': 'Number',
+              '_cvtCoerce': '[FunctionReplacement]',
+              '_cvtFormat': '[FunctionReplacement]',
+              '_cvtGetOrigin': '[FunctionReplacement]'
             },
             'baz': {
               '_cvtProperties': {
                 'bing': {
                   'default': 'foo',
-                  'format': 'String'
+                  'format': 'String',
+                  '_cvtCoerce': '[FunctionReplacement]',
+                  '_cvtFormat': '[FunctionReplacement]',
+                  '_cvtGetOrigin': '[FunctionReplacement]'
                 },
                 'name with spaces': {
                   '_cvtProperties': {
                     'name_with_underscores': {
                       'default': true,
-                      'format': 'Boolean'
+                      'format': 'Boolean',
+                      '_cvtCoerce': '[FunctionReplacement]',
+                      '_cvtFormat': '[FunctionReplacement]',
+                      '_cvtGetOrigin': '[FunctionReplacement]'
                     }
                   }
                 }
@@ -157,10 +187,19 @@ describe('convict schema', function() {
       expect(myOwnConf.getSchema()).to.deep.equal(expectedSchema);
     });
 
-    it('must export the schema as a JSON string', function() {
-      const expected = JSON.stringify(expectedSchema, null, 2);
+    it('must parse exported schema', function() {
+      expect(() => convict(myOwnConf.getSchema())).to.not.throw();
+    });
 
-      expect(myOwnConf.getSchemaString()).to.deep.equal(expected);
+    it('must returns the data schema (like is stored in convict instance) with debug=true', function() {
+      const dataSchema = convertFunctionToString(myOwnConf.getSchema(true));
+      expect(dataSchema).to.deep.equal(expectedDataSchema);
+    });
+
+    it('must export the schema as a JSON string', function() {
+      const stringify = (obj) => JSON.stringify(obj, null, 2);
+
+      expect(myOwnConf.getSchemaString()).to.deep.equal(stringify(expectedSchema));
     });
 
     describe('.has()', function() {
@@ -290,3 +329,26 @@ describe('convict used multiple times on one schema', function() {
     convict(schema);
   }).to.not.throw();
 });
+
+// replace Function by `[FunctionReplacement]` because `.to.deep.equal()` doesn't work well with function
+function convertFunctionToString(nodeSchema) {
+  if (typeof nodeSchema === 'function') {
+    return '[FunctionReplacement]';
+  } else if (!nodeSchema || typeof nodeSchema !== 'object') {
+    return nodeSchema;
+  } else {
+    const schema = {};
+
+    Object.keys(nodeSchema).forEach((name) => {
+      const property = nodeSchema[name];
+
+      if (typeof property === 'function') {
+        schema[name] = '[FunctionReplacement]';
+      } else {
+        schema[name] = convertFunctionToString(property, toString)
+      }
+    });
+
+    return schema;
+  }
+}

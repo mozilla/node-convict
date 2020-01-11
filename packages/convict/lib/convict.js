@@ -333,9 +333,8 @@ function normalizeSchema(name, rawSchema, props, fullName) {
   
   schema._cvtFormat = function(value) {
     try {
-      newFormat(value, schema); // schema = this
+      newFormat(value, schema);
     } catch (err) {
-      // attach the value and the property's fullName to the error
       const hasOrigin = !!schema._cvtGetOrigin;
       const getter = (hasOrigin) ? schema._cvtGetOrigin() : false;
       const getterValue = (hasOrigin && schema[getter]) ? schema[getter] : '';
@@ -527,6 +526,28 @@ function walk(obj, path, initializeMissing) {
   return obj;
 }
 
+function convertSchema(nodeSchema) {
+  if (typeof nodeSchema === 'function') {
+    return;
+  } else if (!nodeSchema || typeof nodeSchema !== 'object' || Array.isArray(nodeSchema)) {
+    return nodeSchema;
+  } else if (nodeSchema._cvtProperties) {
+    return convertSchema(nodeSchema._cvtProperties);
+  } else {
+    const schema = Array.isArray(nodeSchema) ? [] : {};
+
+    Object.keys(nodeSchema).forEach((name) => {
+      if (typeof nodeSchema[name] === 'function') {
+        return;
+      }
+
+      schema[name] = convertSchema(nodeSchema[name]);
+    });
+
+    return schema;
+  }
+}
+
 /**
  * @returns a config object
  */
@@ -578,15 +599,17 @@ const convict = function convict(def, opts) {
     /**
      * Exports the schema as JSON.
      */
-    getSchema: function() {
-      return JSON.parse(JSON.stringify(this._schema));
+    getSchema: function(debug) {
+      const schema = cloneDeep(this._schema);
+
+      return (debug) ? cloneDeep(schema) : convertSchema(schema);
     },
 
     /**
      * Exports the schema as a JSON string
      */
-    getSchemaString: function() {
-      return JSON.stringify(this._schema, null, 2);
+    getSchemaString: function(debug) {
+      return JSON.stringify(convertSchema(this._schema), null, 2);
     },
 
     /**

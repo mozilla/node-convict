@@ -527,9 +527,7 @@ function walk(obj, path, initializeMissing) {
 }
 
 function convertSchema(nodeSchema) {
-  if (typeof nodeSchema === 'function') {
-    return;
-  } else if (!nodeSchema || typeof nodeSchema !== 'object' || Array.isArray(nodeSchema)) {
+  if (!nodeSchema || typeof nodeSchema !== 'object' || Array.isArray(nodeSchema)) {
     return nodeSchema;
   } else if (nodeSchema._cvtProperties) {
     return convertSchema(nodeSchema._cvtProperties);

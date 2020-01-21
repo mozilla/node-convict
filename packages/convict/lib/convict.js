@@ -180,7 +180,7 @@ function validate(instance, schema, strictValidation) {
         });
     }
 
-    if (!(typeof schemaItem.default === 'undefined' &&
+    if (schemaItem.required || !(typeof schemaItem.default === 'undefined' &&
           instanceItem === schemaItem.default)) {
       try {
         schemaItem._cvtValidateFormat(instanceItem);
@@ -702,8 +702,16 @@ const convict = function convict(def, opts) {
     has: function(path) {
       try {
         const r = this.get(path);
-        // values that are set but undefined return false
-        return typeof r !== 'undefined';
+        const isRequired = (() => {
+          try {
+            return !!walk(this._schema._cvtProperties, pathToSchemaPath(path, 'required'));
+          } catch (e) {
+            // undeclared property
+            return false;
+          }
+        })();
+        // values that are set and required = false but undefined return false
+        return isRequired || typeof r !== 'undefined';
       } catch (e) {
         return false;
       }

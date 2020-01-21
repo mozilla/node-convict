@@ -9,11 +9,16 @@ const convict = new_require('../');
 
 describe('convict schema', function() {
   let myOwnConf; // init in beforeEach
-  const conf2 = convict({
+  const requiredPropConf = convict({
     foo: {
       none: {
         format: String,
         default: undefined
+      },
+      required: {
+        format: undefined,
+        default: undefined,
+        required: true
       }
     }
   });
@@ -50,8 +55,22 @@ describe('convict schema', function() {
     expect(() => convict(schema)).to.throw('bar: uses a already used value in "arg" getter (actual: "BAZ")');
   });
 
-  it('conf2 must be valid', function() {
-    expect(() => conf2.validate()).to.not.throw();
+  it('requiredPropConf must be valid', function() {
+    expect(() => requiredPropConf.validate()).to.not.throw();
+  });
+
+  it('must throw if string property is required but undefined', function() {
+    const requiredStringandUndefined = convict({
+      foo: {
+        none: {
+          format: String,
+          required: true,
+          default: undefined
+        }
+      }
+    });
+
+    expect(() => requiredStringandUndefined.validate()).to.throw('foo.none: must be of type String');
   });
 
   it('must accept process arguments and environment variables as parameters', function() {
@@ -87,8 +106,8 @@ describe('convict schema', function() {
       expect(() => myOwnConf.validate()).to.not.throw();
     });
 
-    it('conf2 must be valid again', function() {
-      expect(() => conf2.validate()).to.not.throw();
+    it('requiredPropConf must be valid again', function() {
+      expect(() => requiredPropConf.validate()).to.not.throw();
     });
 
     it('must throw if `_cvtProperties` (reserved keyword) is used', function() {
@@ -207,8 +226,24 @@ describe('convict schema', function() {
         expect(myOwnConf.has('foo.bar.madeup')).to.be.false;
       });
 
+      it('must work on undeclared property', function() {
+        expect(requiredPropConf.has('foo.bing')).to.be.false;
+        requiredPropConf.set('foo.bing', undefined);
+        expect(requiredPropConf.has('foo.bing')).to.be.false;
+        requiredPropConf.set('foo.bing', 'no');
+        expect(requiredPropConf.has('foo.bing')).to.be.true;
+      });
+
       it('must not have properties specified with a default of undefined', function() {
-        expect(conf2.has('foo.none')).to.be.false;
+        expect(requiredPropConf.has('foo.none')).to.be.false;
+        expect(requiredPropConf.has('foo.required')).to.be.true;
+        expect(requiredPropConf.get('foo.required')).to.be.undefined;
+      });
+
+      it('must throw with', function() {
+        expect(requiredPropConf.has('foo.none')).to.be.false;
+        expect(requiredPropConf.has('foo.required')).to.be.true;
+        expect(requiredPropConf.get('foo.required')).to.be.undefined;
       });
     });
 

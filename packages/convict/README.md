@@ -155,6 +155,25 @@ convict's goal of being more robust and collaborator friendly.
 * **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `config.getSchemaString()` and have it displayed in the output.
 * **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `config.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
 
+### Schema parsing behavior
+
+#### Optional config property
+
+By default, the config property will be ignored during the schema validation if its value is `undefined` and `schema.default` is `undefined`. If you want to not accept optional value and validate value in this case [`value === undefined and schema.default === default`], set `schema.required` to `true`.
+
+```js
+var config = convict({
+  options: { // optional
+    format: String,
+    default: undefined
+  }, // if `options` stays `undefined`: will be not validate and not throw
+  password: { // required
+    format: String,
+    required: true,
+    default: undefined
+  } // if `password` stays `undefined`: will be validate and throw
+}).validate();
+```
 
 ### Validation
 

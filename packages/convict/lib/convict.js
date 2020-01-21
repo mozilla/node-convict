@@ -55,7 +55,7 @@ function isWindowsNamedPipe(x) {
 function assert(assertion, err_msg) {
   if (!assertion) {
     throw new Error(err_msg);
-    //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
+    //        ^^^^^-- will be catch in _cvtValidateFormat and convert to FORMAT_INVALID Error.
   }
 }
 const types = {
@@ -183,7 +183,7 @@ function validate(instance, schema, strictValidation) {
     if (!(typeof schemaItem.default === 'undefined' &&
           instanceItem === schemaItem.default)) {
       try {
-        schemaItem._cvtFormat(instanceItem);
+        schemaItem._cvtValidateFormat(instanceItem);
       } catch (err) {
         errors.invalid_type.push(err);
       }
@@ -292,7 +292,7 @@ function normalizeSchema(name, rawSchema, props, fullName) {
       return (value) => {
         if (formatFormat !== Object.prototype.toString.call(value)) {
           throw new Error('must be of type ' + myFormat);
-          //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
+          //        ^^^^^-- will be catch in _cvtValidateFormat and convert to FORMAT_INVALID Error.
         }
       };
     } else if (typeof format === 'string') {
@@ -307,7 +307,7 @@ function normalizeSchema(name, rawSchema, props, fullName) {
       const contains = (whitelist, value) => {
         if (!whitelist.includes(value)) {
           throw new Error('must be one of the possible values: ' + JSON.stringify(whitelist));
-          //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
+          //        ^^^^^-- will be catch in _cvtValidateFormat and convert to FORMAT_INVALID Error.
         }
       }
       return contains.bind(null, format);
@@ -325,7 +325,7 @@ function normalizeSchema(name, rawSchema, props, fullName) {
       return (value) => {
         if (defaultFormat !== Object.prototype.toString.call(value)) {
           throw new Error('must be of type ' + myFormat);
-          //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
+          //        ^^^^^-- will be catch in _cvtValidateFormat and convert to FORMAT_INVALID Error.
         }
       };
     }
@@ -339,7 +339,7 @@ function normalizeSchema(name, rawSchema, props, fullName) {
     }
   })();
   
-  schema._cvtFormat = function(value) {
+  schema._cvtValidateFormat = function(value) {
     try {
       newFormat(value, schema);
     } catch (err) {

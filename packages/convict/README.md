@@ -183,7 +183,7 @@ For example:
 var config = convict({
   key: {
     doc: 'API key',
-    format: function check (val) {
+    format: function check(val, schema) {
       if (!/^[a-fA-F0-9]{64}$/.test(val)) {
         throw new Error('must be a 64 character hex key')
       }
@@ -192,7 +192,7 @@ var config = convict({
   },
   name: {
     doc: 'user name',
-    format: function check (val) {
+    format: function check(val, schema) {
       if (typeof val.first_name !== 'string') {
         throw new TypeError(`first name '${val.first_name}' is not a string`);
       }
@@ -214,7 +214,7 @@ method that can be reused for many different properties:
 ```javascript
 convict.addFormat({
   name: 'float-percent',
-  validate: function(val) {
+  validate: function(val, schema) {
     if (val !== 0 && (!val || val > 1 || val < 0)) {
       throw new Error('must be a float between 0 and 1, inclusive');
     }
@@ -407,7 +407,7 @@ will let you rewrite an existing format.
 ```javascript
 convict.addFormat({
   name: 'float-percent',
-  validate: function(val) {
+  validate: function(val, validate) {
     if (val !== 0 && (!val || val > 1 || val < 0)) {
       throw new Error('must be a float between 0 and 1, inclusive');
     }
@@ -754,6 +754,26 @@ The array of process arguments (not including the launcher and application file 
 ### config.getEnv()
 
 The map of environment variables. Defaults to process.env unless an override is specified using the env key of the second argument (options) argument of the convict function.
+
+## API schema property
+
+Schema property is accessible by second argument of the callback of getter `getter(value, schema, stopPropagation)` and format `validate(value, schema)`.
+
+### schema[`doc` || `defaut` || `format` || ...]
+
+You will find the properties that you defined in your schema (like `doc`, `defaut`, `format`, etc...).
+
+### schema.\_cvtGetOrigin()
+
+Get the name of the getter which gets the current value. 
+
+### schema.\_cvtValidateFormat(value)
+
+Calls the validate format function corresponding to `schema.format`, used by `config.validate(value)` to validate your schema. This function will throw an error if `value` doesn't have the correct format.
+
+### schema.\_cvtCoerce(value)
+
+Calls the `coerce` function corresponding to `schema.format`, used by getters to convert (generally a string) to its proper type (int, float, array...).
 
 ## FAQ
 

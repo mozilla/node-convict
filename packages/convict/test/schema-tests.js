@@ -153,7 +153,7 @@ describe('convict schema', function() {
               'default': 7,
               'format': 'Number',
               '_cvtCoerce': '[FunctionReplacement]',
-              '_cvtFormat': '[FunctionReplacement]',
+              '_cvtValidateFormat': '[FunctionReplacement]',
               '_cvtGetOrigin': '[FunctionReplacement]'
             },
             'baz': {
@@ -162,7 +162,7 @@ describe('convict schema', function() {
                   'default': 'foo',
                   'format': 'String',
                   '_cvtCoerce': '[FunctionReplacement]',
-                  '_cvtFormat': '[FunctionReplacement]',
+                  '_cvtValidateFormat': '[FunctionReplacement]',
                   '_cvtGetOrigin': '[FunctionReplacement]'
                 },
                 'name with spaces': {
@@ -171,7 +171,7 @@ describe('convict schema', function() {
                       'default': true,
                       'format': 'Boolean',
                       '_cvtCoerce': '[FunctionReplacement]',
-                      '_cvtFormat': '[FunctionReplacement]',
+                      '_cvtValidateFormat': '[FunctionReplacement]',
                       '_cvtGetOrigin': '[FunctionReplacement]'
                     }
                   }

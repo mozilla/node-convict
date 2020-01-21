@@ -267,9 +267,9 @@ describe('schema contains an object property with a custom format', function() {
     const message = 'this is a hack to make a fake convict internal error';
 
     convict.addFormat('hack', function(name, schema) {
-      // we prevent that error : will be catch in original _cvtFormat function
+      // we prevent that error : will be catch in original _cvtValidateFormat function
       //                     and will be convert to FORMAT_INVALID Error.
-      schema._cvtFormat = function(value) {
+      schema._cvtValidateFormat = function(value) {
         throw new Error(message);
       };
     });
@@ -280,7 +280,7 @@ describe('schema contains an object property with a custom format', function() {
       }
     });
 
-    // init the hack (replace _cvtFormat by our own function)
+    // init the hack (replace _cvtValidateFormat by our own function)
     expect(() => conf.validate(strictMode)).not.to.throw();
 
     // run the hack function

@@ -977,7 +977,7 @@ convict.addGetter = function(property, getter, usedOnlyOnce, rewrite) {
   if (typeof getter !== 'function') {
     throw new CUSTOMISE_FAILED('Getter function for "' + property + '" must be a function.');
   }
-  if (['value', 'force'].includes(property)) {
+  if (['_cvtCoerce', '_cvtValidateFormat', '_cvtGetOrigin', 'format', 'required', 'value', 'force'].includes(property)) {
     throw new CUSTOMISE_FAILED('Getter name use a reservated word: ' + property);
   }
   if (getters.list[property] && !rewrite) {

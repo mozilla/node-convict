@@ -215,7 +215,7 @@ const BUILT_INS = BUILT_IN_NAMES.map(function(name) {
   return BUILT_INS_BY_NAME[name];
 });
 
-function normalizeSchema(name, rawSchema, props, fullName) {
+function parsingSchema(name, rawSchema, props, fullName) {
   if (name === '_cvtProperties') {
     throw new SCHEMA_INVALID(fullName, "'_cvtProperties' is reserved word of convict, it can be used like property name.");
   }
@@ -233,19 +233,19 @@ function normalizeSchema(name, rawSchema, props, fullName) {
   //   - is an object not null and not an array ;
   //   - is not a config property (= has no `.default`) ;
   //   - has children.
-  // Then: recursively normalize it.
+  // Then: recursively parsing it.
   if (isObjNotNull(rawSchema) && !isArray && countChildren > 0 && !('default' in rawSchema)) {
     props[name] = {
       _cvtProperties: {}
     };
     Object.keys(rawSchema).forEach((key) => {
       const path = fullName + '.' + key;
-      normalizeSchema.call(this, key, rawSchema[key], props[name]._cvtProperties, path);
+      parsingSchema.call(this, key, rawSchema[key], props[name]._cvtProperties, path);
     });
     return;
-  // Magic normalizer
+  // Magic parsing
   } else if (typeof rawSchema !== 'object' || rawSchema === null || isArray || countChildren === 0) {
-    // Normalizes shorthand "value" to a config property
+    // Parses a shorthand value to a config property
     rawSchema = { default: rawSchema };
   }
 
@@ -912,7 +912,7 @@ const convict = function convict(def, opts) {
   rv._getters = cloneDeep(getters);
 
   Object.keys(rv._def).forEach((key) => {
-    normalizeSchema.call(rv, key, rv._def[key], rv._schema._cvtProperties, key);
+    parsingSchema.call(rv, key, rv._def[key], rv._schema._cvtProperties, key);
   });
 
   // config instance

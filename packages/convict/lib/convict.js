@@ -222,6 +222,9 @@ function parsingSchema(name, rawSchema, props, fullName) {
 
   const countChildren = (rawSchema) ? Object.keys(rawSchema).length : 0;
   const isArray = (rawSchema) ? Array.isArray(rawSchema) : false;
+  const hasFormat = (rawSchema) ? rawSchema['format'] : false;
+
+  const isConfigPropFormat = (hasFormat && isObjNotNull(hasFormat) && !Array.isArray(hasFormat));
 
   const filterName = (name) => {
     return (name === this._defaultSubstitute) ? 'default' : name;
@@ -231,10 +234,15 @@ function parsingSchema(name, rawSchema, props, fullName) {
 
   // If the current schema (= rawSchema) :
   //   - is an object not null and not an array ;
-  //   - is not a config property (= has no `.default`) ;
+  //   - is not a config property :
+  //         - has no `.default` ;
+  //         - has no `.format` or has `.format: [ isObject && notNull && notArray ]`
   //   - has children.
-  // Then: recursively parsing it.
-  if (isObjNotNull(rawSchema) && !isArray && countChildren > 0 && !('default' in rawSchema)) {
+  // Then: recursively parsing like schema property.
+  if (isObjNotNull(rawSchema) && !isArray && countChildren > 0
+    && !('default' in rawSchema)
+    && (!hasFormat || isConfigPropFormat)
+  ) {
     props[name] = {
       _cvtProperties: {}
     };
@@ -247,6 +255,9 @@ function parsingSchema(name, rawSchema, props, fullName) {
   } else if (typeof rawSchema !== 'object' || rawSchema === null || isArray || countChildren === 0) {
     // Parses a shorthand value to a config property
     rawSchema = { default: rawSchema };
+  } else if (!('default' in rawSchema) && !isConfigPropFormat) {
+    // Set `.default` to undefined when it doesn't exist
+    rawSchema.default = (function() {})(); // === undefined
   }
 
   const schema = cloneDeep(rawSchema);
@@ -313,14 +324,15 @@ function parsingSchema(name, rawSchema, props, fullName) {
       return contains.bind(null, format);
     } else if (typeof format === 'function') {
       return format;
-    } else if (format && typeof format !== 'function') {
+    } else if (format) {
+      // Wrong type for format
       const errorMessage = 'uses an invalid format, it must be a format name, a function, an array or a known format type';
       throw new SCHEMA_INVALID(fullName, errorMessage, (format || '').toString() || 'is a ' + typeof format);
-    } else { // !format
-      // default format is the typeof the default value
+    } else if (typeof schema.default !== 'undefined') {
+      // Magic format: default format is the type of the default value
       const defaultFormat = Object.prototype.toString.call(schema.default);
       const myFormat = defaultFormat.replace(/\[.* |]/g, '');
-      // magic coerceing
+      // Magic coerceing
       schema.format = format = myFormat;
       return (value) => {
         if (defaultFormat !== Object.prototype.toString.call(value)) {
@@ -328,6 +340,9 @@ function parsingSchema(name, rawSchema, props, fullName) {
           //        ^^^^^-- will be catch in _cvtValidateFormat and convert to FORMAT_INVALID Error.
         }
       };
+    } else { // default and format are not defined.
+      const errorMessage = 'format is not defined.';
+      throw new SCHEMA_INVALID(fullName, errorMessage, (format || '').toString() || 'is a ' + typeof format);
     }
   })();
 

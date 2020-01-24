@@ -1,0 +1,13 @@
+{
+  "none": 8,
+  "zoo": {
+    "elephant": [
+      "Patrick",
+      "Bob",
+      "Carlo"
+    ],
+    "format": {
+      "bird": "everywhere"
+    }
+  }
+}

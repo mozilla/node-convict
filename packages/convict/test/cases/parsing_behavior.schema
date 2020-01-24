@@ -1,0 +1,17 @@
+{
+  "zoo": {
+    "elephant": {
+      "doc": "Elephant name",
+      "format": "Array"
+    },
+    "format": {
+      "bird": {
+        "default": "everywhere",
+        "format": "String"
+      }
+    }
+  },
+  "none": {
+    "format": "*"
+  }
+}

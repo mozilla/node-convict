@@ -16,12 +16,23 @@ describe('convict schema', function() {
         default: undefined
       },
       required: {
-        format: undefined,
+        format: '*',
         default: undefined,
+        required: true
+      },
+      none2: {
+        format: String
+      },
+      none3: {
+        format: 'String'
+      },
+      required2: {
+        format: String,
         required: true
       }
     }
   });
+  requiredPropConf.set('foo.required2', 'ok');
 
   it('must have the default getters order', function() {
     const order = ['default', 'value', 'env', 'arg', 'force'];
@@ -66,11 +77,21 @@ describe('convict schema', function() {
           format: String,
           required: true,
           default: undefined
+        },
+        none2: {
+          format: String,
+          required: true
         }
       }
     });
 
-    expect(() => requiredStringandUndefined.validate()).to.throw('foo.none: must be of type String');
+    console.log(requiredStringandUndefined.getSchema());
+    console.log(requiredStringandUndefined.getSchema());
+
+    const expected = 'Validate failed because wrong value(s):\n'
+      + '  - foo.none: must be of type String\n'
+      + '  - foo.none2: must be of type String';
+    expect(() => requiredStringandUndefined.validate()).to.throw(expected);
   });
 
   it('must accept process arguments and environment variables as parameters', function() {

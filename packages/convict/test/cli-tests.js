@@ -113,7 +113,7 @@ describe('CLI tests', function() {
         if (files.indexOf(name + '.schema') !== -1) {
           const expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path, name + '.schema')));
 
-          expect(conf.getSchema()).to.deep.equal(expected);
+          expect(JSON.parse(conf.getSchemaString())).to.deep.equal(expected);
         }
       });
     });

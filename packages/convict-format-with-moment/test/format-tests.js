@@ -5,7 +5,7 @@ const expect = chai.expect;
 
 const moment = require('moment');
 
-const new_require = require('./new_require.js');
+const new_require = require('../../convict/test/new_require.js');
 const convict = new_require('../../convict/');
 
 describe('convict formats', function() {

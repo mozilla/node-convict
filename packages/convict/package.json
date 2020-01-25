@@ -34,7 +34,7 @@
   "main": "lib/convict.js",
   "dependencies": {
     "lodash.clonedeep": "4.5.0",
-    "objectpath": "1.2.2",
+    "objectpath": "2.0.0",
     "yargs-parser": "13.0.0"
   },
   "devDependencies": {

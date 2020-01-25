@@ -9,6 +9,7 @@ const fs        = require('fs');
 const parseArgs = require('yargs-parser');
 const cloneDeep = require('lodash.clonedeep');
 const parsePath = require('objectpath').parse;
+const stringifyPath = require('objectpath').stringify;
 const cvtError  = require('./convicterror.js');
 
 const CONVICT_ERROR = cvtError.CONVICT_ERROR;
@@ -518,23 +519,6 @@ function pathToSchemaPath(path, addKey) {
     schemaPath.push(addKey);
 
   return schemaPath;
-}
-
-function stringifyPath(arr, quote, forceQuote) {
-  quote = (quote === '"') ? '"' : "'";
-  const regexp = new RegExp('(\\\\|' + quote + ')', 'g'); // regex => /(\\|')/g
-
-  return arr.map(function(value, key) {
-    let property = value.toString();
-    if (!forceQuote && /^[A-z_]\w*$/.exec(property)) { // str with only A-z0-9_ chars will display `foo.bar`
-      return (key !== 0) ? '.' + property : property;
-    } else if (!forceQuote && /^\d+$/.exec(property)) { // str with only numbers will display `foo[0]`
-      return '[' + property + ']';
-    } else {
-      property = property.replace(regexp, '\\$1');
-      return '[' + quote + property + quote + ']';
-    }
-  }).join('');
 }
 
 function walk(obj, path, initializeMissing) {

@@ -46,25 +46,25 @@ describe('configuration files contain properties not declared in the schema', fu
   });
 
   it('must not throw, if properties in config file match with the schema', function() {
-    conf.loadFile(path.join(__dirname, 'cases/validation_correct.json'));
+    conf.loadFile(path.join(__dirname, 'fixtures/validation_correct.json'));
 
     expect(() => conf.validate(strictMode)).to.not.throw();
   });
 
   it('must not throw, if the option to check for non schema properties is set by default but must display warnings', function() {
-    conf.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    conf.loadFile(path.join(__dirname, 'fixtures/validation_incorrect.json'));
 
     expect(() => conf.validate()).to.not.throw();
   });
 
   it('must not throw, if the option to check for non schema properties is not specified and must display warnings', function() {
-    conf.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    conf.loadFile(path.join(__dirname, 'fixtures/validation_incorrect.json'));
 
     expect(() => conf.validate()).to.not.throw();
   });
 
   it('must throw, if properties in config file do not match the properties declared in the schema', function() {
-    conf.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    conf.loadFile(path.join(__dirname, 'fixtures/validation_incorrect.json'));
 
     const expected = 'Validate failed because wrong value(s):'
     + "\n  - configuration param 'undeclared' not declared in the schema"
@@ -77,7 +77,7 @@ describe('configuration files contain properties not declared in the schema', fu
     const opts = {
       allowed: 'warn'
     };
-    conf.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    conf.loadFile(path.join(__dirname, 'fixtures/validation_incorrect.json'));
 
     expect(() => conf.validate(opts)).to.not.throw();
   });
@@ -144,7 +144,7 @@ describe('configuration files contain properties not declared in the schema', fu
     const opts = {
       output: 312
     };
-    conf.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    conf.loadFile(path.join(__dirname, 'fixtures/validation_incorrect.json'));
 
     expect(() => conf.validate(opts)).to.throw('options.output is optionnal and must be a function.');
   });
@@ -160,8 +160,8 @@ describe('configuration files contain properties not declared in the schema', fu
     const conf = convict(schema);
 
     conf.loadFile([
-      path.join(__dirname, 'cases/object_override1.json'),
-      path.join(__dirname, 'cases/object_override2.json')
+      path.join(__dirname, 'fixtures/object_override1.json'),
+      path.join(__dirname, 'fixtures/object_override2.json')
     ]);
 
     expect(() => conf.validate()).to.not.throw();

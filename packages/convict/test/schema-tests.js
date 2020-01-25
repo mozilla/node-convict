@@ -46,7 +46,7 @@ describe('convict schema', function() {
   });
 
   it('must parse a specification with built-in formats', function() {
-    const filepath = path.join(__dirname, 'cases/schema-built-in-formats.json');
+    const filepath = path.join(__dirname, 'fixtures/schema-built-in-formats.json');
 
     expect(() => convict(filepath)).to.not.throw();
   });
@@ -317,7 +317,7 @@ describe('convict schema', function() {
       describe('when acting on an Object property', function() {
         // >> init myOwnConf before each it
         beforeEach(function() {
-          myOwnConf = convict(path.join(__dirname, 'cases/schema-built-in-formats.json'));
+          myOwnConf = convict(path.join(__dirname, 'fixtures/schema-built-in-formats.json'));
         });
         // <<
 

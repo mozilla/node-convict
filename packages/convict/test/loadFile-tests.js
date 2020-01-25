@@ -12,8 +12,8 @@ const new_require = require('./new_require.js');
 const convict = new_require('../');
 
 describe('convict loadFile & addParser functions', function() {
-  const schema = require('./cases/formats/schema');
-  const expected_output = require('./cases/formats/out');
+  const schema = require('./fixtures/formats/schema');
+  const expected_output = require('./fixtures/formats/out');
 
   describe('.addParser()', function() {
     it('must not throw on valid parser', function() {
@@ -92,7 +92,7 @@ describe('convict loadFile & addParser functions', function() {
   describe('convict().loadFile()', function() {
     it('must work using default json parser if format isn\'t supported', function() {
       const conf = convict(schema);
-      conf.loadFile(path.join(__dirname, 'cases/formats/data'));
+      conf.loadFile(path.join(__dirname, 'fixtures/formats/data'));
 
       expect(() => conf.validate()).to.not.throw();
       expect(conf.get()).to.deep.equal(expected_output);
@@ -102,7 +102,7 @@ describe('convict loadFile & addParser functions', function() {
       convict.addParser({ extension: 'json', parse: JSON.parse });
 
       const conf = convict(schema);
-      conf.loadFile(path.join(__dirname, 'cases/formats/data.json'));
+      conf.loadFile(path.join(__dirname, 'fixtures/formats/data.json'));
 
       expect(() => conf.validate()).to.not.throw();
       expect(conf.get()).to.deep.equal(expected_output);
@@ -112,7 +112,7 @@ describe('convict loadFile & addParser functions', function() {
       convict.addParser({ extension: 'json5', parse: json5.parse });
 
       const conf = convict(schema);
-      conf.loadFile(path.join(__dirname, 'cases/formats/data.json5'));
+      conf.loadFile(path.join(__dirname, 'fixtures/formats/data.json5'));
 
       expect(() => conf.validate()).to.not.throw();
       expect(conf.get()).to.deep.equal(expected_output);
@@ -122,7 +122,7 @@ describe('convict loadFile & addParser functions', function() {
       convict.addParser({ extension: ['yml', 'yaml'], parse: yaml.safeLoad });
 
       const conf = convict(schema);
-      conf.loadFile(path.join(__dirname, 'cases/formats/data.yaml'));
+      conf.loadFile(path.join(__dirname, 'fixtures/formats/data.yaml'));
 
       expect(() => conf.validate()).to.not.throw();
       expect(conf.get()).to.deep.equal(expected_output);
@@ -132,14 +132,14 @@ describe('convict loadFile & addParser functions', function() {
       convict.addParser({ extension: 'toml', parse: toml.parse });
 
       const conf = convict(schema);
-      conf.loadFile(path.join(__dirname, 'cases/formats/data.toml'));
+      conf.loadFile(path.join(__dirname, 'fixtures/formats/data.toml'));
 
       expect(() => conf.validate()).to.not.throw();
       expect(conf.get()).to.deep.equal(expected_output);
     });
 
     it('must use wildcard parser if no parser is registered for extension', function() {
-      const filepath = path.join(__dirname, 'cases/formats/data.xml');
+      const filepath = path.join(__dirname, 'fixtures/formats/data.xml');
       const message = 'Unsupported file type'
       convict.addParser({ extension: '*', parse: function() { throw new Error(message) } });
       const conf = convict(schema);
@@ -151,7 +151,7 @@ describe('convict loadFile & addParser functions', function() {
       convict.addParser({ extension: ['yml', 'yaml'], parse: yaml.safeLoad });
     
       const conf = convict(schema);
-      conf.loadFile(path.join(__dirname, 'cases/formats/data.empty.yaml'));
+      conf.loadFile(path.join(__dirname, 'fixtures/formats/data.empty.yaml'));
     
       expect(() => conf.validate()).to.not.throw();
     });

@@ -145,23 +145,69 @@ const config = convict({
 config.loadFile(['./prod.json', './config.json']);
 ```
 
-Each setting in the schema has the following possible properties, each aiding in
-convict's goal of being more robust and collaborator friendly.
+Each setting in the schema has the following possible properties, each aiding in convict's goal of being more robust and collaborator friendly.
 
-* **Type information**: the `format` property specifies either a built-in convict format (`ipaddress`, `port`, `int`, etc.), or it can be a function to check a custom format. During validation, if a format check fails it will be added to the error report.
-* **Default values**: Every setting *must* have a default value. If you want to use `default` property name like a config property in your schema use `$~default`. `$~default` will be replaced by `default` during the schema parsing.
-* **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value. An environment variable may not be mapped to more than one setting.
-* **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
-* **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `config.getSchemaString()` and have it displayed in the output.
-* **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `config.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
+### Convict properties
+
+ - **Type information**: the `format` property specifies either a built-in convict format (`ipaddress`, `port`, `int`, etc.), or it can be a function to check a custom format. During validation, if a format check fails it will be added to the error report.
+ - **Default values**: Is a default value before this value will be rewrite by another getter. 
+ - **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value. An environment variable may not be mapped to more than one setting.
+ - **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
+ - **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `config.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
 
 ### Schema parsing behavior
+
+#### Config & convict properties parsing
+
+Config properties are property that you will use in your app, convict properties are property that you will use in your schema to validate value (e.g.: `default`, `format`, `sensitive`, `env` or `arg`...).
+
+Only two convict properties are used to turn an object to a config properties:
+  - `default`: Every setting *must* have a default value but can be omitted if `format` is defined and not an Object `{...}`. If you want to use `default` property name like a config property in your schema use `$~default`. `$~default` will be replaced by `default` during the schema parsing;
+  - `format`: If `default` is not defined and format is not an Object `{...}`, the current object will turn to a config properties.
+
+Also **magic parsing** will turn `keyname: [ notObject ]` to `keyname: { default: [ notObject ], format: [ keyname type ] }`. E.g:
+```javascript
+const config = convict({
+  keyname: 'str',
+  zoo: {
+    elephant: {
+      doc: 'Elephant name',
+      format: Array
+    },
+    format: {
+      // magic parsing
+      bird: 'everywhere'
+    }
+  }
+});
+// convict will understand `config.getSchema()`:
+({
+  keyname: {
+    default: 'str',
+    format: String
+  },
+  zoo: {
+    elephant: {
+      doc: 'Elephant name',
+      format: Array
+    },
+    format: {
+      bird: {
+        default: 'everywhere',
+        format: String
+      }
+    }
+  }
+});
+```
+
+When you use schema parsing with `opt.strictParsing = true`, `default` and `format` will be required, **magic parsing** will be disabled. Convict will throw an error if `default` and `format` properties are missing.
 
 #### Optional config property
 
 By default, the config property will be ignored during the schema validation if its value is `undefined` and `schema.default` is `undefined`. If you want to not accept optional value and validate value in this case [`value === undefined and schema.default === default`], set `schema.required` to `true`.
 
-```js
+```javascript
 const config = convict({
   options: { // optional
     format: String,

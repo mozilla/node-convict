@@ -7,3 +7,9 @@ exports.conf = {
     }
   }
 };
+
+exports.data = {
+  top: {
+    middle: true
+  }
+};

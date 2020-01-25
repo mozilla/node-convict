@@ -7,3 +7,7 @@ exports.conf = {
     format: 'String'
   }
 };
+
+exports.data = {
+  default: 'myNewValue'
+};

@@ -12,3 +12,11 @@ exports.conf = {
     }
   }
 };
+
+exports.data = {
+  first: {
+    second: {
+      third: null
+    }
+  }
+};

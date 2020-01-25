@@ -17,3 +17,10 @@ exports.conf = {
     default: undefined
   }
 };
+
+exports.data = {
+  zoo: {
+    elephant: ['Patrick', 'Bob', 'Carlo']
+  },
+  none: 8
+};

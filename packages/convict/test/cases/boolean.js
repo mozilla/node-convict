@@ -30,3 +30,17 @@ exports.conf = {
     }
   }
 };
+
+exports.data = {
+  true: {
+    upper: 'TRUE',
+    lower: 'true',
+    mixed: 'True'
+  },
+  false: {
+    upper: 'FALSE',
+    lower: 'false',
+    mixed: 'False'
+  }
+};
+

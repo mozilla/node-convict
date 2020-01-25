@@ -11,3 +11,7 @@ exports.conf = {
 exports.env = {
   FOO: 'c'
 };
+
+exports.data = {
+  foo: 'b'
+};

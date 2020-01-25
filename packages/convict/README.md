@@ -746,22 +746,23 @@ config.loadFile(process.env.CONFIG_FILES.split(','));
 Validates `config` against the schema used to initialize it. All errors are
 collected and thrown or displayed at once.
 
-#### allowed option
+#### options :
 
-1. `warn`: If set to `warn` (that is `{allowed: 'warn'}` is passed), any
-   properties specified in config files that are not declared in the schema will
-   print a warning. This is the default behavior.
+1. `allowed`: Any properties specified in config files that are not declared in
+   the schema will print a warning or throw an error depending of this setting:
+   - `warn`: is the default behavior, will print a warning.
+   - `strict`: will throw errors. This is to ensure that the schema and the config
+     files are in sync.
 
-2. `strict`: If set to `strict` (that is `{allowed: 'strict'}` is passed), any
-   properties specified in config files that are not declared in the schema will
-   throw errors. This is to ensure that the schema and the config files are in
-   sync.
-
-3. `output` : You can replace the default output `console.log`
+2. `output`: You can replace the default output `console.log`
    by your own output function. You can use [debug module][debug] like this:
-   ```javascript
-     output: require('debug')('convict:validate:error')
-   ```
+E.g.:
+```javascript
+config.validate({
+  allowed: 'strict',
+  output: require('debug')('convict:validate:error');
+})
+```
 
 [debug]: https://www.npmjs.com/package/debug
 

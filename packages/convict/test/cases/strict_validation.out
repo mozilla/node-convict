@@ -1,0 +1,2 @@
+Validate failed because wrong value(s):
+  - configuration param 'bar' not declared in the schema

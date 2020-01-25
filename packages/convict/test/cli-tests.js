@@ -72,7 +72,7 @@ describe('CLI tests', function() {
               conf.load(settings.data);
             }
           }
-          conf.validate();
+          conf.validate(settings.validate || {});
         }
 
         if (typeof expectedOutput === 'string') {

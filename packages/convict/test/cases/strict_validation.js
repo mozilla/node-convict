@@ -3,15 +3,14 @@
 exports.conf = {
   foo: {
     default: 'a',
-    format: String,
-    env: 'FOO'
+    format: String
   }
 };
 
-exports.env = {
-  FOO: 'c'
-};
-
 exports.data = {
-  foo: 'b'
+  bar: false
+}
+
+exports.validate = {
+  allowed: 'strict'
 };

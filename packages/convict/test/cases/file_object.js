@@ -13,4 +13,14 @@ exports.conf = {
     }
   }
 };
-
+exports.data = {
+  single: {
+    test: 2,
+    additionalItem: [1, 2, 3]
+  },
+  nested: {
+    object: {
+      nestedValue: 'Value'
+    }
+  }
+};

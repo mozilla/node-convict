@@ -12,6 +12,7 @@ exports.conf = {
     env: 'FOO'
   },
 };
+
 exports.env = {
   FOO: 'b'
 };

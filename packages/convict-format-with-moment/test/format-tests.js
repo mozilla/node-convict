@@ -5,8 +5,10 @@ const expect = chai.expect;
 
 const moment = require('moment');
 
+const new_require = require('../../convict/test/new_require.js');
+const convict = new_require('../../convict/');
+
 describe('convict formats', function() {
-  const convict = require('convict');
   let conf;
 
   it('must add "duration" and "timestamp" format with convict-format-with-moment', function() {

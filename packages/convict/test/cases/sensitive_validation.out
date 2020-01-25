@@ -1,2 +1,3 @@
-public: must be a positive integer: value was -1, getter was `default=-1`
-private: must be a positive integer: value was [Sensitive], getter was `default=[Sensitive]`
+Validate failed because wrong value(s):
+  - public: must be a positive integer: value was -1, getter was `default=-1`
+  - private: must be a positive integer: value was [Sensitive], getter was `default=[Sensitive]`

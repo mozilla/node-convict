@@ -6,3 +6,17 @@ exports.conf = {
     format: '*'
   }
 };
+
+exports.data = [];
+
+exports.data.push({
+  'object': {
+    'one': 1
+  }
+});
+
+exports.data.push({
+  'object': {
+    'two': 2
+  }
+});

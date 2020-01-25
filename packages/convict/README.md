@@ -35,12 +35,12 @@ npm install convict
 An example `config.js` file:
 
 ```javascript
-var convict = require('convict');
+const convict = require('convict');
 
 convict.addFormat(require('convict-format-with-validator').ipaddress);
 
 // Define a schema
-var config = convict({
+const config = convict({
   env: {
     doc: 'The application environment.',
     format: ['production', 'development', 'test'],
@@ -75,7 +75,7 @@ var config = convict({
 });
 
 // Load environment dependent configuration
-var env = config.get('env');
+const env = config.get('env');
 config.loadFile('./config/' + env + '.json');
 
 // Perform validation
@@ -87,17 +87,17 @@ module.exports = config;
 An example `server.js` file leveraging the `config.js` file above:
 
 ```javascript
-var http = require('http');
-var config = require('./config.js');
+const http = require('http');
+const config = require('./config.js');
 
-var server = http.createServer(function (req, res) {
+const server = http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.end('Hello World\n');
 });
 
 // Consume
 server.listen(config.get('port'), config.get('ip'), function(x) {
-  var addy = server.address();
+  const addy = server.address();
   console.log('running on http://' + addy.address + ':' + addy.port);
 });
 ```
@@ -117,7 +117,7 @@ A configuration module, with its deep nested schema, could look like this:
 
 config.js:
 ```javascript
-var config = convict({
+const config = convict({
   db: {
     name: {
       format: String,
@@ -145,15 +145,81 @@ var config = convict({
 config.loadFile(['./prod.json', './config.json']);
 ```
 
-Each setting in the schema has the following possible properties, each aiding in
-convict's goal of being more robust and collaborator friendly.
+Each setting in the schema has the following possible properties, each aiding in convict's goal of being more robust and collaborator friendly.
 
-* **Type information**: the `format` property specifies either a built-in convict format (`ipaddress`, `port`, `int`, etc.), or it can be a function to check a custom format. During validation, if a format check fails it will be added to the error report.
-* **Default values**:  Every setting *must* have a default value.
-* **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value. An environment variable may not be mapped to more than one setting.
-* **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
-* **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `config.getSchemaString()` and have it displayed in the output.
-* **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `config.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
+### Convict properties
+
+ - **Type information**: the `format` property specifies either a built-in convict format (`ipaddress`, `port`, `int`, etc.), or it can be a function to check a custom format. During validation, if a format check fails it will be added to the error report.
+ - **Default values**: Is a default value before this value will be rewrite by another getter. 
+ - **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value. An environment variable may not be mapped to more than one setting.
+ - **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
+ - **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `config.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
+
+### Schema parsing behavior
+
+#### Config & convict properties parsing
+
+Config properties are property that you will use in your app, convict properties are property that you will use in your schema to validate value (e.g.: `default`, `format`, `sensitive`, `env` or `arg`...).
+
+Only two convict properties are used to turn an object to a config properties:
+  - `default`: Every setting *must* have a default value but can be omitted if `format` is defined and not an Object `{...}`. If you want to use `default` property name like a config property in your schema use `$~default`. `$~default` will be replaced by `default` during the schema parsing;
+  - `format`: If `default` is not defined and format is not an Object `{...}`, the current object will turn to a config properties.
+
+Also **magic parsing** will turn `keyname: [ notObject ]` to `keyname: { default: [ notObject ], format: [ keyname type ] }`. E.g:
+```javascript
+const config = convict({
+  keyname: 'str',
+  zoo: {
+    elephant: {
+      doc: 'Elephant name',
+      format: Array
+    },
+    format: {
+      // magic parsing
+      bird: 'everywhere'
+    }
+  }
+});
+// convict will understand `config.getSchema()`:
+({
+  keyname: {
+    default: 'str',
+    format: String
+  },
+  zoo: {
+    elephant: {
+      doc: 'Elephant name',
+      format: Array
+    },
+    format: {
+      bird: {
+        default: 'everywhere',
+        format: String
+      }
+    }
+  }
+});
+```
+
+When you use schema parsing with `opt.strictParsing = true`, `default` and `format` will be required, **magic parsing** will be disabled. Convict will throw an error if `default` and `format` properties are missing.
+
+#### Optional config property
+
+By default, the config property will be ignored during the schema validation if its value is `undefined` and `schema.default` is `undefined`. If you want to not accept optional value and validate value in this case [`value === undefined and schema.default === default`], set `schema.required` to `true`.
+
+```javascript
+const config = convict({
+  options: { // optional
+    format: String,
+    default: undefined
+  }, // if `options` stays `undefined`: will be not validate and not throw
+  password: { // required
+    format: String,
+    required: true,
+    default: undefined
+  } // if `password` stays `undefined`: will be validate and throw
+}).validate();
+```
 
 
 ### Validation
@@ -180,10 +246,10 @@ You can specify a custom format checking method on a property basis.
 For example:
 
 ```javascript
-var config = convict({
+const config = convict({
   key: {
     doc: 'API key',
-    format: function check (val) {
+    format: function check(val, schema) {
       if (!/^[a-fA-F0-9]{64}$/.test(val)) {
         throw new Error('must be a 64 character hex key')
       }
@@ -192,7 +258,7 @@ var config = convict({
   },
   name: {
     doc: 'user name',
-    format: function check (val) {
+    format: function check(val, schema) {
       if (typeof val.first_name !== 'string') {
         throw new TypeError(`first name '${val.first_name}' is not a string`);
       }
@@ -214,7 +280,7 @@ method that can be reused for many different properties:
 ```javascript
 convict.addFormat({
   name: 'float-percent',
-  validate: function(val) {
+  validate: function(val, schema) {
     if (val !== 0 && (!val || val > 1 || val < 0)) {
       throw new Error('must be a float between 0 and 1, inclusive');
     }
@@ -224,7 +290,7 @@ convict.addFormat({
   }
 });
 
-var config = convict({
+const config = convict({
   space_used: {
     format: 'float-percent',
     default: 0.5
@@ -320,8 +386,7 @@ convict.getGettersOrder();
     - With: `config.set(name, value, true)` (permanent) ;
     - With: `config.set(name, value)` (can be undo with `config.refreshGetters()`).
 
-This order means that if schema defines parameter to be taken from an environment variable and environment variable is set
-then you cannot override it with `config.loadFile(file)` or `config.load(json)`.
+This order means that if schema defines parameter to be taken from an environment variable and environment variable is set then you cannot override it with `config.loadFile(file)` or `config.load(json)`.
 
 ```javascript
 process.env.PORT = 8080; // environment variable is set
@@ -346,7 +411,7 @@ When creating a config object pass an object with two optional properties as the
 - `args: Array<string>` - this array will be used instead of `process.argv`
 
 ```javascript
-var config = convict({
+const config = convict({
   // configuration schema
 }, {
   env: {
@@ -392,9 +457,12 @@ convict.addParser({extension: 'json', parse: require('json5').parse});
 
 Some function are only global, like : addParser, addFormat, addGetter...
 
-### convict.addParser(parser or parserArray)
+### convict.addParser(parser)
 
-Adds new parsers for custom file extensions. Parser should be an Object :
+ - **parser**: is an Object or an Array contains containing Object.
+
+Adds new parsers for custom file extensions. Parser should be an Object.
+E.g.:
 ```javascript
 // Allow comments in JSON file (with JSON5)
 convict.addParser({ extension: 'json5', parse: require('json5').parse });
@@ -404,10 +472,11 @@ convict.addParser({ extension: 'json5', parse: require('json5').parse });
 
 Adds a new custom format, `format` being an object, see example below. `rewrite = true`
 will let you rewrite an existing format.
+E.g.:
 ```javascript
 convict.addFormat({
   name: 'float-percent',
-  validate: function(val) {
+  validate: function(val, validate) {
     if (val !== 0 && (!val || val > 1 || val < 0)) {
       throw new Error('must be a float between 0 and 1, inclusive');
     }
@@ -422,6 +491,7 @@ convict.addFormat({
 
 Adds new custom formats, `formats` being an object whose keys are the new custom
 format names, see example below.
+E.g.:
 ```javascript
 convict.addFormats({
   prime: {
@@ -457,6 +527,7 @@ will let you rewrite an existing getter.
 The third argument of getter callback function lets catch `undefined` value. By default, convict
 will try to call each getter function to get a value (different of `undefined`), then `stopPropagation()`
 stops the getter calling loop.
+E.g.:
 ```javascript
 convict.addGetter({
   name: 'file',
@@ -476,7 +547,8 @@ convict.addGetter({
 ### convict.addGetters(getters)
 
 Adds new custom getter, `getter` being an object whose keys are the new custom
-getter names, see example below.
+getter names.
+E.g.:
 ```javascript
 convict.addGetters([
   /* example to rewrite 'env' getter: */
@@ -488,6 +560,7 @@ convict.addGetters([
 ### convict.getGettersOrder()
 
 Returns array containing getter names sorted by priority (ascending order).
+E.g.:
 ```javascript
 convict.getGettersOrder();
 // ['default', 'value', 'env', 'arg', 'force']
@@ -502,6 +575,7 @@ to sort getters before create configuration object instance (before `config = co
 because global getters config is cloned to a local getters config. Also see:
 [`config.refreshGetters()`](#TEMP_LINK)
 
+E.g.:
 ```javascript
 convict.getGettersOrder();
 // ['default', 'value', 'env', 'arg', 'force']
@@ -519,9 +593,9 @@ Also see: [`config.sortGetters()`](#TEMP_LINK)
 
 ## API config instance (local, inherited configuration object)
 
-Inherited config object created by `var config = convict(schema)`.
+Inherited config object created by `const config = convict(schema)`.
 
-### var config = convict(schema[, opts])
+### const config = convict(schema[, opts])
 
 `convict()` takes a schema object or a path to a schema JSON file and returns a
 convict configuration object.
@@ -531,6 +605,9 @@ convict configuration object.
   - **opts.env**: Override `process.env` if specified using an object `{'NODE_ENV': 'production'}`.
   - **opts.args**: Override `process.argv` if specified using an array `['--argname', 'value']` or
   a string `--argname value`.
+  - **opts.defaultSubstitute**: Override `'$~default'`, this value will be replaced by `'default'`
+  during the schema parsing.
+  - **opts.strictParsing**: Throw an error if `default` or `format` properties are omitted.
 
 The configuration object has an API for getting and setting values, described
 below.
@@ -539,8 +616,9 @@ The global getter config will be cloned to local config. You must
 [refresh getters configs](#config.refreshGetters_TEMP_LINK) if you apply global change
 to local (configuration instance).
 
+E.g.:
 ```javascript
-var config = convict({
+const config = convict({
   env: {
     doc: 'The applicaton environment.',
     format: ['production', 'development', 'test'],
@@ -560,7 +638,8 @@ config = convict('/some/path/to/a/config-schema.json');
 
 ### config.get(name)
 
-Returns the current value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
+Returns the current value of the `name` property. `name` can use dot notation to reference nested values.
+E.g.:
 ```javascript
 config.get('db.host');
 // or
@@ -575,7 +654,8 @@ config.get("['foo.bar']"); // { 'foo.bar': 'baz' }
 
 ### config.getOrigin(name)
 
-Returns the current getter name of the `name` value origin. `name` can use dot notation to reference nested values. E.g.:
+Returns the current getter name of the `name` value origin. `name` can use dot notation to reference nested values.
+E.g.:
 ```javascript
 config.getOrigin('db.host');
 ```
@@ -597,6 +677,7 @@ of new getters order.
 
 `value` set with `.load()`/`.set()` will be replaced by schema/getter value depending
 of Origin priority. (See: [`getter-tests.js#L304`](#TEMP_LINK))
+E.g.:
 ```javascript
 convict.getGettersOrder();
 // ['default', 'value', 'env', 'arg', 'force']
@@ -616,21 +697,24 @@ conf.getGettersOrder(); // ['value', 'default', 'arg', 'env', 'force']
 
 ### config.default(name)
 
-Returns the default value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
+Returns the default value of the `name` property. `name` can use dot notation to reference nested values.
+E.g.:
 ```javascript
 config.default('server.port');
 ```
 
 ### config.reset(name)
 
-Resets a property to its default value as defined in the schema. E.g.:
+Resets a property to its default value as defined in the schema.
+E.g.:
 ```javascript
 config.reset('server.port');
 ```
 
 ### config.has(name)
 
-Returns `true` if the property `name` is defined, or `false` otherwise. E.g.:
+Returns `true` if the property `name` is defined, or `false` otherwise.
+E.g.:
 ```javascript
 if (config.has('some.property')) {
   // Do something
@@ -682,7 +766,8 @@ config.load({color: 'blue'}); // getter: 'value'
 
 ### config.load(object)
 
-Loads and merges a JavaScript object into `config`. E.g.:
+Loads and merges a JavaScript object into `config`.
+E.g.:
 ```javascript
 config.load({
   'env': 'test',
@@ -698,7 +783,8 @@ E.g.:
 config.loadFile('./config/' + conf.get('env') + '.json');
 ```
 
-Or, loading multiple files at once:
+Or, loading multiple files at once.
+E.g.:
 ```javascript
 // CONFIG_FILES=/path/to/production.json,/path/to/secrets.json,/path/to/sitespecific.json
 config.loadFile(process.env.CONFIG_FILES.split(','));
@@ -708,22 +794,23 @@ config.loadFile(process.env.CONFIG_FILES.split(','));
 Validates `config` against the schema used to initialize it. All errors are
 collected and thrown or displayed at once.
 
-#### allowed option
+#### options :
 
-1. `warn`: If set to `warn` (that is `{allowed: 'warn'}` is passed), any
-   properties specified in config files that are not declared in the schema will
-   print a warning. This is the default behavior.
+1. `allowed`: Any properties specified in config files that are not declared in
+   the schema will print a warning or throw an error depending of this setting:
+   - `warn`: is the default behavior, will print a warning.
+   - `strict`: will throw errors. This is to ensure that the schema and the config
+     files are in sync.
 
-2. `strict`: If set to `strict` (that is `{allowed: 'strict'}` is passed), any
-   properties specified in config files that are not declared in the schema will
-   throw errors. This is to ensure that the schema and the config files are in
-   sync.
-
-3. `output` : You can replace the default output `console.log`
+2. `output`: You can replace the default output `console.log`
    by your own output function. You can use [debug module][debug] like this:
-   ```javascript
-     output: require('debug')('convict:validate:error')
-   ```
+E.g.:
+```javascript
+config.validate({
+  allowed: 'strict',
+  output: require('debug')('convict:validate:error');
+})
+```
 
 [debug]: https://www.npmjs.com/package/debug
 
@@ -737,13 +824,13 @@ Exports all the properties (that is the keys and their current values) as a JSON
 string, with sensitive values masked. Sensitive values are masked even if they
 aren't set, to avoid revealing any information.
 
-### config.getSchema()
+### config.getSchema(debug)
 
-Exports the schema as JSON.
+Exports the schema as JSON. When debug is true, returns data schema (copy of convict storage).
 
-### config.getSchemaString()
+### config.getSchemaString(debug)
 
-Exports the schema as a JSON string.
+Exports the schema as a JSON string. When debug is true, returns data schema (copy of convict storage).
 
 ### config.getArgs()
 
@@ -752,6 +839,26 @@ The array of process arguments (not including the launcher and application file 
 ### config.getEnv()
 
 The map of environment variables. Defaults to process.env unless an override is specified using the env key of the second argument (options) argument of the convict function.
+
+## API schema property
+
+Schema property is accessible by second argument of the callback of getter `getter(value, schema, stopPropagation)` and format `validate(value, schema)`.
+
+### schema[`doc` || `defaut` || `format` || ...]
+
+You will find the properties that you defined in your schema (like `doc`, `defaut`, `format`, etc...).
+
+### schema.\_cvtGetOrigin()
+
+Get the name of the getter which gets the current value. 
+
+### schema.\_cvtValidateFormat(value)
+
+Calls the validate format function corresponding to `schema.format`, used by `config.validate(value)` to validate your schema. This function will throw an error if `value` doesn't have the correct format.
+
+### schema.\_cvtCoerce(value)
+
+Calls the `coerce` function corresponding to `schema.format`, used by getters to convert (generally a string) to its proper type (int, float, array...).
 
 ## FAQ
 

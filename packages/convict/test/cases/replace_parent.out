@@ -1,1 +1,2 @@
-configuration param "top.middle.leaf" missing from config, did you override its parent?
+Validate failed because wrong value(s):
+  - config parameter "top.middle.leaf" missing from config, did you override its parent? Because "top.middle" is a boolean.

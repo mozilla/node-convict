@@ -1,94 +1,88 @@
 {
-  "_cvtProperties": {
-    "URL": {
-      "default": "https://browserid.org",
-      "env": "URL",
-      "format": "String"
-    },
-    "authentication_duration": {
-      "default": "2 weeks",
-      "format": "duration"
-    },
-    "bcrypt_work_factor": {
-      "default": 12,
-      "format": "nat"
-    },
-    "certificate_validity": {
-      "default": "1 day",
-      "format": "duration"
-    },
-    "database": {
-      "_cvtProperties": {
-        "create_schema": {
-          "default": true,
-          "format": "Boolean"
-        },
-        "driver": {
-          "default": "mysql",
-          "format": ["json", "mysql"]
-        },
-        "may_write": {
-          "default": false,
-          "format": "Boolean"
-        },
-        "user": {
-          "default": "browserid",
-          "format": "String"
-        }
-      }
-    },
-    "default_lang": {
-      "default": ["en-US"],
-      "format": "Array"
-    },
-    "disable_primary_support": {
-      "default": false,
-      "format": "Boolean"
-    },
-    "enable_code_version": {
-      "default": false,
-      "format": "Boolean"
-    },
-    "env": {
-      "default": "production",
-      "env": "NODE_ENV",
-      "format": ["production", "local"]
-    },
-    "express_log_format": {
-      "default": "default",
-      "format": "String"
-    },
-    "locale_directory": {
-      "default": "locale",
-      "format": "String"
-    },
-    "max_compute_duration": {
-      "default": "10 seconds",
-      "format": "duration"
-    },
-    "min_time_between_emails": {
-      "default": "1 minute",
-      "format": "duration"
-    },
-    "statsd": {
-      "_cvtProperties": {
-        "enabled": {
-          "default": true,
-          "format": "Boolean"
-        }
-      }
-    },
-    "supported_languages": {
-      "default": ["en-US"],
-      "format": "Array"
-    },
-    "use_minified_resources": {
+  "URL": {
+    "default": "https://browserid.org",
+    "env": "URL",
+    "format": "String"
+  },
+  "authentication_duration": {
+    "default": "2 weeks",
+    "format": "duration"
+  },
+  "bcrypt_work_factor": {
+    "default": 12,
+    "format": "nat"
+  },
+  "certificate_validity": {
+    "default": "1 day",
+    "format": "duration"
+  },
+  "database": {
+    "create_schema": {
       "default": true,
       "format": "Boolean"
     },
-    "var_path": {
-      "default": "/home/browserid/var",
+    "driver": {
+      "default": "mysql",
+      "format": ["json", "mysql"]
+    },
+    "may_write": {
+      "default": false,
+      "format": "Boolean"
+    },
+    "user": {
+      "default": "browserid",
       "format": "String"
     }
+  },
+  "default_lang": {
+    "default": ["en-US"],
+    "format": "Array"
+  },
+  "disable_primary_support": {
+    "default": false,
+    "format": "Boolean"
+  },
+  "enable_code_version": {
+    "default": false,
+    "format": "Boolean"
+  },
+  "env": {
+    "default": "production",
+    "env": "NODE_ENV",
+    "format": ["production", "local"]
+  },
+  "express_log_format": {
+    "default": "default",
+    "format": "String"
+  },
+  "locale_directory": {
+    "default": "locale",
+    "format": "String"
+  },
+  "max_compute_duration": {
+    "default": "10 seconds",
+    "format": "duration"
+  },
+  "min_time_between_emails": {
+    "default": "1 minute",
+    "format": "duration"
+  },
+  "statsd": {
+    "enabled": {
+      "default": true,
+      "format": "Boolean"
+    }
+  },
+  "supported_languages": {
+    "default": ["en-US"],
+    "format": "Array"
+  },
+  "use_minified_resources": {
+    "default": true,
+    "format": "Boolean"
+  },
+  "var_path": {
+    "default": "/home/browserid/var",
+    "format": "String"
   }
 }

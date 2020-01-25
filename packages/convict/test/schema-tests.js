@@ -9,14 +9,30 @@ const convict = new_require('../');
 
 describe('convict schema', function() {
   let myOwnConf; // init in beforeEach
-  const conf2 = convict({
+  const requiredPropConf = convict({
     foo: {
       none: {
         format: String,
         default: undefined
+      },
+      required: {
+        format: '*',
+        default: undefined,
+        required: true
+      },
+      none2: {
+        format: String
+      },
+      none3: {
+        format: 'String'
+      },
+      required2: {
+        format: String,
+        required: true
       }
     }
   });
+  requiredPropConf.set('foo.required2', 'ok');
 
   it('must have the default getters order', function() {
     const order = ['default', 'value', 'env', 'arg', 'force'];
@@ -30,7 +46,7 @@ describe('convict schema', function() {
   });
 
   it('must parse a specification with built-in formats', function() {
-    const filepath = path.join(__dirname, 'cases/schema-built-in-formats.json');
+    const filepath = path.join(__dirname, 'fixtures/schema-built-in-formats.json');
 
     expect(() => convict(filepath)).to.not.throw();
   });
@@ -50,8 +66,32 @@ describe('convict schema', function() {
     expect(() => convict(schema)).to.throw('bar: uses a already used value in "arg" getter (actual: "BAZ")');
   });
 
-  it('conf2 must be valid', function() {
-    expect(() => conf2.validate()).to.not.throw();
+  it('requiredPropConf must be valid', function() {
+    expect(() => requiredPropConf.validate()).to.not.throw();
+  });
+
+  it('must throw if string property is required but undefined', function() {
+    const requiredStringandUndefined = convict({
+      foo: {
+        none: {
+          format: String,
+          required: true,
+          default: undefined
+        },
+        none2: {
+          format: String,
+          required: true
+        }
+      }
+    });
+
+    console.log(requiredStringandUndefined.getSchema());
+    console.log(requiredStringandUndefined.getSchema());
+
+    const expected = 'Validate failed because wrong value(s):\n'
+      + '  - foo.none: must be of type String\n'
+      + '  - foo.none2: must be of type String';
+    expect(() => requiredStringandUndefined.validate()).to.throw(expected);
   });
 
   it('must accept process arguments and environment variables as parameters', function() {
@@ -87,8 +127,8 @@ describe('convict schema', function() {
       expect(() => myOwnConf.validate()).to.not.throw();
     });
 
-    it('conf2 must be valid again', function() {
-      expect(() => conf2.validate()).to.not.throw();
+    it('requiredPropConf must be valid again', function() {
+      expect(() => requiredPropConf.validate()).to.not.throw();
     });
 
     it('must throw if `_cvtProperties` (reserved keyword) is used', function() {
@@ -125,24 +165,54 @@ describe('convict schema', function() {
     });
 
     const expectedSchema = {
+      'foo': {
+        'bar': {
+          'default': 7,
+          'format': 'Number'
+        },
+        'baz': {
+          'bing': {
+            'default': 'foo',
+            'format': 'String'
+          },
+          'name with spaces': {
+            'name_with_underscores': {
+              'default': true,
+              'format': 'Boolean'
+            }
+          }
+        }
+      }
+    };
+
+    const expectedDataSchema = {
       '_cvtProperties': {
         'foo': {
           '_cvtProperties': {
             'bar': {
               'default': 7,
-              'format': 'Number'
+              'format': 'Number',
+              '_cvtCoerce': '[FunctionReplacement]',
+              '_cvtValidateFormat': '[FunctionReplacement]',
+              '_cvtGetOrigin': '[FunctionReplacement]'
             },
             'baz': {
               '_cvtProperties': {
                 'bing': {
                   'default': 'foo',
-                  'format': 'String'
+                  'format': 'String',
+                  '_cvtCoerce': '[FunctionReplacement]',
+                  '_cvtValidateFormat': '[FunctionReplacement]',
+                  '_cvtGetOrigin': '[FunctionReplacement]'
                 },
                 'name with spaces': {
                   '_cvtProperties': {
                     'name_with_underscores': {
                       'default': true,
-                      'format': 'Boolean'
+                      'format': 'Boolean',
+                      '_cvtCoerce': '[FunctionReplacement]',
+                      '_cvtValidateFormat': '[FunctionReplacement]',
+                      '_cvtGetOrigin': '[FunctionReplacement]'
                     }
                   }
                 }
@@ -157,10 +227,19 @@ describe('convict schema', function() {
       expect(myOwnConf.getSchema()).to.deep.equal(expectedSchema);
     });
 
-    it('must export the schema as a JSON string', function() {
-      const expected = JSON.stringify(expectedSchema, null, 2);
+    it('must parse exported schema', function() {
+      expect(() => convict(myOwnConf.getSchema())).to.not.throw();
+    });
 
-      expect(myOwnConf.getSchemaString()).to.deep.equal(expected);
+    it('must returns the data schema (like is stored in convict instance) with debug=true', function() {
+      const dataSchema = convertFunctionToString(myOwnConf.getSchema(true));
+      expect(dataSchema).to.deep.equal(expectedDataSchema);
+    });
+
+    it('must export the schema as a JSON string', function() {
+      const stringify = (obj) => JSON.stringify(obj, null, 2);
+
+      expect(myOwnConf.getSchemaString()).to.deep.equal(stringify(expectedSchema));
     });
 
     describe('.has()', function() {
@@ -168,8 +247,24 @@ describe('convict schema', function() {
         expect(myOwnConf.has('foo.bar.madeup')).to.be.false;
       });
 
+      it('must work on undeclared property', function() {
+        expect(requiredPropConf.has('foo.bing')).to.be.false;
+        requiredPropConf.set('foo.bing', undefined);
+        expect(requiredPropConf.has('foo.bing')).to.be.false;
+        requiredPropConf.set('foo.bing', 'no');
+        expect(requiredPropConf.has('foo.bing')).to.be.true;
+      });
+
       it('must not have properties specified with a default of undefined', function() {
-        expect(conf2.has('foo.none')).to.be.false;
+        expect(requiredPropConf.has('foo.none')).to.be.false;
+        expect(requiredPropConf.has('foo.required')).to.be.true;
+        expect(requiredPropConf.get('foo.required')).to.be.undefined;
+      });
+
+      it('must throw with', function() {
+        expect(requiredPropConf.has('foo.none')).to.be.false;
+        expect(requiredPropConf.has('foo.required')).to.be.true;
+        expect(requiredPropConf.get('foo.required')).to.be.undefined;
       });
     });
 
@@ -194,7 +289,7 @@ describe('convict schema', function() {
       });
 
       it('must throw if conf doesn\'t exist', function() {
-        expect(() => myOwnConf.get('foo.no')).to.throw('cannot find configuration param: foo.no');
+        expect(() => myOwnConf.get('foo.no')).to.throw('foo.no: cannot find "foo.no" property because "foo.no" is not defined.');
       });
     });
 
@@ -216,13 +311,13 @@ describe('convict schema', function() {
       });
 
       it('must throw if key doesn\'t exist', function() {
-        expect(() => myOwnConf.default('foo.no')).to.throw('cannot find configuration param: foo._cvtProperties.no.default');
+        expect(() => myOwnConf.default('foo.no')).to.throw('foo.no.default: cannot find "foo.no" property because "foo.no" is not defined.');
       });
 
       describe('when acting on an Object property', function() {
         // >> init myOwnConf before each it
         beforeEach(function() {
-          myOwnConf = convict(path.join(__dirname, 'cases/schema-built-in-formats.json'));
+          myOwnConf = convict(path.join(__dirname, 'fixtures/schema-built-in-formats.json'));
         });
         // <<
 
@@ -235,14 +330,14 @@ describe('convict schema', function() {
           myOwnConf.set('someObject.five', 5);
 
           expect(myOwnConf.default('someObject')).to.deep.equal({});
-          expect(() => myOwnConf.default('someObject.five')).to.throw('cannot find configuration param: someObject._cvtProperties.five.default');
+          expect(() => myOwnConf.default('someObject.five')).to.throw('someObject.five.default: cannot find "someObject" property because "someObject" is not defined.');
         });
 
         it('must not be altered by calls to .load()', function() {
           myOwnConf.load({someObject: {five: 5}});
 
           expect(myOwnConf.default('someObject')).to.deep.equal({});
-          expect(() => myOwnConf.default('someObject.five')).to.throw('cannot find configuration param: someObject._cvtProperties.five.default');
+          expect(() => myOwnConf.default('someObject.five')).to.throw('someObject.five.default: cannot find "someObject" property because "someObject" is not defined.');
         });
       });
     });
@@ -269,7 +364,7 @@ describe('convict schema', function() {
       });
 
       it('must throw if key doesn\'t exist', function() {
-        expect(() => myOwnConf.reset('foo.no')).to.throw('cannot find configuration param: foo._cvtProperties.no.default');
+        expect(() => myOwnConf.reset('foo.no')).to.throw('foo.no.default: cannot find "foo.no" property because "foo.no" is not defined.');
       });
     });
 
@@ -290,3 +385,26 @@ describe('convict used multiple times on one schema', function() {
     convict(schema);
   }).to.not.throw();
 });
+
+// replace Function by `[FunctionReplacement]` because `.to.deep.equal()` doesn't work well with function
+function convertFunctionToString(nodeSchema) {
+  if (typeof nodeSchema === 'function') {
+    return '[FunctionReplacement]';
+  } else if (!nodeSchema || typeof nodeSchema !== 'object') {
+    return nodeSchema;
+  } else {
+    const schema = {};
+
+    Object.keys(nodeSchema).forEach((name) => {
+      const property = nodeSchema[name];
+
+      if (typeof property === 'function') {
+        schema[name] = '[FunctionReplacement]';
+      } else {
+        schema[name] = convertFunctionToString(property, toString)
+      }
+    });
+
+    return schema;
+  }
+}

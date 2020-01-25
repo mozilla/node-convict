@@ -46,28 +46,29 @@ describe('configuration files contain properties not declared in the schema', fu
   });
 
   it('must not throw, if properties in config file match with the schema', function() {
-    conf.loadFile(path.join(__dirname, 'cases/validation_correct.json'));
+    conf.loadFile(path.join(__dirname, 'fixtures/validation_correct.json'));
 
     expect(() => conf.validate(strictMode)).to.not.throw();
   });
 
   it('must not throw, if the option to check for non schema properties is set by default but must display warnings', function() {
-    conf.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    conf.loadFile(path.join(__dirname, 'fixtures/validation_incorrect.json'));
 
     expect(() => conf.validate()).to.not.throw();
   });
 
   it('must not throw, if the option to check for non schema properties is not specified and must display warnings', function() {
-    conf.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    conf.loadFile(path.join(__dirname, 'fixtures/validation_incorrect.json'));
 
     expect(() => conf.validate()).to.not.throw();
   });
 
   it('must throw, if properties in config file do not match the properties declared in the schema', function() {
-    conf.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    conf.loadFile(path.join(__dirname, 'fixtures/validation_incorrect.json'));
 
-    const expected = "configuration param 'undeclared' not declared in the schema"
-      + "\nconfiguration param 'nested.level1_1' not declared in the schema";
+    const expected = 'Validate failed because wrong value(s):'
+    + "\n  - configuration param 'undeclared' not declared in the schema"
+    + "\n  - configuration param 'nested.level1_1' not declared in the schema";
 
     expect(() => conf.validate(strictMode)).to.throw(expected);
   });
@@ -76,7 +77,7 @@ describe('configuration files contain properties not declared in the schema', fu
     const opts = {
       allowed: 'warn'
     };
-    conf.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    conf.loadFile(path.join(__dirname, 'fixtures/validation_incorrect.json'));
 
     expect(() => conf.validate(opts)).to.not.throw();
   });
@@ -93,10 +94,11 @@ describe('configuration files contain properties not declared in the schema', fu
 
     expect(() => conf.load(param)).to.not.throw();
 
-    const expected = 'foo: must be of type String: value was 58, getter was `value`'
-      + '\nbar: must be of type String: value was 98, getter was `value`'
-      + "\nconfiguration param 'undeclared' not declared in the schema"
-      + "\nconfiguration param 'nested.level1_1' not declared in the schema";
+    const expected = 'Validate failed because wrong value(s):'
+      + '\n  - foo: must be of type String: value was 58, getter was `value`'
+      + '\n  - bar: must be of type String: value was 98, getter was `value`'
+      + "\n  - configuration param 'undeclared' not declared in the schema"
+      + "\n  - configuration param 'nested.level1_1' not declared in the schema";
 
     expect(() => conf.validate(strictMode)).to.throw(expected);
   });
@@ -133,7 +135,7 @@ describe('configuration files contain properties not declared in the schema', fu
   });
 
   it('must use the user output function when it was declared', function() {
-    const expected = "\u001b[33;1mWarning:\u001b[0m configuration param '[0]' not declared in the schema";
+    const expected = "\u001b[33;1mWarning:\u001b[0m\n  - configuration param '[0]' not declared in the schema";
 
     expect(message).to.equal(expected);
   });
@@ -142,7 +144,7 @@ describe('configuration files contain properties not declared in the schema', fu
     const opts = {
       output: 312
     };
-    conf.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
+    conf.loadFile(path.join(__dirname, 'fixtures/validation_incorrect.json'));
 
     expect(() => conf.validate(opts)).to.throw('options.output is optionnal and must be a function.');
   });
@@ -158,8 +160,8 @@ describe('configuration files contain properties not declared in the schema', fu
     const conf = convict(schema);
 
     conf.loadFile([
-      path.join(__dirname, 'cases/object_override1.json'),
-      path.join(__dirname, 'cases/object_override2.json')
+      path.join(__dirname, 'fixtures/object_override1.json'),
+      path.join(__dirname, 'fixtures/object_override2.json')
     ]);
 
     expect(() => conf.validate()).to.not.throw();
@@ -193,8 +195,9 @@ describe('setting specific values', function() {
     myOwnConf.set('parent.object', { foo: 'bar' });
     myOwnConf.set('parent_object', { foo: 'bar' });
 
-    const expected = "configuration param 'parent_object.foo' not declared in the schema"
-      + "\nconfiguration param 'parent.object.foo' not declared in the schema";
+    const expected = 'Validate failed because wrong value(s):'
+      + "\n  - configuration param 'parent_object.foo' not declared in the schema"
+      + "\n  - configuration param 'parent.object.foo' not declared in the schema";
 
     expect(() => myOwnConf.validate(strictMode)).to.throw(expected);
   });
@@ -264,9 +267,9 @@ describe('schema contains an object property with a custom format', function() {
     const message = 'this is a hack to make a fake convict internal error';
 
     convict.addFormat('hack', function(name, schema) {
-      // we prevent that error : will be catch in original _cvtFormat function
+      // we prevent that error : will be catch in original _cvtValidateFormat function
       //                     and will be convert to FORMAT_INVALID Error.
-      schema._cvtFormat = function(value) {
+      schema._cvtValidateFormat = function(value) {
         throw new Error(message);
       };
     });
@@ -277,7 +280,7 @@ describe('schema contains an object property with a custom format', function() {
       }
     });
 
-    // init the hack (replace _cvtFormat by our own function)
+    // init the hack (replace _cvtValidateFormat by our own function)
     expect(() => conf.validate(strictMode)).not.to.throw();
 
     // run the hack function

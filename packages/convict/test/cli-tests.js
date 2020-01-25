@@ -12,31 +12,17 @@ const new_require = require('./new_require.js');
 const cases_dir_path = path.join(__dirname, 'cases');
 let files = fs.readdirSync(cases_dir_path);
 
-const config_files = {};
+const tests = [];
 files.forEach(function(filename) {
   let match = /^([a-zA-Z_\-0-9]+)\.js$/.exec(filename);
   if (match) {
-    const name = match[1];
-    config_files[name] = [];
+    // store test name
+    tests.push(match[1]);
   }
 });
 
-// now find all configuration files for all tests
-Object.keys(config_files).forEach(function(name) {
-  let reg = new RegExp('^' + name + '.*\\.json$');
-  files.forEach(function(filename) {
-    if (reg.test(filename)) {
-      config_files[name].push(path.join(cases_dir_path, filename));
-    }
-  });
-  config_files[name].sort();
-});
-
-// time to run!
-let toRun = Object.keys(config_files);
-
 describe('CLI tests', function() {
-  toRun.forEach(function(name) {
+  tests.forEach(function(name) {
     describe(name, function() {
       const output = {};
 
@@ -78,9 +64,19 @@ describe('CLI tests', function() {
             opts.args = settings.argv;
           }
 
+          if (settings.strictParsing) {
+            opts.strictParsing = true;
+          }
+
           conf = convict(settings.conf, opts);
-          conf.loadFile(config_files[name]);
-          conf.validate();
+          if (settings.data) {
+            if (Array.isArray(settings.data)) {
+              settings.data.forEach((data) => conf.load(data));
+            } else {
+              conf.load(settings.data);
+            }
+          }
+          conf.validate(settings.validate || {});
         }
 
         if (typeof expectedOutput === 'string') {
@@ -113,7 +109,7 @@ describe('CLI tests', function() {
         if (files.indexOf(name + '.schema') !== -1) {
           const expected = JSON.parse(fs.readFileSync(path.join(cases_dir_path, name + '.schema')));
 
-          expect(conf.getSchema()).to.deep.equal(expected);
+          expect(JSON.parse(conf.getSchemaString())).to.deep.equal(expected);
         }
       });
     });

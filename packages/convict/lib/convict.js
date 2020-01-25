@@ -11,16 +11,16 @@ const cloneDeep = require('lodash.clonedeep');
 const parsePath = require('objectpath').parse;
 const cvtError  = require('./convicterror.js');
 
-// 1
 const CONVICT_ERROR = cvtError.CONVICT_ERROR;
-const PARSING_ERROR = cvtError.PARSING_ERROR;
-// 2
+// 1
 const SCHEMA_INVALID = cvtError.SCHEMA_INVALID;
+// 2
 const CUSTOMISE_FAILED = cvtError.CUSTOMISE_FAILED;
 const INCORRECT_USAGE = cvtError.INCORRECT_USAGE;
 const PATH_INVALID = cvtError.PATH_INVALID;
-// 3
+// 2
 const VALUE_INVALID = cvtError.VALUE_INVALID;
+const VALIDATE_FAILED = cvtError.VALIDATE_FAILED;
 const FORMAT_INVALID = cvtError.FORMAT_INVALID;
 
 
@@ -55,7 +55,7 @@ function isWindowsNamedPipe(x) {
 function assert(assertion, err_msg) {
   if (!assertion) {
     throw new Error(err_msg);
-    //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
+    //        ^^^^^-- will be catch in _cvtValidateFormat and convert to FORMAT_INVALID Error.
   }
 }
 const types = {
@@ -102,7 +102,8 @@ function flatten(obj, useProperties) {
   while (stack.length) {
     let path = stack.shift();
     let node = walk(obj, path);
-    if (typeof node === 'object' && !Array.isArray(node) && node != null) {
+    // Is an object not null and not an array
+    if (isObjNotNull(node) && !Array.isArray(node)) {
       if (useProperties) {
         if ('_cvtProperties' in node) {
           node = node._cvtProperties;
@@ -157,18 +158,13 @@ function validate(instance, schema, strictValidation) {
     let instanceItem = flatInstance[name];
     if (!(name in flatInstance)) {
       try {
-        if (typeof schemaItem.default === 'object' &&
-          !Array.isArray(schemaItem.default)) {
-          // Missing item may be an object with undeclared children, so try to
-          // pull it unflattened from the config instance for type validation
-          instanceItem = walk(instance, name);
-        } else {
-          throw new PARSING_ERROR('missing');
+        instanceItem = walk(instance, name);
+      } catch (err) {
+        let message = 'config parameter "' + name + '" missing from config, did you override its parent?';
+        if (err.lastPosition && err.type === 'PATH_INVALID') {
+          message += ` Because ${err.why}.`;
         }
-      } catch (e) {
-        const msg = 'configuration param "' + name + '" missing from config, did you override its parent?';
-        const err = new PARSING_ERROR(msg);
-        errors.missing.push(err);
+        errors.missing.push(new VALUE_INVALID(message));
         return;
       }
     }
@@ -184,10 +180,10 @@ function validate(instance, schema, strictValidation) {
         });
     }
 
-    if (!(typeof schemaItem.default === 'undefined' &&
+    if (schemaItem.required || !(typeof schemaItem.default === 'undefined' &&
           instanceItem === schemaItem.default)) {
       try {
-        schemaItem._cvtFormat(instanceItem);
+        schemaItem._cvtValidateFormat(instanceItem);
       } catch (err) {
         errors.invalid_type.push(err);
       }
@@ -219,26 +215,52 @@ const BUILT_INS = BUILT_IN_NAMES.map(function(name) {
   return BUILT_INS_BY_NAME[name];
 });
 
-function normalizeSchema(name, rawSchema, props, fullName) {
+function parsingSchema(name, rawSchema, props, fullName) {
   if (name === '_cvtProperties') {
     throw new SCHEMA_INVALID(fullName, "'_cvtProperties' is reserved word of convict, it can be used like property name.");
   }
 
-  // If the current schema rawSchema is not a config property (has no "default"), recursively normalize it.
-  if (typeof rawSchema === 'object' && rawSchema !== null && !Array.isArray(rawSchema) &&
-        Object.keys(rawSchema).length > 0 && !('default' in rawSchema)) {
+  const countChildren = (rawSchema) ? Object.keys(rawSchema).length : 0;
+  const isArray = (rawSchema) ? Array.isArray(rawSchema) : false;
+  const hasFormat = (rawSchema) ? rawSchema['format'] : false;
+
+  const isConfigPropFormat = (hasFormat && isObjNotNull(hasFormat) && !Array.isArray(hasFormat));
+
+  const filterName = (name) => {
+    return (name === this._defaultSubstitute) ? 'default' : name;
+  }; //                   ^^^^^^^^^^^^^^^^^^ = '$~default'
+
+  name = filterName(name);
+
+  // If the current schema (= rawSchema) :
+  //   - is an object not null and not an array ;
+  //   - is not a config property :
+  //         - has no `.default` ;
+  //         - has no `.format` or has `.format: [ isObject && notNull && notArray ]`
+  //   - has children.
+  // Then: recursively parsing like schema property.
+  if (isObjNotNull(rawSchema) && !isArray && countChildren > 0
+    && !('default' in rawSchema)
+    && (!hasFormat || isConfigPropFormat)
+  ) {
     props[name] = {
       _cvtProperties: {}
     };
     Object.keys(rawSchema).forEach((key) => {
       const path = fullName + '.' + key;
-      normalizeSchema.call(this, key, rawSchema[key], props[name]._cvtProperties, path);
+      parsingSchema.call(this, key, rawSchema[key], props[name]._cvtProperties, path);
     });
     return;
-  } else if (typeof rawSchema !== 'object' || Array.isArray(rawSchema) ||
-    rawSchema === null || Object.keys(rawSchema).length == 0) {
-    // Normalize shorthand "value" config properties
+  } else if (this._strictParsing && isObjNotNull(rawSchema) && !('default' in rawSchema)) {
+    // throw an error instead use magic parsing
+    throw new SCHEMA_INVALID(fullName, 'default property is missing');
+  // Magic parsing
+  } else if (typeof rawSchema !== 'object' || rawSchema === null || isArray || countChildren === 0) {
+    // Parses a shorthand value to a config property
     rawSchema = { default: rawSchema };
+  } else if (!('default' in rawSchema) && !isConfigPropFormat) {
+    // Set `.default` to undefined when it doesn't exist
+    rawSchema.default = (function() {})(); // === undefined
   }
 
   const schema = cloneDeep(rawSchema);
@@ -257,7 +279,8 @@ function normalizeSchema(name, rawSchema, props, fullName) {
           if (typeof usedOnlyOnce === 'function') {
             return usedOnlyOnce(value, schema, fullName, getterName);
           } else {
-            throw new SCHEMA_INVALID(fullName, 'uses a already used value in "' + getterName + '" getter', value);
+            const errorMessage = `uses a already used value in "${getterName}" getter (actual: ${JSON.stringify(value)})`;
+            throw new SCHEMA_INVALID(fullName, errorMessage);
           }
         }
 
@@ -284,13 +307,13 @@ function normalizeSchema(name, rawSchema, props, fullName) {
       return (value) => {
         if (formatFormat !== Object.prototype.toString.call(value)) {
           throw new Error('must be of type ' + myFormat);
-          //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
+          //        ^^^^^-- will be catch in _cvtValidateFormat and convert to FORMAT_INVALID Error.
         }
       };
     } else if (typeof format === 'string') {
       // store declared type
       if (!types[format]) {
-        throw new SCHEMA_INVALID(fullName, 'uses an unknown format type', format);
+        throw new SCHEMA_INVALID(fullName, `uses an unknown format type (actual: ${JSON.stringify(format)})`);
       }
       // use a predefined type
       return types[format];
@@ -299,27 +322,32 @@ function normalizeSchema(name, rawSchema, props, fullName) {
       const contains = (whitelist, value) => {
         if (!whitelist.includes(value)) {
           throw new Error('must be one of the possible values: ' + JSON.stringify(whitelist));
-          //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
+          //        ^^^^^-- will be catch in _cvtValidateFormat and convert to FORMAT_INVALID Error.
         }
       }
       return contains.bind(null, format);
     } else if (typeof format === 'function') {
       return format;
-    } else if (format && typeof format !== 'function') {
+    } else if (format) {
+      // Wrong type for format
       const errorMessage = 'uses an invalid format, it must be a format name, a function, an array or a known format type';
-      throw new SCHEMA_INVALID(fullName, errorMessage, (format || '').toString() || 'is a ' + typeof format);
-    } else { // !format
-      // default format is the typeof the default value
+      const value = (format || '').toString() || 'is a ' + typeof format;
+      throw new SCHEMA_INVALID(fullName, `${errorMessage} (actual: ${JSON.stringify(value)})`);
+    } else if (!this._strictParsing && typeof schema.default !== 'undefined') {
+      // Magic format: default format is the type of the default value (if strictParsing is not enabled)
       const defaultFormat = Object.prototype.toString.call(schema.default);
       const myFormat = defaultFormat.replace(/\[.* |]/g, '');
-      // magic coerceing
+      // Magic coerceing
       schema.format = format = myFormat;
       return (value) => {
         if (defaultFormat !== Object.prototype.toString.call(value)) {
           throw new Error('must be of type ' + myFormat);
-          //        ^^^^^-- will be catch in _cvtFormat and convert to FORMAT_INVALID Error.
+          //        ^^^^^-- will be catch in _cvtValidateFormat and convert to FORMAT_INVALID Error.
         }
       };
+    } else { // .format are missing
+      const errorMessage = 'format property is missing';
+      throw new SCHEMA_INVALID(fullName, errorMessage);
     }
   })();
 
@@ -331,11 +359,10 @@ function normalizeSchema(name, rawSchema, props, fullName) {
     }
   })();
   
-  schema._cvtFormat = function(value) {
+  schema._cvtValidateFormat = function(value) {
     try {
-      newFormat(value, schema); // schema = this
+      newFormat(value, schema);
     } catch (err) {
-      // attach the value and the property's fullName to the error
       const hasOrigin = !!schema._cvtGetOrigin;
       const getter = (hasOrigin) ? schema._cvtGetOrigin() : false;
       const getterValue = (hasOrigin && schema[getter]) ? schema[getter] : '';
@@ -387,7 +414,10 @@ function applyGetters(schema, node) {
   });
 }
 
-function isObj(o) { return (typeof o === 'object' && o !== null); }
+// With 'in': Prevent error: 'Cannot use 'in' operator to search for {key} in {value}'
+function isObjNotNull(obj) {
+  return typeof obj === 'object' && obj !== null;
+}
 
 function applyValues(from, to, schema) {
   const getters = this._getters;
@@ -396,7 +426,7 @@ function applyValues(from, to, schema) {
   Object.keys(from).forEach((name) => {
     const mySchema = (schema && schema._cvtProperties) ? schema._cvtProperties[name] : null;
     // leaf
-    if (Array.isArray(from[name]) || !isObj(from[name]) || !schema || schema.format === 'object') {
+    if (Array.isArray(from[name]) || !isObjNotNull(from[name]) || !schema || schema.format === 'object') {
       const bool = mySchema && mySchema._cvtGetOrigin;
       const lastG = bool && mySchema._cvtGetOrigin();
 
@@ -409,7 +439,7 @@ function applyValues(from, to, schema) {
         mySchema._cvtGetOrigin = () => 'value';
       }
     } else {
-      if (!isObj(to[name])) to[name] = {};
+      if (!isObjNotNull(to[name])) to[name] = {};
       applyValues.call(this, from[name], to[name], mySchema);
     }
   });
@@ -511,20 +541,53 @@ function walk(obj, path, initializeMissing) {
   if (path) {
     path = Array.isArray(path) ? path : parsePath(path);
     const sibling = path.slice(0);
+    let historic = [];
     while (sibling.length) {
       const key = sibling.shift();
+
+      if (key !== '_cvtProperties') {
+        historic.push(key);
+      }
+
       if (initializeMissing && obj[key] == null) {
         obj[key] = {};
         obj = obj[key];
-      } else if (key in obj) {
+      } else if (isObjNotNull(obj) && key in obj) {
         obj = obj[key];
       } else {
-        throw new PATH_INVALID('cannot find configuration param: ' + stringifyPath(path)); 
+        const noCvtProp = (path) => path !== '_cvtProperties';
+        throw new PATH_INVALID(stringifyPath(path.filter(noCvtProp)), stringifyPath(historic), {
+          path: stringifyPath(historic.slice(0, -1)),
+          value: obj
+        }); 
       }
     }
   }
 
   return obj;
+}
+
+function convertSchema(nodeSchema, convictProperties) {
+  if (!nodeSchema || typeof nodeSchema !== 'object' || Array.isArray(nodeSchema)) {
+    return nodeSchema;
+  } else if (nodeSchema._cvtProperties) {
+    return convertSchema.call(this, nodeSchema._cvtProperties, true);
+  } else {
+    const schema = Array.isArray(nodeSchema) ? [] : {};
+
+    Object.keys(nodeSchema).forEach((name) => {
+      let keyname = name;
+      if (typeof nodeSchema[name] === 'function') {
+        return;
+      } else if (name === 'default' && convictProperties) {
+        keyname = this._defaultSubstitute;
+      }
+
+      schema[keyname] = convertSchema.call(this, nodeSchema[name]);
+    });
+
+    return schema;
+  }
 }
 
 /**
@@ -578,15 +641,17 @@ const convict = function convict(def, opts) {
     /**
      * Exports the schema as JSON.
      */
-    getSchema: function() {
-      return JSON.parse(JSON.stringify(this._schema));
+    getSchema: function(debug) {
+      const schema = cloneDeep(this._schema);
+
+      return (debug) ? cloneDeep(schema) : convertSchema.call(this, schema);
     },
 
     /**
      * Exports the schema as a JSON string
      */
-    getSchemaString: function() {
-      return JSON.stringify(this._schema, null, 2);
+    getSchemaString: function(debug) {
+      return JSON.stringify(this.getSchema(debug), null, 2);
     },
 
     /**
@@ -657,8 +722,16 @@ const convict = function convict(def, opts) {
     has: function(path) {
       try {
         const r = this.get(path);
-        // values that are set but undefined return false
-        return typeof r !== 'undefined';
+        const isRequired = (() => {
+          try {
+            return !!walk(this._schema._cvtProperties, pathToSchemaPath(path, 'required'));
+          } catch (e) {
+            // undeclared property
+            return false;
+          }
+        })();
+        // values that are set and required = false but undefined return false
+        return isRequired || typeof r !== 'undefined';
       } catch (e) {
         return false;
       }
@@ -767,11 +840,9 @@ const convict = function convict(def, opts) {
         const sensitive = this._sensitive;
 
         const fillErrorBuffer = function(errors) {
-          let err_buf = '';
+          const messages = [];
           errors.forEach(function(err) {
-            if (err_buf.length) {
-              err_buf += '\n';
-            }
+            let err_buf = '  - ';
 
             /*if (err.type) {
               err_buf += '[' + err.type + '] ';
@@ -802,13 +873,15 @@ const convict = function convict(def, opts) {
               }
               err_buf += ' ' + warning;
             }
+
+            messages.push(err_buf);
           });
-          return err_buf;
+          return messages;
         };
 
-        const types_err_buf = fillErrorBuffer(errors.invalid_type);
-        const params_err_buf = fillErrorBuffer(errors.undeclared);
-        const missing_err_buf = fillErrorBuffer(errors.missing);
+        const types_err_buf = fillErrorBuffer(errors.invalid_type).join('\n');
+        const params_err_buf = fillErrorBuffer(errors.undeclared).join('\n');
+        const missing_err_buf = fillErrorBuffer(errors.missing).join('\n');
 
         const output_err_bufs = [types_err_buf, missing_err_buf];
 
@@ -817,7 +890,7 @@ const convict = function convict(def, opts) {
           if (process.stdout.isTTY) {
             warning = BOLD_YELLOW_TEXT + warning + RESET_TEXT;
           }
-          output_function(warning + ' ' + params_err_buf);
+          output_function(warning + '\n' + params_err_buf);
         } else if (options.allowed === ALLOWED_OPTION_STRICT) {
           output_err_bufs.push(params_err_buf);
         }
@@ -827,7 +900,7 @@ const convict = function convict(def, opts) {
           .join('\n');
 
         if (output.length) {
-          throw new VALUE_INVALID(output);
+          throw new VALIDATE_FAILED(output);
         }
 
       }
@@ -842,6 +915,11 @@ const convict = function convict(def, opts) {
     rv._def = def;
   }
 
+  // The key `$~default` will be replaced by `default` during the schema parsing that allow
+  // to use default key for config properties.
+  const optsDefSub = (opts) ? opts.defaultSubstitute : false;
+  rv._defaultSubstitute = (typeof optsDefSub !== 'string') ? '$~default' : optsDefSub;
+
   // build up current config from definition
   rv._schema = {
     _cvtProperties: {}
@@ -850,11 +928,12 @@ const convict = function convict(def, opts) {
   rv._getterAlreadyUsed = {};
   rv._sensitive = new Set();
 
+  rv._strictParsing = !!(opts && opts.strictParsing);
   // inheritance (own getter)
   rv._getters = cloneDeep(getters);
 
   Object.keys(rv._def).forEach((key) => {
-    normalizeSchema.call(rv, key, rv._def[key], rv._schema._cvtProperties, key);
+    parsingSchema.call(rv, key, rv._def[key], rv._schema._cvtProperties, key);
   });
 
   // config instance
@@ -927,7 +1006,7 @@ convict.addGetter = function(property, getter, usedOnlyOnce, rewrite) {
   if (typeof getter !== 'function') {
     throw new CUSTOMISE_FAILED('Getter function for "' + property + '" must be a function.');
   }
-  if (['value', 'force'].includes(property)) {
+  if (['_cvtCoerce', '_cvtValidateFormat', '_cvtGetOrigin', 'format', 'required', 'value', 'force'].includes(property)) {
     throw new CUSTOMISE_FAILED('Getter name use a reservated word: ' + property);
   }
   if (getters.list[property] && !rewrite) {

@@ -35,12 +35,12 @@ npm install convict
 An example `config.js` file:
 
 ```javascript
-var convict = require('convict');
+const convict = require('convict');
 
 convict.addFormat(require('convict-format-with-validator').ipaddress);
 
 // Define a schema
-var config = convict({
+const config = convict({
   env: {
     doc: 'The application environment.',
     format: ['production', 'development', 'test'],
@@ -75,7 +75,7 @@ var config = convict({
 });
 
 // Load environment dependent configuration
-var env = config.get('env');
+const env = config.get('env');
 config.loadFile('./config/' + env + '.json');
 
 // Perform validation
@@ -87,17 +87,17 @@ module.exports = config;
 An example `server.js` file leveraging the `config.js` file above:
 
 ```javascript
-var http = require('http');
-var config = require('./config.js');
+const http = require('http');
+const config = require('./config.js');
 
-var server = http.createServer(function (req, res) {
+const server = http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.end('Hello World\n');
 });
 
 // Consume
 server.listen(config.get('port'), config.get('ip'), function(x) {
-  var addy = server.address();
+  const addy = server.address();
   console.log('running on http://' + addy.address + ':' + addy.port);
 });
 ```
@@ -117,7 +117,7 @@ A configuration module, with its deep nested schema, could look like this:
 
 config.js:
 ```javascript
-var config = convict({
+const config = convict({
   db: {
     name: {
       format: String,
@@ -162,7 +162,7 @@ convict's goal of being more robust and collaborator friendly.
 By default, the config property will be ignored during the schema validation if its value is `undefined` and `schema.default` is `undefined`. If you want to not accept optional value and validate value in this case [`value === undefined and schema.default === default`], set `schema.required` to `true`.
 
 ```js
-var config = convict({
+const config = convict({
   options: { // optional
     format: String,
     default: undefined
@@ -174,6 +174,7 @@ var config = convict({
   } // if `password` stays `undefined`: will be validate and throw
 }).validate();
 ```
+
 
 ### Validation
 
@@ -199,7 +200,7 @@ You can specify a custom format checking method on a property basis.
 For example:
 
 ```javascript
-var config = convict({
+const config = convict({
   key: {
     doc: 'API key',
     format: function check(val, schema) {
@@ -243,7 +244,7 @@ convict.addFormat({
   }
 });
 
-var config = convict({
+const config = convict({
   space_used: {
     format: 'float-percent',
     default: 0.5
@@ -364,7 +365,7 @@ When creating a config object pass an object with two optional properties as the
 - `args: Array<string>` - this array will be used instead of `process.argv`
 
 ```javascript
-var config = convict({
+const config = convict({
   // configuration schema
 }, {
   env: {
@@ -546,9 +547,9 @@ Also see: [`config.sortGetters()`](#TEMP_LINK)
 
 ## API config instance (local, inherited configuration object)
 
-Inherited config object created by `var config = convict(schema)`.
+Inherited config object created by `const config = convict(schema)`.
 
-### var config = convict(schema[, opts])
+### const config = convict(schema[, opts])
 
 `convict()` takes a schema object or a path to a schema JSON file and returns a
 convict configuration object.
@@ -571,7 +572,7 @@ to local (configuration instance).
 
 E.g.:
 ```javascript
-var config = convict({
+const config = convict({
   env: {
     doc: 'The applicaton environment.',
     format: ['production', 'development', 'test'],
@@ -781,9 +782,9 @@ aren't set, to avoid revealing any information.
 
 Exports the schema as JSON. When debug is true, returns data schema (copy of convict storage).
 
-### config.getSchemaString()
+### config.getSchemaString(debug)
 
-Exports the schema as a JSON string.
+Exports the schema as a JSON string. When debug is true, returns data schema (copy of convict storage).
 
 ### config.getArgs()
 

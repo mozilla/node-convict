@@ -64,6 +64,10 @@ describe('CLI tests', function() {
             opts.args = settings.argv;
           }
 
+          if (settings.strictParsing) {
+            opts.strictParsing = true;
+          }
+
           conf = convict(settings.conf, opts);
           if (settings.data) {
             if (Array.isArray(settings.data)) {

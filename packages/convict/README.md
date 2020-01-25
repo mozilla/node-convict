@@ -560,6 +560,7 @@ convict configuration object.
   a string `--argname value`.
   - **opts.defaultSubstitute**: Override `'$~default'`, this value will be replaced by `'default'`
   during the schema parsing.
+  - **opts.strictParsing**: Throw an error if `default` or `format` properties are omitted.
 
 The configuration object has an API for getting and setting values, described
 below.

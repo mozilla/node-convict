@@ -251,6 +251,9 @@ function parsingSchema(name, rawSchema, props, fullName) {
       parsingSchema.call(this, key, rawSchema[key], props[name]._cvtProperties, path);
     });
     return;
+  } else if (this._strictParsing && isObjNotNull(rawSchema) && !('default' in rawSchema)) {
+    // throw an error instead use magic parsing
+    throw new SCHEMA_INVALID(fullName, 'default property is missing');
   // Magic parsing
   } else if (typeof rawSchema !== 'object' || rawSchema === null || isArray || countChildren === 0) {
     // Parses a shorthand value to a config property
@@ -276,7 +279,8 @@ function parsingSchema(name, rawSchema, props, fullName) {
           if (typeof usedOnlyOnce === 'function') {
             return usedOnlyOnce(value, schema, fullName, getterName);
           } else {
-            throw new SCHEMA_INVALID(fullName, 'uses a already used value in "' + getterName + '" getter', value);
+            const errorMessage = `uses a already used value in "${getterName}" getter (actual: ${JSON.stringify(value)})`;
+            throw new SCHEMA_INVALID(fullName, errorMessage);
           }
         }
 
@@ -309,7 +313,7 @@ function parsingSchema(name, rawSchema, props, fullName) {
     } else if (typeof format === 'string') {
       // store declared type
       if (!types[format]) {
-        throw new SCHEMA_INVALID(fullName, 'uses an unknown format type', format);
+        throw new SCHEMA_INVALID(fullName, `uses an unknown format type (actual: ${JSON.stringify(format)})`);
       }
       // use a predefined type
       return types[format];
@@ -327,9 +331,10 @@ function parsingSchema(name, rawSchema, props, fullName) {
     } else if (format) {
       // Wrong type for format
       const errorMessage = 'uses an invalid format, it must be a format name, a function, an array or a known format type';
-      throw new SCHEMA_INVALID(fullName, errorMessage, (format || '').toString() || 'is a ' + typeof format);
-    } else if (typeof schema.default !== 'undefined') {
-      // Magic format: default format is the type of the default value
+      const value = (format || '').toString() || 'is a ' + typeof format;
+      throw new SCHEMA_INVALID(fullName, `${errorMessage} (actual: ${JSON.stringify(value)})`);
+    } else if (!this._strictParsing && typeof schema.default !== 'undefined') {
+      // Magic format: default format is the type of the default value (if strictParsing is not enabled)
       const defaultFormat = Object.prototype.toString.call(schema.default);
       const myFormat = defaultFormat.replace(/\[.* |]/g, '');
       // Magic coerceing
@@ -340,9 +345,9 @@ function parsingSchema(name, rawSchema, props, fullName) {
           //        ^^^^^-- will be catch in _cvtValidateFormat and convert to FORMAT_INVALID Error.
         }
       };
-    } else { // default and format are not defined.
-      const errorMessage = 'format is not defined.';
-      throw new SCHEMA_INVALID(fullName, errorMessage, (format || '').toString() || 'is a ' + typeof format);
+    } else { // .format are missing
+      const errorMessage = 'format property is missing';
+      throw new SCHEMA_INVALID(fullName, errorMessage);
     }
   })();
 
@@ -923,6 +928,7 @@ const convict = function convict(def, opts) {
   rv._getterAlreadyUsed = {};
   rv._sensitive = new Set();
 
+  rv._strictParsing = !!(opts && opts.strictParsing);
   // inheritance (own getter)
   rv._getters = cloneDeep(getters);
 

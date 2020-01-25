@@ -28,7 +28,7 @@ class CONVICT_ERROR extends Error {
 
 class SCHEMA_INVALID extends CONVICT_ERROR {
   constructor(fullName, message, value) {
-    super(`${fullName}: ${message} (actual: ${JSON.stringify(value)})`);
+    super(`${fullName}: ${message}`);
     this.fullName = fullName;
     this.value = value;
     this.type = 'SCHEMA_INVALID';

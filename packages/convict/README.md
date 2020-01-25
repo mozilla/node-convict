@@ -339,8 +339,7 @@ convict.getGettersOrder();
     - With: `config.set(name, value, true)` (permanent) ;
     - With: `config.set(name, value)` (can be undo with `config.refreshGetters()`).
 
-This order means that if schema defines parameter to be taken from an environment variable and environment variable is set
-then you cannot override it with `config.loadFile(file)` or `config.load(json)`.
+This order means that if schema defines parameter to be taken from an environment variable and environment variable is set then you cannot override it with `config.loadFile(file)` or `config.load(json)`.
 
 ```javascript
 process.env.PORT = 8080; // environment variable is set
@@ -411,9 +410,12 @@ convict.addParser({extension: 'json', parse: require('json5').parse});
 
 Some function are only global, like : addParser, addFormat, addGetter...
 
-### convict.addParser(parser or parserArray)
+### convict.addParser(parser)
 
-Adds new parsers for custom file extensions. Parser should be an Object :
+ - **parser**: is an Object or an Array contains containing Object.
+
+Adds new parsers for custom file extensions. Parser should be an Object.
+E.g.:
 ```javascript
 // Allow comments in JSON file (with JSON5)
 convict.addParser({ extension: 'json5', parse: require('json5').parse });
@@ -423,6 +425,7 @@ convict.addParser({ extension: 'json5', parse: require('json5').parse });
 
 Adds a new custom format, `format` being an object, see example below. `rewrite = true`
 will let you rewrite an existing format.
+E.g.:
 ```javascript
 convict.addFormat({
   name: 'float-percent',
@@ -441,6 +444,7 @@ convict.addFormat({
 
 Adds new custom formats, `formats` being an object whose keys are the new custom
 format names, see example below.
+E.g.:
 ```javascript
 convict.addFormats({
   prime: {
@@ -476,6 +480,7 @@ will let you rewrite an existing getter.
 The third argument of getter callback function lets catch `undefined` value. By default, convict
 will try to call each getter function to get a value (different of `undefined`), then `stopPropagation()`
 stops the getter calling loop.
+E.g.:
 ```javascript
 convict.addGetter({
   name: 'file',
@@ -495,7 +500,8 @@ convict.addGetter({
 ### convict.addGetters(getters)
 
 Adds new custom getter, `getter` being an object whose keys are the new custom
-getter names, see example below.
+getter names.
+E.g.:
 ```javascript
 convict.addGetters([
   /* example to rewrite 'env' getter: */
@@ -507,6 +513,7 @@ convict.addGetters([
 ### convict.getGettersOrder()
 
 Returns array containing getter names sorted by priority (ascending order).
+E.g.:
 ```javascript
 convict.getGettersOrder();
 // ['default', 'value', 'env', 'arg', 'force']
@@ -521,6 +528,7 @@ to sort getters before create configuration object instance (before `config = co
 because global getters config is cloned to a local getters config. Also see:
 [`config.refreshGetters()`](#TEMP_LINK)
 
+E.g.:
 ```javascript
 convict.getGettersOrder();
 // ['default', 'value', 'env', 'arg', 'force']
@@ -560,6 +568,7 @@ The global getter config will be cloned to local config. You must
 [refresh getters configs](#config.refreshGetters_TEMP_LINK) if you apply global change
 to local (configuration instance).
 
+E.g.:
 ```javascript
 var config = convict({
   env: {
@@ -581,7 +590,8 @@ config = convict('/some/path/to/a/config-schema.json');
 
 ### config.get(name)
 
-Returns the current value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
+Returns the current value of the `name` property. `name` can use dot notation to reference nested values.
+E.g.:
 ```javascript
 config.get('db.host');
 // or
@@ -596,7 +606,8 @@ config.get("['foo.bar']"); // { 'foo.bar': 'baz' }
 
 ### config.getOrigin(name)
 
-Returns the current getter name of the `name` value origin. `name` can use dot notation to reference nested values. E.g.:
+Returns the current getter name of the `name` value origin. `name` can use dot notation to reference nested values.
+E.g.:
 ```javascript
 config.getOrigin('db.host');
 ```
@@ -618,6 +629,7 @@ of new getters order.
 
 `value` set with `.load()`/`.set()` will be replaced by schema/getter value depending
 of Origin priority. (See: [`getter-tests.js#L304`](#TEMP_LINK))
+E.g.:
 ```javascript
 convict.getGettersOrder();
 // ['default', 'value', 'env', 'arg', 'force']
@@ -637,21 +649,24 @@ conf.getGettersOrder(); // ['value', 'default', 'arg', 'env', 'force']
 
 ### config.default(name)
 
-Returns the default value of the `name` property. `name` can use dot notation to reference nested values. E.g.:
+Returns the default value of the `name` property. `name` can use dot notation to reference nested values.
+E.g.:
 ```javascript
 config.default('server.port');
 ```
 
 ### config.reset(name)
 
-Resets a property to its default value as defined in the schema. E.g.:
+Resets a property to its default value as defined in the schema.
+E.g.:
 ```javascript
 config.reset('server.port');
 ```
 
 ### config.has(name)
 
-Returns `true` if the property `name` is defined, or `false` otherwise. E.g.:
+Returns `true` if the property `name` is defined, or `false` otherwise.
+E.g.:
 ```javascript
 if (config.has('some.property')) {
   // Do something
@@ -703,7 +718,8 @@ config.load({color: 'blue'}); // getter: 'value'
 
 ### config.load(object)
 
-Loads and merges a JavaScript object into `config`. E.g.:
+Loads and merges a JavaScript object into `config`.
+E.g.:
 ```javascript
 config.load({
   'env': 'test',
@@ -719,7 +735,8 @@ E.g.:
 config.loadFile('./config/' + conf.get('env') + '.json');
 ```
 
-Or, loading multiple files at once:
+Or, loading multiple files at once.
+E.g.:
 ```javascript
 // CONFIG_FILES=/path/to/production.json,/path/to/secrets.json,/path/to/sitespecific.json
 config.loadFile(process.env.CONFIG_FILES.split(','));

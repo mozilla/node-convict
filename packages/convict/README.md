@@ -459,9 +459,9 @@ Some functions are only global, like `addParser`, `addFormat`, `addGetter`, etc.
 
 ### convict.addParser(parser)
 
- - **parser**: is an Object or an Array contains containing Object.
+ - **parser**: should be an `Object` or an `Array` containing a list of `Object`.
 
-Adds new parsers for custom file extensions. Parser should be an Object.
+Adds new parsers for custom file extensions.
 E.g.:
 ```javascript
 // Allow comments in JSON file (with JSON5)

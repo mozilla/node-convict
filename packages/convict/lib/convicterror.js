@@ -40,7 +40,7 @@ class SCHEMA_INVALID extends CONVICT_ERROR {
 // =========================================
 // ============= INSIDE ERROR ==============
 // =============== JS ERROR ================ (with custom getter, format or parser)
-// ========================================= or wrong path with get/set/defaut/reset/getOrigin function.
+// ========================================= or wrong path with get/set/default/reset/getOrigin function.
 // This is probably a js/application problem.
 
 class CUSTOMISE_FAILED extends CONVICT_ERROR {

@@ -145,12 +145,12 @@ const config = convict({
 config.loadFile(['./prod.json', './config.json']);
 ```
 
-Each setting in the schema has the following possible properties, each aiding in convict's goal of being more robust and collaborator friendly.
+Each setting in the schema has the following possible properties, each aiding in the convict's goal of being more robust and collaborator friendly.
 
 ### Convict properties
 
- - **Type information**: the `format` property specifies either a built-in convict format (`ipaddress`, `port`, `int`, etc.), or it can be a function to check a custom format. During validation, if a format check fails it will be added to the error report.
- - **Default values**: Is a default value before this value will be rewrite by another getter. 
+ - **Type information**: the `format` property specifies either a built-in convict format (`ipaddress`, `port`, `int`, etc.) or it can be a function to check a custom format. During validation, if a format check fails it will be added to the error report.
+ - **Default values**: Is a default value before this value will be overwritten by another getter. 
  - **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value. An environment variable may not be mapped to more than one setting.
  - **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
  - **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `config.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
@@ -368,7 +368,7 @@ For instance, values with the format `int`, `nat`, `port`, or `Number` will beco
 
 ### Precedence order
 
-When merging configuration values from different sources, Convict follows precedence rules depending of the getters order.
+When merging configuration values from different sources, Convict follows precedence rules depending on the getters' order.
 The default getters order, from lowest to highest:
 
 ```javascript
@@ -402,7 +402,7 @@ console.log(config.get('port')); // still 8080 from env
 
 ### Overriding Environment variables and Command line arguments
 
-Convict allows to override Environment variables and Command line arguments.
+Convict allows to override Environment variables and Command-line arguments.
 It can be helpful for testing purposes.
 
 When creating a config object pass an object with two optional properties as the 2nd parameter:
@@ -455,7 +455,7 @@ convict.addParser({extension: 'json', parse: require('json5').parse});
 
 ## API convict (global)
 
-Some function are only global, like : addParser, addFormat, addGetter...
+Some functions are only global, like `addParser`, `addFormat`, `addGetter`, etc.
 
 ### convict.addParser(parser)
 
@@ -470,7 +470,7 @@ convict.addParser({ extension: 'json5', parse: require('json5').parse });
 
 ### convict.addFormat(format) or convict.addFormat(name, validate, coerce[, rewrite = false])
 
-Adds a new custom format, `format` being an object, see example below. `rewrite = true`
+Adds a new custom format, `format` is an object, see example below. `rewrite = true`
 will let you rewrite an existing format.
 E.g.:
 ```javascript
@@ -570,7 +570,7 @@ Also see: [`config.getGettersOrder()`](#TEMP_LINK)
 
 ### convict.sortGetters(newOrder)
 
-Sort getter depending of array order, priority uses ascending order. You have
+Sort getter depending on array order, priority uses ascending order. You have
 to sort getters before create configuration object instance (before `config = convict({})`)
 because global getters config is cloned to a local getters config. Also see:
 [`config.refreshGetters()`](#TEMP_LINK)
@@ -673,7 +673,7 @@ Sort getter depending of array order, priority uses ascending order.
 ### config.refreshGetters()
 
 Reclone global getters config to local getters config and update configuration object value depending
-of new getters order.
+on new getters' order.
 
 `value` set with `.load()`/`.set()` will be replaced by schema/getter value depending
 of Origin priority. (See: [`getter-tests.js#L304`](#TEMP_LINK))
@@ -729,7 +729,7 @@ they will be initialized to empty objects.
 
 **priority**: Optional, can be a boolean or getter name (a string). You must
 declare this property in the schema to use this option. `set` will change
-the property getter origin depending of `priority` value:
+the property getter origin depending on `priority` value:
  - `false`: priority set to `value`.
  - `true`: priority set to `force`, can be only changed if you do another
  `.set(name, value)`. Make sure that `.refreshGetters()` will not overwrite
@@ -797,14 +797,13 @@ collected and thrown or displayed at once.
 #### options :
 
 1. `allowed`: Any properties specified in config files that are not declared in
-   the schema will print a warning or throw an error depending of this setting:
+   the schema will print a warning or throw an error depending on this setting:
    - `warn`: is the default behavior, will print a warning.
    - `strict`: will throw errors. This is to ensure that the schema and the config
      files are in sync.
 
 2. `output`: You can replace the default output `console.log`
    by your own output function. You can use [debug module][debug] like this:
-E.g.:
 ```javascript
 config.validate({
   allowed: 'strict',
@@ -842,11 +841,11 @@ The map of environment variables. Defaults to process.env unless an override is 
 
 ## API schema property
 
-Schema property is accessible by second argument of the callback of getter `getter(value, schema, stopPropagation)` and format `validate(value, schema)`.
+Schema property is accessible by the second argument of the callback of getter `getter(value, schema, stopPropagation)` and format `validate(value, schema)`.
 
-### schema[`doc` || `defaut` || `format` || ...]
+### schema[`doc` || `default` || `format` || ...]
 
-You will find the properties that you defined in your schema (like `doc`, `defaut`, `format`, etc...).
+You will find the properties that you defined in your schema (like `doc`, `default`, `format`, etc...).
 
 ### schema.\_cvtGetOrigin()
 

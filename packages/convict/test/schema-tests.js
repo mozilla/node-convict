@@ -95,22 +95,33 @@ describe('convict schema', function() {
       }, null, 2));
     });
 
+    it('must throw if `_cvtProperties` (reserved keyword) is used', function() {
+      (function() {
+        conf = convict({
+          _cvtProperties: {
+            format: String,
+            default: 'DEFAULT'
+          }
+        });
+      }).must.throw();
+    });
+
     it('must export the schema as JSON', function() {
       let res = conf.getSchema();
       res.must.eql({
-        'properties': {
+        '_cvtProperties': {
           'foo': {
-            'properties': {
+            '_cvtProperties': {
               'bar': {
                 'default': 7
               },
               'baz': {
-                'properties': {
+                '_cvtProperties': {
                   'bing': {
                     'default': 'foo'
                   },
                   'name with spaces': {
-                    'properties': {
+                    '_cvtProperties': {
                       'name_with_underscores': {
                         'default': true
                       }
@@ -127,19 +138,19 @@ describe('convict schema', function() {
     it('must export the schema as a JSON string', function() {
       let res = conf.getSchemaString();
       res.must.eql(JSON.stringify({
-        'properties': {
+        '_cvtProperties': {
           'foo': {
-            'properties': {
+            '_cvtProperties': {
               'bar': {
                 'default': 7
               },
               'baz': {
-                'properties': {
+                '_cvtProperties': {
                   'bing': {
                     'default': 'foo'
                   },
                   'name with spaces': {
-                    'properties': {
+                    '_cvtProperties': {
                       'name_with_underscores': {
                         'default': true
                       }

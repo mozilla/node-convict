@@ -1,16 +1,11 @@
 /**
- * node-convict
+ * convict
  * Configuration management with support for environmental variables, files,
  * and validation.
  */
 'use strict';
 
 const fs        = require('fs');
-const isEmail   = require('validator/lib/isEmail');
-const isIn      = require('validator/lib/isIn');
-const isURL     = require('validator/lib/isURL');
-const isIP      = require('validator/lib/isIP');
-const moment    = require('moment');
 const parseArgs = require('yargs-parser');
 const cloneDeep = require('lodash.clonedeep');
 
@@ -65,26 +60,6 @@ const types = {
     if (!isWindowsNamedPipe(x)) {
       assert(isPort(x), 'must be a windows named pipe or a number within range 0 - 65535');
     }
-  },
-  url: function(x) {
-    assert(isURL(x, {require_tld: false}), 'must be a URL');
-  },
-  email: function(x) {
-    assert(isEmail(x), 'must be an email address');
-  },
-  ipaddress: function(x) {
-    assert(isIP(x), 'must be an IP address');
-  },
-  duration: function(x) {
-    let err_msg = 'must be a positive integer or human readable string (e.g. 3000, "5 days")';
-    if (Number.isInteger(x)) {
-      assert(x >= 0, err_msg);
-    } else {
-      assert(x.match(/^(\d)+ (.+)$/), err_msg);
-    }
-  },
-  timestamp: function(x) {
-    assert(Number.isInteger(x) && x >= 0, 'must be a positive integer');
   }
 };
 // alias
@@ -108,9 +83,9 @@ function flatten(obj, useProperties) {
     let val = walk(obj, key);
     if (typeof val === 'object' && !Array.isArray(val) && val != null) {
       if (useProperties) {
-        if ('properties' in val) {
-          val = val.properties;
-          key = key + '.properties';
+        if ('_cvtProperties' in val) {
+          val = val._cvtProperties;
+          key = key + '._cvtProperties';
         } else {
           entries.push([key, val]);
           continue;
@@ -133,7 +108,7 @@ function flatten(obj, useProperties) {
   entries.forEach(function(entry) {
     let key = entry[0];
     if (useProperties) {
-      key = key.replace(/\.properties/g, '');
+      key = key.replace(/\._cvtProperties/g, '');
     }
     const val = entry[1];
     flattened[key] = val;
@@ -150,7 +125,7 @@ function validate(instance, schema, strictValidation) {
   };
 
   const flatInstance = flatten(instance);
-  const flatSchema = flatten(schema.properties, true);
+  const flatSchema = flatten(schema._cvtProperties, true);
 
   Object.keys(flatSchema).forEach(function(name) {
     const schemaItem = flatSchema[name];
@@ -209,7 +184,7 @@ function validate(instance, schema, strictValidation) {
 
 // helper for asserting that a value is in the list of valid options
 function contains(options, x) {
-  assert(isIn(x, options), 'must be one of the possible values: ' +
+  assert(options.indexOf(x) !== -1, 'must be one of the possible values: ' +
          JSON.stringify(options));
 }
 
@@ -227,14 +202,18 @@ const BUILT_INS = BUILT_IN_NAMES.map(function(name) {
 });
 
 function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
+  if (name === '_cvtProperties') {
+    throw new Error("'" + fullName + "': '_cvtProperties' is reserved word of convict.");
+  }
+
   // If the current schema node is not a config property (has no "default"), recursively normalize it.
   if (typeof node === 'object' && node !== null && !Array.isArray(node) &&
     Object.keys(node).length > 0 && !('default' in node)) {
     props[name] = {
-      properties: {}
+      _cvtProperties: {}
     };
     Object.keys(node).forEach(function(k) {
-      normalizeSchema(k, node[k], props[name].properties, fullName + '.' +
+      normalizeSchema(k, node[k], props[name]._cvtProperties, fullName + '.' +
                       k, env, argv, sensitive);
     });
     return;
@@ -353,9 +332,9 @@ function importArguments(o) {
 }
 
 function addDefaultValues(schema, c, instance) {
-  Object.keys(schema.properties).forEach(function(name) {
-    let p = schema.properties[name];
-    if (p.properties) {
+  Object.keys(schema._cvtProperties).forEach(function(name) {
+    let p = schema._cvtProperties[name];
+    if (p._cvtProperties) {
       let kids = c[name] || {};
       addDefaultValues(p, kids, instance);
       c[name] = kids;
@@ -374,7 +353,7 @@ function overlay(from, to, schema) {
       to[k] = coerce(k, from[k], schema);
     } else {
       if (!isObj(to[k])) to[k] = {};
-      overlay(from[k], to[k], schema.properties[k]);
+      overlay(from[k], to[k], schema._cvtProperties[k]);
     }
   });
 }
@@ -384,8 +363,8 @@ function traverseSchema(schema, path) {
   let o = schema;
   while (ar.length > 0) {
     let k = ar.shift();
-    if (o && o.properties && o.properties[k]) {
-      o = o.properties[k];
+    if (o && o._cvtProperties && o._cvtProperties[k]) {
+      o = o._cvtProperties[k];
     } else {
       o = null;
       break;
@@ -422,19 +401,6 @@ function coerce(k, v, schema, instance) {
     case 'array': v = v.split(','); break;
     case 'object': v = JSON.parse(v); break;
     case 'regexp': v = new RegExp(v); break;
-    case 'timestamp': v = moment(v).valueOf(); break;
-    case 'duration': {
-      let split = v.split(' ');
-      if (split.length == 1) {
-        // It must be an integer in string form.
-        v = parseInt(v, 10);
-      } else {
-        // Add an "s" as the unit of measurement used in Moment
-        if (!split[1].match(/s$/)) split[1] += 's';
-        v = moment.duration(parseInt(split[0], 10), split[1]).valueOf();
-      }
-      break;
-    }
     default:
         // TODO: Should we throw an exception here?
     }
@@ -548,10 +514,10 @@ let convict = function convict(def, opts) {
      *     notation to reference nested values
      */
     default: function(path) {
-      // The default value for FOO.BAR.BAZ is stored in `_schema.properties` at:
-      //   FOO.properties.BAR.properties.BAZ.default
-      path = (path.split('.').join('.properties.')) + '.default';
-      let o = walk(this._schema.properties, path);
+      // The default value for FOO.BAR.BAZ is stored in `_schema._cvtProperties` at:
+      //   FOO._cvtProperties.BAR._cvtProperties.BAZ.default
+      path = (path.split('.').join('._cvtProperties.')) + '.default';
+      let o = walk(this._schema._cvtProperties, path);
       return cloneDeep(o);
     },
 
@@ -699,7 +665,7 @@ let convict = function convict(def, opts) {
 
   // build up current config from definition
   rv._schema = {
-    properties: {}
+    _cvtProperties: {}
   };
 
   rv._env = {};
@@ -707,7 +673,7 @@ let convict = function convict(def, opts) {
   rv._sensitive = new Set();
 
   Object.keys(rv._def).forEach(function(k) {
-    normalizeSchema(k, rv._def[k], rv._schema.properties, k, rv._env, rv._argv,
+    normalizeSchema(k, rv._def[k], rv._schema._cvtProperties, k, rv._env, rv._argv,
       rv._sensitive);
   });
 

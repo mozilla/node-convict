@@ -24,8 +24,7 @@
     "posttest": "npm run lint",
     "test": "mocha --check-leaks test/*-tests.js",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
-    "version": "./assert_changelog_ready $npm_package_version"
+    "lint:fix": "eslint --fix ."
   },
   "files": [
     "lib"

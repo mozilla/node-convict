@@ -1,7 +1,6 @@
 'use strict';
 
 const expect = require('must');
-const validator = require('validator');
 
 describe('convict formats', function() {
   const convict = require('../');
@@ -79,14 +78,6 @@ describe('convict formats', function() {
         any: {
           format: '*',
           default: 'foo'
-        },
-        custom: {
-          format: function(val) {
-            if (!validator.isAlpha(val)) {
-              throw new Error('expected alpha characters, got ' + val);
-            }
-          },
-          default: 'abcd'
         },
         primeNumber: {
           format: 'prime',
@@ -206,48 +197,57 @@ describe('convict formats', function() {
 
   describe('must return schema in second argument', function() {
     const schema = {
-      sources: {
-        doc: 'A collection of data sources.',
+      domains: {
+        doc: 'A collection of domain names.',
         format: 'source-array',
         default: [],
 
         children: {
-          type: {
-            doc: 'The source type',
-            format: ['git', 'hg', 'svn'],
+          domain_base: {
+            doc: 'The base domain name',
+            format: 'String',
             default: null
           },
-          url: {
-            doc: 'The source URL',
-            format: 'url',
+          extension: {
+            doc: 'The domain name extension',
+            format: ['org', 'net', 'com'],
             default: null
-          }
+          },
+          bought: {
+            doc: 'Whether the domain has been bought or not',
+            format: 'Boolean',
+            default: null
+          },
         }
       }
     };
 
-    const config = {
-      'sources': [
+    const configWithoutErrors = {
+      'domains': [
         {
-          'type': 'git',
-          'url': 'https://github.com/mozilla/node-convict.git'
+          'domain_base': 'mozilla',
+          'extension': 'org',
+          'bought': true,
         },
         {
-          'type': 'git',
-          'url': 'https://github.com/github/hub.git'
+          'domain_base': 'gitlab',
+          'extension': 'com',
+          'bought': true,
         }
       ]
     };
 
-    const configWithError = {
-      'sources': [
+    const configWithErrors = {
+      'domains': [
         {
-          'type': 'git',
-          'url': 'https:/(è_é)/github.com/mozilla/node-convict.git'
+          'domain_base': 'mozilla',
+          'extension': 'org',
+          'bought': true,
         },
         {
-          'type': 'git',
-          'url': 'https://github.com/github/hub.git'
+          'domain_base': 'gitlab',
+          'extension': 'com',
+          'bought': 8,
         }
       ]
     };
@@ -268,11 +268,11 @@ describe('convict formats', function() {
     });
 
     it('must validate children value without throw an Error', function() {
-      (function() { convict(schema).load(config).validate() }).must.not.throw();
+      (function() { convict(schema).load(configWithoutErrors).validate() }).must.not.throw();
     });
 
     it('successfully fails to validate incorrect children values', function() {
-      (function() { convict(schema).load(configWithError).validate() }).must.throw(Error, /url: must be a URL: value was "https:\/\(è_é\)\/github\.com\/mozilla\/node-convict\.git"/);
+      (function() { convict(schema).load(configWithErrors).validate() }).must.throw(Error, /domains: bought: must be of type Boolean/);
     });
   });
 });

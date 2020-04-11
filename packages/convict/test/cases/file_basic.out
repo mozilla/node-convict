@@ -1,6 +1,5 @@
 {
-  "ip": "10.0.1.101",
+  "foo": "Yoyodyne",
   "port": 8080,
-  "session": 345600000,
-  "cache": 3000
+  "max_count": 800
 }

@@ -1,16 +1,10 @@
 'use strict';
 
-exports.formats = [
-  require('convict-format-with-moment'),
-  require('convict-format-with-validator')
-];
-
 exports.conf = {
-  ip: {
-    doc: 'The IP Address to bind.',
-    default: '127.0.0.1',
-    format: 'ipaddress',
-    env: 'IP_ADDRESS'
+  foo: {
+    default: 'a',
+    format: String,
+    env: 'FOO',
   },
   port: {
     default: 0,
@@ -18,14 +12,10 @@ exports.conf = {
     env: 'PORT',
     doc: 'The port to bind.'
   },
-  session: {
-    doc: 'Duration of the session',
-    format: 'duration',
-    default: '2 days'
-  },
-  cache: {
-    doc: 'Duration of the cache',
-    format: 'duration',
-    default: '1 hour'
+  max_count: {
+    default: 800,
+    format: 'Number',
+    env: 'MAX_COUNT',
+    doc: 'Maximum number of elements allowed.'
   }
 };

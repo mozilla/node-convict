@@ -4,10 +4,6 @@ describe('deep nested tree structure', function() {
   const convict = require('../');
   let conf;
 
-  it('must add formats of convict-format-with-validator', function() {
-    convict.addFormats(require('convict-format-with-validator'));
-  });
-
   it('must parse a deep nested config specification', function() {
     conf = convict({
       db: {
@@ -20,9 +16,9 @@ describe('deep nested tree structure', function() {
             format: 'Boolean',
             default: false
           },
-          remote_url: {
-            format: 'url',
-            default: 'http://localhost:8080/'
+          foo: {
+            format: String,
+            default: 'abcd'
           }
         }
       }
@@ -35,7 +31,7 @@ describe('deep nested tree structure', function() {
         name: 'some_db',
         synchro: {
           active: true,
-          remote_url: 'http://localhost:3333/'
+          foo: 'xyz'
         }
       }
     });
@@ -62,7 +58,7 @@ describe('deep nested tree structure', function() {
     });
 
     it('must handle three levels of side by side nesting', function() {
-      conf.get('db.synchro.remote_url').must.be('http://localhost:3333/');
+      conf.get('db.synchro.foo').must.be('xyz');
     });
   });
 
@@ -98,14 +94,14 @@ describe('deep nested tree structure', function() {
     });
 
     it('modify a deep nested value and must be valid', function() {
-      db.synchro.remote_url = 'http://local.test:9876';
+      db.synchro.foo = 'mnopq';
       conf.set('db', db);
       (function() {
         conf.validate({
           allowed: 'strict'
         });
       }).must.not.throw();
-      conf.get('db.synchro.remote_url').must.be('http://local.test:9876');
+      conf.get('db.synchro.foo').must.be('mnopq');
     });
 
   });

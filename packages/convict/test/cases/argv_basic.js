@@ -1,12 +1,10 @@
 'use strict';
 
-exports.formats = require('convict-format-with-validator');
-
 exports.conf = {
-  ip: {
-    default: '127.0.0.1',
-    format: 'ipaddress',
-    arg: 'ip-address'
+  foo: {
+    default: 'a',
+    format: String,
+    arg: 'foo'
   },
   port: {
     default: 0,
@@ -15,4 +13,4 @@ exports.conf = {
   }
 };
 
-exports.argv = '--ip-address 10.0.1.101 --port 8080';
+exports.argv = '--foo bar --port 8080';

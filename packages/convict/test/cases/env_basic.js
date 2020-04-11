@@ -1,12 +1,10 @@
 'use strict';
 
-exports.formats = require('convict-format-with-validator');
-
 exports.conf = {
-  ip: {
-    default: '127.0.0.1',
-    format: 'ipaddress',
-    env: 'IP_ADDRESS'
+  foo: {
+    default: 'a',
+    format: String,
+    env: 'FOO',
   },
   port: {
     default: 0,
@@ -16,6 +14,6 @@ exports.conf = {
 };
 
 exports.env = {
-  IP_ADDRESS: '10.0.1.101',
+  FOO: 'Yoyodyne',
   PORT: 8080
 };

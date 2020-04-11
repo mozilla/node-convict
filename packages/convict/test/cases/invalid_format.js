@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   invalidFormat: {
@@ -6,4 +6,4 @@ exports.conf = {
     default: 'invalidFormat',
     doc: 'A value with an invalid format'
   }
-};
+}

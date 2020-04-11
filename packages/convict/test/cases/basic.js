@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   env: {
@@ -24,4 +24,4 @@ exports.conf = {
     default: '/home/browserid/var',
     doc: 'The path the the "var" directory, where logs and such will go'
   }
-};
+}

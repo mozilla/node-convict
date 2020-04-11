@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
-const expect = require('must');
+const expect = require('must')
 
 describe('convict formats', function() {
-  const convict = require('../');
-  let conf;
+  const convict = require('../')
+  let conf
 
   it('must parse a config specification', function() {
 
@@ -12,38 +12,44 @@ describe('convict formats', function() {
       name: 'float-percent',
       validate: function(val) {
         if (val !== 0 && (!val || val > 1 || val < 0)) {
-          throw new Error('must be a float between 0 and 1, inclusive');
+          throw new Error('must be a float between 0 and 1, inclusive')
         }
       },
       coerce: function(val) {
-        return parseFloat(val, 10);
+        return parseFloat(val, 10)
       }
-    });
+    })
 
     convict.addFormats({
       prime: {
         validate: function(val) {
           function isPrime(n) {
-            if (n <= 1) return false; // zero and one are not prime
-            for (let i=2; i*i <= n; i++) {
-              if (n % i === 0) return false;
+            if (n <= 1) {
+              return false
+            } // zero and one are not prime
+            for (let i = 2; i * i <= n; i++) {
+              if (n % i === 0) {
+                return false
+              }
             }
-            return true;
+            return true
           }
-          if (!isPrime(val)) throw new Error('must be a prime number');
+          if (!isPrime(val)) {
+            throw new Error('must be a prime number')
+          }
         },
         coerce: function(val) {
-          return parseInt(val, 10);
+          return parseInt(val, 10)
         }
       },
       'hex-string': {
         validate: function(val) {
           if (/^[0-9a-fA-F]+$/.test(val)) {
-            throw new Error('must be a hexidecimal string');
+            throw new Error('must be a hexidecimal string')
           }
         }
       }
-    });
+    })
 
     conf = convict({
       foo: {
@@ -92,32 +98,40 @@ describe('convict formats', function() {
           default: undefined
         }
       }
-    });
+    })
 
-  });
+  })
 
   it('validates default schema', function() {
-    (function() { conf.validate(); }).must.not.throw();
-  });
+    (function() {
+      conf.validate()
+    }).must.not.throw()
+  })
 
   it('validates non-coerced correct values', function() {
     conf.set('foo.primeNumber', 7);
-    (function() { conf.validate(); }).must.not.throw();
-  });
+    (function() {
+      conf.validate()
+    }).must.not.throw()
+  })
 
   it('validates coerced correct values', function() {
     conf.set('foo.primeNumber', '11');
-    (function() { conf.validate(); }).must.not.throw();
-  });
+    (function() {
+      conf.validate()
+    }).must.not.throw()
+  })
 
   it('successfully fails to validate incorrect values', function() {
     conf.set('foo.primeNumber', 16);
-    (function() { conf.validate(); }).must.throw();
-  });
+    (function() {
+      conf.validate()
+    }).must.throw()
+  })
 
   describe('predefined formats', function() {
     describe('port_or_windows_named_pipe', function() {
-      let conf = convict({
+      const conf = convict({
         port: {
           format: 'port_or_windows_named_pipe',
           default: '1234',
@@ -134,50 +148,54 @@ describe('convict formats', function() {
           format: 'port_or_windows_named_pipe',
           default: '\\\\.\\pipe\\default',
         },
-      });
+      })
 
       it('must coerce ports to integers', function() {
-        conf.get('port').must.be(1234);
-      });
+        conf.get('port').must.be(1234)
+      })
 
       it('must not coerce pipes to integers', function() {
-        conf.get('pipe').must.be('\\\\.\\pipe\\test');
-      });
+        conf.get('pipe').must.be('\\\\.\\pipe\\test')
+      })
 
       it('must handle switching from port to pipe', function() {
-        conf.set('to_pipe', '\\\\.\\pipe\\changed');
-        conf.get('to_pipe').must.be('\\\\.\\pipe\\changed');
-      });
+        conf.set('to_pipe', '\\\\.\\pipe\\changed')
+        conf.get('to_pipe').must.be('\\\\.\\pipe\\changed')
+      })
 
       it('must handle switching from pipe to port', function() {
-        conf.set('to_port', '8080');
-        conf.get('to_port').must.be(8080);
-      });
+        conf.set('to_port', '8080')
+        conf.get('to_port').must.be(8080)
+      })
 
       it('must throw for invalid ports', function() {
-        let conf = convict({
+        const conf = convict({
           invalid: {
             format: 'port_or_windows_named_pipe',
             default: '235235452355',
           },
         });
 
-        (function() { conf.validate() }).must.throw(Error, /must be a windows named pipe or a number within range/);
-      });
+        (function() {
+          conf.validate()
+        }).must.throw(Error, /must be a windows named pipe or a number within range/)
+      })
 
       it('must throw for invalid pipes', function() {
 
-        let conf = convict({
+        const conf = convict({
           invalid: {
             format: 'port_or_windows_named_pipe',
             default: '\\.pipe\\test',
           },
         });
 
-        (function() { conf.validate() }).must.throw(Error, /must be a windows named pipe or a number within range/);
-      });
-    });
-  });
+        (function() {
+          conf.validate()
+        }).must.throw(Error, /must be a windows named pipe or a number within range/)
+      })
+    })
+  })
 
   it('must throw with unknown format', function() {
     (function() {
@@ -186,14 +204,14 @@ describe('convict formats', function() {
           format: 'unknown',
           default: 'bar'
         }
-      });
-    }).must.throw();
-  });
+      })
+    }).must.throw()
+  })
 
   it('must accept undefined as a default', function() {
-    let val = conf.get('foo.optional');
-    expect(val).to.be(undefined);
-  });
+    const val = conf.get('foo.optional')
+    expect(val).to.be(undefined)
+  })
 
   describe('must return schema in second argument', function() {
     const schema = {
@@ -220,59 +238,63 @@ describe('convict formats', function() {
           },
         }
       }
-    };
+    }
 
     const configWithoutErrors = {
-      'domains': [
+      domains: [
         {
-          'domain_base': 'mozilla',
-          'extension': 'org',
-          'bought': true,
+          domain_base: 'mozilla',
+          extension: 'org',
+          bought: true,
         },
         {
-          'domain_base': 'gitlab',
-          'extension': 'com',
-          'bought': true,
+          domain_base: 'gitlab',
+          extension: 'com',
+          bought: true,
         }
       ]
-    };
+    }
 
     const configWithErrors = {
-      'domains': [
+      domains: [
         {
-          'domain_base': 'mozilla',
-          'extension': 'org',
-          'bought': true,
+          domain_base: 'mozilla',
+          extension: 'org',
+          bought: true,
         },
         {
-          'domain_base': 'gitlab',
-          'extension': 'com',
-          'bought': 8,
+          domain_base: 'gitlab',
+          extension: 'com',
+          bought: 8,
         }
       ]
-    };
+    }
 
     it('must parse a config specification', function() {
       convict.addFormat({
         name: 'source-array',
         validate: function(sources, schema) {
           if (!Array.isArray(sources)) {
-            throw new Error('must be of type Array');
+            throw new Error('must be of type Array')
           }
 
           sources.forEach((source) => {
-            convict(schema.children).load(source).validate();
+            convict(schema.children).load(source).validate()
           })
         }
-      });
-    });
+      })
+    })
 
     it('must validate children value without throw an Error', function() {
-      (function() { convict(schema).load(configWithoutErrors).validate() }).must.not.throw();
-    });
+      (function() {
+        convict(schema).load(configWithoutErrors).validate()
+      }).must.not.throw()
+    })
 
     it('successfully fails to validate incorrect children values', function() {
-      (function() { convict(schema).load(configWithErrors).validate() }).must.throw(Error, /domains: bought: must be of type Boolean/);
-    });
-  });
-});
+      (function() {
+        convict(schema).load(configWithErrors).validate()
+      }).must.throw(Error, /domains: bought: must be of type Boolean/)
+    })
+  })
+})

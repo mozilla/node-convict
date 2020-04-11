@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   item: {
@@ -14,4 +14,4 @@ exports.conf = {
       sensitive: true
     }
   }
-};
+}

@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   single: {
     format: Object,
-    default: { test: 0 }
+    default: {test: 0}
   },
   nested: {
     object: {
@@ -12,4 +12,4 @@ exports.conf = {
       default: {}
     }
   }
-};
+}

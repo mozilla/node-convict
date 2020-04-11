@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   invalidValidator: {
@@ -6,10 +6,12 @@ exports.conf = {
     default: 'invalidValidator',
     doc: 'A value with an invalid validator'
   }
-};
+}
 
 exports.formats = {
   invalidValidator: {
-    coerce: function(value) { return value; }
+    coerce: function(value) {
+      return value
+    }
   }
-};
+}

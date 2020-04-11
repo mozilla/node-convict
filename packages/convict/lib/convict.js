@@ -3,15 +3,15 @@
  * Configuration management with support for environmental variables, files,
  * and validation.
  */
-'use strict';
+'use strict'
 
-const fs        = require('fs');
-const parseArgs = require('yargs-parser');
-const cloneDeep = require('lodash.clonedeep');
+const fs = require('fs')
+const parseArgs = require('yargs-parser')
+const cloneDeep = require('lodash.clonedeep')
 
 function assert(assertion, err_msg) {
   if (!assertion) {
-    throw new Error(err_msg);
+    throw new Error(err_msg)
   }
 }
 
@@ -28,7 +28,7 @@ function assert(assertion, err_msg) {
  * @returns {Boolean}
  */
 function isPort(x) {
-  return Number.isInteger(x) && x >= 0 && x <= 65535;
+  return Number.isInteger(x) && x >= 0 && x <= 65535
 }
 
 /**
@@ -39,171 +39,171 @@ function isPort(x) {
  * @returns {Boolean}
  */
 function isWindowsNamedPipe(x) {
-  return String(x).includes('\\\\.\\pipe\\');
+  return String(x).includes('\\\\.\\pipe\\')
 }
 
 const types = {
   '*': function() { },
   int: function(x) {
-    assert(Number.isInteger(x), 'must be an integer');
+    assert(Number.isInteger(x), 'must be an integer')
   },
   nat: function(x) {
-    assert(Number.isInteger(x) && x >= 0, 'must be a positive integer');
+    assert(Number.isInteger(x) && x >= 0, 'must be a positive integer')
   },
   port: function(x) {
-    assert(isPort(x), 'ports must be within range 0 - 65535');
+    assert(isPort(x), 'ports must be within range 0 - 65535')
   },
   windows_named_pipe: function(x) {
-    assert(isWindowsNamedPipe(x), 'must be a valid pipe');
+    assert(isWindowsNamedPipe(x), 'must be a valid pipe')
   },
   port_or_windows_named_pipe: function(x) {
     if (!isWindowsNamedPipe(x)) {
-      assert(isPort(x), 'must be a windows named pipe or a number within range 0 - 65535');
+      assert(isPort(x), 'must be a windows named pipe or a number within range 0 - 65535')
     }
   }
-};
+}
 // alias
-types.integer = types.int;
+types.integer = types.int
 
-const converters = new Map();
+const converters = new Map()
 
-const parsers_registry = { '*': JSON.parse };
+const parsers_registry = {'*': JSON.parse}
 
-const ALLOWED_OPTION_STRICT = 'strict';
-const ALLOWED_OPTION_WARN = 'warn';
+const ALLOWED_OPTION_STRICT = 'strict'
+const ALLOWED_OPTION_WARN = 'warn'
 
 function flatten(obj, useProperties) {
-  let stack = Object.keys(obj);
-  let key;
+  const stack = Object.keys(obj)
+  let key
 
-  let entries = [];
+  const entries = []
 
   while (stack.length) {
-    key = stack.shift();
-    let val = walk(obj, key);
+    key = stack.shift()
+    let val = walk(obj, key)
     if (typeof val === 'object' && !Array.isArray(val) && val != null) {
       if (useProperties) {
         if ('_cvtProperties' in val) {
-          val = val._cvtProperties;
-          key = key + '._cvtProperties';
+          val = val._cvtProperties
+          key = key + '._cvtProperties'
         } else {
-          entries.push([key, val]);
-          continue;
+          entries.push([key, val])
+          continue
         }
       }
-      let subkeys = Object.keys(val);
+      const subkeys = Object.keys(val)
 
       // Don't filter out empty objects
       if (subkeys.length > 0) {
         subkeys.forEach(function(subkey) {
-          stack.push(key + '.' + subkey);
-        });
-        continue;
+          stack.push(key + '.' + subkey)
+        })
+        continue
       }
     }
-    entries.push([key, val]);
+    entries.push([key, val])
   }
 
-  let flattened = {};
+  const flattened = {}
   entries.forEach(function(entry) {
-    let key = entry[0];
+    let key = entry[0]
     if (useProperties) {
-      key = key.replace(/\._cvtProperties/g, '');
+      key = key.replace(/\._cvtProperties/g, '')
     }
-    const val = entry[1];
-    flattened[key] = val;
-  });
+    const val = entry[1]
+    flattened[key] = val
+  })
 
-  return flattened;
+  return flattened
 }
 
 function validate(instance, schema, strictValidation) {
-  let errors = {
+  const errors = {
     undeclared: [],
     invalid_type: [],
     missing: []
-  };
+  }
 
-  const flatInstance = flatten(instance);
-  const flatSchema = flatten(schema._cvtProperties, true);
+  const flatInstance = flatten(instance)
+  const flatSchema = flatten(schema._cvtProperties, true)
 
   Object.keys(flatSchema).forEach(function(name) {
-    const schemaItem = flatSchema[name];
-    let instanceItem = flatInstance[name];
+    const schemaItem = flatSchema[name]
+    let instanceItem = flatInstance[name]
     if (!(name in flatInstance)) {
       try {
         if (typeof schemaItem.default === 'object' &&
           !Array.isArray(schemaItem.default)) {
           // Missing item may be an object with undeclared children, so try to
           // pull it unflattened from the config instance for type validation
-          instanceItem = walk(instance, name);
+          instanceItem = walk(instance, name)
         } else {
-          throw new Error('missing');
+          throw new Error('missing')
         }
       } catch (e) {
         const err = new Error("configuration param '" + name
-          + "' missing from config, did you override its parent?");
-        errors.missing.push(err);
-        return;
+          + "' missing from config, did you override its parent?")
+        errors.missing.push(err)
+        return
       }
     }
-    delete flatInstance[name];
+    delete flatInstance[name]
 
     // ignore nested keys of schema 'object' properties
     if (schemaItem.format === 'object' || typeof schemaItem.default === 'object') {
       Object.keys(flatInstance)
         .filter(function(key) {
-          return key.lastIndexOf(name + '.', 0) === 0;
+          return key.lastIndexOf(name + '.', 0) === 0
         }).forEach(function(key) {
-          delete flatInstance[key];
-        });
+          delete flatInstance[key]
+        })
     }
 
     if (!(typeof schemaItem.default === 'undefined' &&
           instanceItem === schemaItem.default)) {
       try {
-        schemaItem._format(instanceItem);
+        schemaItem._format(instanceItem)
       } catch (err) {
-        errors.invalid_type.push(err);
+        errors.invalid_type.push(err)
       }
     }
 
-    return;
-  });
+    return
+  })
 
   if (strictValidation) {
     Object.keys(flatInstance).forEach(function(name) {
       const err = new Error("configuration param '" + name
-        + "' not declared in the schema");
-      errors.undeclared.push(err);
-    });
+        + "' not declared in the schema")
+      errors.undeclared.push(err)
+    })
   }
 
-  return errors;
+  return errors
 }
 
 // helper for asserting that a value is in the list of valid options
 function contains(options, x) {
   assert(options.indexOf(x) !== -1, 'must be one of the possible values: ' +
-         JSON.stringify(options));
+         JSON.stringify(options))
 }
 
 const BUILT_INS_BY_NAME = {
-  'Object': Object,
-  'Array': Array,
-  'String': String,
-  'Number': Number,
-  'Boolean': Boolean,
-  'RegExp': RegExp
-};
-const BUILT_IN_NAMES = Object.keys(BUILT_INS_BY_NAME);
+  Object: Object,
+  Array: Array,
+  String: String,
+  Number: Number,
+  Boolean: Boolean,
+  RegExp: RegExp
+}
+const BUILT_IN_NAMES = Object.keys(BUILT_INS_BY_NAME)
 const BUILT_INS = BUILT_IN_NAMES.map(function(name) {
-  return BUILT_INS_BY_NAME[name];
-});
+  return BUILT_INS_BY_NAME[name]
+})
 
 function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
   if (name === '_cvtProperties') {
-    throw new Error("'" + fullName + "': '_cvtProperties' is reserved word of convict.");
+    throw new Error("'" + fullName + "': '_cvtProperties' is reserved word of convict.")
   }
 
   // If the current schema node is not a config property (has no "default"), recursively normalize it.
@@ -211,110 +211,110 @@ function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
     Object.keys(node).length > 0 && !('default' in node)) {
     props[name] = {
       _cvtProperties: {}
-    };
+    }
     Object.keys(node).forEach(function(k) {
       normalizeSchema(k, node[k], props[name]._cvtProperties, fullName + '.' +
-                      k, env, argv, sensitive);
-    });
-    return;
+                      k, env, argv, sensitive)
+    })
+    return
   } else if (typeof node !== 'object' || Array.isArray(node) ||
     node === null || Object.keys(node).length == 0) {
     // Normalize shorthand "value" config properties
-    node = { default: node };
+    node = {default: node}
   }
 
-  let o = cloneDeep(node);
-  props[name] = o;
+  const o = cloneDeep(node)
+  props[name] = o
   // associate this property with an environmental variable
   if (o.env) {
     if (!env[o.env]) {
-      env[o.env] = [];
+      env[o.env] = []
     }
-    env[o.env].push(fullName);
+    env[o.env].push(fullName)
   }
 
   // associate this property with a command-line argument
   if (o.arg) {
     if (argv[o.arg]) {
       throw new Error("'" + fullName + "' reuses a command-line argument: " +
-        o.arg);
+        o.arg)
     }
-    argv[o.arg] = fullName;
+    argv[o.arg] = fullName
   }
 
   // mark this property as sensitive
   if (o.sensitive === true) {
-    sensitive.add(fullName);
+    sensitive.add(fullName)
   }
 
   // store original format function
-  let format = o.format;
-  let newFormat;
+  const format = o.format
+  let newFormat
 
   if (BUILT_INS.indexOf(format) >= 0 || BUILT_IN_NAMES.indexOf(format) >= 0) {
     // if the format property is a built-in JavaScript constructor,
     // assert that the value is of that type
-    let Format = typeof format === 'string' ? BUILT_INS_BY_NAME[format] : format;
+    const Format = typeof format === 'string' ? BUILT_INS_BY_NAME[format] : format
     newFormat = function(x) {
       assert(Object.prototype.toString.call(x) ==
         Object.prototype.toString.call(new Format()),
-      'must be of type ' + Format.name);
-    };
-    o.format = Format.name.toLowerCase();
+      'must be of type ' + Format.name)
+    }
+    o.format = Format.name.toLowerCase()
 
   } else if (typeof format === 'string') {
     // store declared type
     if (!types[format]) {
       throw new Error("'" + fullName + "' uses an unknown format type: " +
-        format);
+        format)
     }
 
     // use a predefined type
-    newFormat = types[format];
+    newFormat = types[format]
 
   } else if (Array.isArray(format)) {
     // assert that the value is a valid option
-    newFormat = contains.bind(null, format);
+    newFormat = contains.bind(null, format)
 
   } else if (typeof format === 'function') {
-    newFormat = format;
+    newFormat = format
 
   } else if (format && typeof format !== 'function') {
     throw new Error("'" + fullName +
-      "': `format` must be a function or a known format type.");
+      "': `format` must be a function or a known format type.")
   }
 
   if (!newFormat && !format) {
     // default format is the typeof the default value
-    let type = Object.prototype.toString.call(o.default);
+    const type = Object.prototype.toString.call(o.default)
     newFormat = function(x) {
       assert(Object.prototype.toString.call(x) == type,
-        ' should be of type ' + type.replace(/\[.* |]/g, ''));
-    };
+        ' should be of type ' + type.replace(/\[.* |]/g, ''))
+    }
   }
 
   o._format = function(x) {
     try {
-      newFormat(x, this);
+      newFormat(x, this)
     } catch (e) {
       // attach the value and the property's fullName to the error
-      e.fullName = fullName;
-      e.value = x;
-      throw e;
+      e.fullName = fullName
+      e.value = x
+      throw e
     }
-  };
+  }
 }
 
 function importEnvironment(o) {
-  const env = o.getEnv();
+  const env = o.getEnv()
   Object.keys(o._env).forEach(function(envStr) {
     if (env[envStr] !== undefined) {
-      let ks = o._env[envStr];
+      const ks = o._env[envStr]
       ks.forEach(function(k) {
-        o.set(k, env[envStr]);
-      });
+        o.set(k, env[envStr])
+      })
     }
-  });
+  })
 }
 
 function importArguments(o) {
@@ -322,136 +322,146 @@ function importArguments(o) {
     configuration: {
       'dot-notation': false
     }
-  });
+  })
   Object.keys(o._argv).forEach(function(argStr) {
-    let k = o._argv[argStr];
+    const k = o._argv[argStr]
     if (argv[argStr] !== undefined) {
-      o.set(k, String(argv[argStr]));
+      o.set(k, String(argv[argStr]))
     }
-  });
+  })
 }
 
 function addDefaultValues(schema, c, instance) {
   Object.keys(schema._cvtProperties).forEach(function(name) {
-    let p = schema._cvtProperties[name];
+    const p = schema._cvtProperties[name]
     if (p._cvtProperties) {
-      let kids = c[name] || {};
-      addDefaultValues(p, kids, instance);
-      c[name] = kids;
+      const kids = c[name] || {}
+      addDefaultValues(p, kids, instance)
+      c[name] = kids
     } else {
-      c[name] = coerce(name, cloneDeep(p.default), schema, instance);
+      c[name] = coerce(name, cloneDeep(p.default), schema, instance)
     }
-  });
+  })
 }
 
-function isObj(o) { return (typeof o === 'object' && o !== null); }
+function isObj(o) {
+  return typeof o === 'object' && o !== null
+}
 
 function overlay(from, to, schema) {
   Object.keys(from).forEach(function(k) {
     // leaf
     if (Array.isArray(from[k]) || !isObj(from[k]) || !schema || schema.format === 'object') {
-      to[k] = coerce(k, from[k], schema);
+      to[k] = coerce(k, from[k], schema)
     } else {
-      if (!isObj(to[k])) to[k] = {};
-      overlay(from[k], to[k], schema._cvtProperties[k]);
+      if (!isObj(to[k])) {
+        to[k] = {}
+      }
+      overlay(from[k], to[k], schema._cvtProperties[k])
     }
-  });
+  })
 }
 
 function traverseSchema(schema, path) {
-  let ar = path.split('.');
-  let o = schema;
+  const ar = path.split('.')
+  let o = schema
   while (ar.length > 0) {
-    let k = ar.shift();
+    const k = ar.shift()
     if (o && o._cvtProperties && o._cvtProperties[k]) {
-      o = o._cvtProperties[k];
+      o = o._cvtProperties[k]
     } else {
-      o = null;
-      break;
+      o = null
+      break
     }
   }
 
-  return o;
+  return o
 }
 
 function getFormat(schema, path) {
-  let o = traverseSchema(schema, path);
-  if (o == null) return null;
-  if (typeof o.format === 'string') return o.format;
-  if (o.default != null) return typeof o.default;
-  return null;
+  const o = traverseSchema(schema, path)
+  if (o == null) {
+    return null
+  }
+  if (typeof o.format === 'string') {
+    return o.format
+  }
+  if (o.default != null) {
+    return typeof o.default
+  }
+  return null
 }
 
 function coerce(k, v, schema, instance) {
   // magic coerceing
-  let format = getFormat(schema, k);
+  const format = getFormat(schema, k)
 
   if (typeof v === 'string') {
     if (converters.has(format)) {
-      return converters.get(format)(v, instance, k);
+      return converters.get(format)(v, instance, k)
     }
     switch (format) {
     case 'port':
     case 'nat':
     case 'integer':
-    case 'int': v = parseInt(v, 10); break;
-    case 'port_or_windows_named_pipe': v = isWindowsNamedPipe(v) ? v : parseInt(v, 10); break;
-    case 'number': v = parseFloat(v); break;
-    case 'boolean': v = (String(v).toLowerCase() !== 'false'); break;
-    case 'array': v = v.split(','); break;
-    case 'object': v = JSON.parse(v); break;
-    case 'regexp': v = new RegExp(v); break;
+    case 'int': v = parseInt(v, 10); break
+    case 'port_or_windows_named_pipe': v = isWindowsNamedPipe(v) ? v : parseInt(v, 10); break
+    case 'number': v = parseFloat(v); break
+    case 'boolean': v = String(v).toLowerCase() !== 'false'; break
+    case 'array': v = v.split(','); break
+    case 'object': v = JSON.parse(v); break
+    case 'regexp': v = new RegExp(v); break
     default:
         // TODO: Should we throw an exception here?
     }
   }
 
-  return v;
+  return v
 }
 
 function loadFile(path) {
-  const segments = path.split('.');
-  const extension = segments.length > 1 ? segments.pop() : '';
-  const parse = parsers_registry[extension] || parsers_registry['*'];
+  const segments = path.split('.')
+  const extension = segments.length > 1 ? segments.pop() : ''
+  const parse = parsers_registry[extension] || parsers_registry['*']
 
   // TODO Get rid of the sync call
   // eslint-disable-next-line no-sync
-  return parse(fs.readFileSync(path, 'utf-8'));
+  return parse(fs.readFileSync(path, 'utf-8'))
 }
 
 function walk(obj, path, initializeMissing) {
   if (path) {
-    let ar = path.split('.');
+    const ar = path.split('.')
     while (ar.length) {
-      let k = ar.shift();
+      const k = ar.shift()
       if (initializeMissing && obj[k] == null) {
-        obj[k] = {};
-        obj = obj[k];
+        obj[k] = {}
+        obj = obj[k]
       } else if (k in obj) {
-        obj = obj[k];
+        obj = obj[k]
       } else {
-        throw new Error("cannot find configuration param '" + path + "'");
+        throw new Error("cannot find configuration param '" + path + "'")
       }
     }
   }
 
-  return obj;
+  return obj
 }
 
 /**
  * @returns a config object
  */
-let convict = function convict(def, opts) {
+const convict = function convict(def, opts) {
 
   // TODO: Rename this `rv` variable (supposedly "return value") into something
   // more meaningful.
-  let rv = {
+  const rv = {
     /**
      * Gets the array of process arguments, using the override passed to the
      * convict function or process.argv if no override was passed.
      */
     getArgs: function() {
-      return (opts && opts.args) || process.argv.slice(2);
+      return opts && opts.args || process.argv.slice(2)
     },
 
     /**
@@ -459,14 +469,14 @@ let convict = function convict(def, opts) {
      * convict function or process.env if no override was passed.
      */
     getEnv: function() {
-      return (opts && opts.env) || process.env;
+      return opts && opts.env || process.env
     },
 
     /**
      * Exports all the properties (that is the keys and their current values) as JSON
      */
     getProperties: function() {
-      return cloneDeep(this._instance);
+      return cloneDeep(this._instance)
     },
 
     /**
@@ -475,29 +485,29 @@ let convict = function convict(def, opts) {
      * even if they aren't set, to avoid revealing any information.
      */
     toString: function() {
-      let clone = cloneDeep(this._instance);
+      const clone = cloneDeep(this._instance)
       this._sensitive.forEach(function(key) {
-        let path = key.split('.');
-        let childKey = path.pop();
-        let parentKey = path.join('.');
-        let parent = walk(clone, parentKey);
-        parent[childKey] = '[Sensitive]';
-      });
-      return JSON.stringify(clone, null, 2);
+        const path = key.split('.')
+        const childKey = path.pop()
+        const parentKey = path.join('.')
+        const parent = walk(clone, parentKey)
+        parent[childKey] = '[Sensitive]'
+      })
+      return JSON.stringify(clone, null, 2)
     },
 
     /**
      * Exports the schema as JSON.
      */
     getSchema: function() {
-      return JSON.parse(JSON.stringify(this._schema));
+      return JSON.parse(JSON.stringify(this._schema))
     },
 
     /**
      * Exports the schema as a JSON string
      */
     getSchemaString: function() {
-      return JSON.stringify(this._schema, null, 2);
+      return JSON.stringify(this._schema, null, 2)
     },
 
     /**
@@ -505,8 +515,8 @@ let convict = function convict(def, opts) {
      *     notation to reference nested values
      */
     get: function(path) {
-      let o = walk(this._instance, path);
-      return cloneDeep(o);
+      const o = walk(this._instance, path)
+      return cloneDeep(o)
     },
 
     /**
@@ -516,16 +526,16 @@ let convict = function convict(def, opts) {
     default: function(path) {
       // The default value for FOO.BAR.BAZ is stored in `_schema._cvtProperties` at:
       //   FOO._cvtProperties.BAR._cvtProperties.BAZ.default
-      path = (path.split('.').join('._cvtProperties.')) + '.default';
-      let o = walk(this._schema._cvtProperties, path);
-      return cloneDeep(o);
+      path = path.split('.').join('._cvtProperties.') + '.default'
+      const o = walk(this._schema._cvtProperties, path)
+      return cloneDeep(o)
     },
 
     /**
      * Resets a property to its default value as defined in the schema
      */
     reset: function(prop_name) {
-      this.set(prop_name, this.default(prop_name));
+      this.set(prop_name, this.default(prop_name))
     },
 
     /**
@@ -533,11 +543,11 @@ let convict = function convict(def, opts) {
      */
     has: function(path) {
       try {
-        let r = this.get(path);
+        const r = this.get(path)
         // values that are set but undefined return false
-        return typeof r !== 'undefined';
+        return typeof r !== 'undefined'
       } catch (e) {
-        return false;
+        return false
       }
     },
 
@@ -547,191 +557,213 @@ let convict = function convict(def, opts) {
      * exist, they will be initialized to empty objects
      */
     set: function(k, v) {
-      v = coerce(k, v, this._schema, this);
-      let path = k.split('.');
-      let childKey = path.pop();
-      let parentKey = path.join('.');
-      let parent = walk(this._instance, parentKey, true);
-      parent[childKey] = v;
-      return this;
+      v = coerce(k, v, this._schema, this)
+      const path = k.split('.')
+      const childKey = path.pop()
+      const parentKey = path.join('.')
+      const parent = walk(this._instance, parentKey, true)
+      parent[childKey] = v
+      return this
     },
 
     /**
      * Loads and merges a JavaScript object into config
      */
     load: function(conf) {
-      overlay(conf, this._instance, this._schema);
+      overlay(conf, this._instance, this._schema)
       // environment and arguments always overrides config files
-      importEnvironment(rv);
-      importArguments(rv);
-      return this;
+      importEnvironment(rv)
+      importArguments(rv)
+      return this
     },
 
     /**
      * Loads and merges one or multiple JSON configuration files into config
      */
     loadFile: function(paths) {
-      let self = this;
-      if (!Array.isArray(paths)) paths = [paths];
+      const self = this
+      if (!Array.isArray(paths)) {
+        paths = [paths]
+      }
       paths.forEach(function(path) {
         // Support empty config files #253
-        const result = loadFile(path);
+        const result = loadFile(path)
         if (result) {
-          overlay(result, self._instance, self._schema);
+          overlay(result, self._instance, self._schema)
         }
-      });
+      })
       // environment and arguments always overrides config files
-      importEnvironment(rv);
-      importArguments(rv);
-      return this;
+      importEnvironment(rv)
+      importArguments(rv)
+      return this
     },
 
     /**
      * Validates config against the schema used to initialize it
      */
     validate: function(options) {
-      options = options || {};
+      options = options || {}
 
-      options.allowed = options.allowed || ALLOWED_OPTION_WARN;
+      options.allowed = options.allowed || ALLOWED_OPTION_WARN
 
       if (options.output && typeof options.output !== 'function') {
-        throw new Error('options.output is optionnal and must be a function.');
+        throw new Error('options.output is optionnal and must be a function.')
       }
 
-      const output_function = options.output || global.console.log;
+      const output_function = options.output || global.console.log
 
-      let errors = validate(this._instance, this._schema, options.allowed);
+      const errors = validate(this._instance, this._schema, options.allowed)
 
       if (errors.invalid_type.length + errors.undeclared.length + errors.missing.length) {
-        let sensitive = this._sensitive;
+        const sensitive = this._sensitive
 
-        let fillErrorBuffer = function(errors) {
-          let err_buf = '';
+        const fillErrorBuffer = function(errors) {
+          let err_buf = ''
           for (let i = 0; i < errors.length; i++) {
 
-            if (err_buf.length) err_buf += '\n';
+            if (err_buf.length) {
+              err_buf += '\n'
+            }
 
-            let e = errors[i];
+            const e = errors[i]
 
             if (e.fullName) {
-              err_buf += e.fullName + ': ';
+              err_buf += e.fullName + ': '
             }
-            if (e.message) err_buf += e.message;
+            if (e.message) {
+              err_buf += e.message
+            }
             if (e.value && !sensitive.has(e.fullName)) {
-              err_buf +=  ': value was ' + JSON.stringify(e.value);
+              err_buf += ': value was ' + JSON.stringify(e.value)
             }
           }
-          return err_buf;
-        };
-
-        const types_err_buf = fillErrorBuffer(errors.invalid_type);
-        const params_err_buf = fillErrorBuffer(errors.undeclared);
-        const missing_err_buf = fillErrorBuffer(errors.missing);
-
-        let output_err_bufs = [types_err_buf, missing_err_buf];
-
-        if (options.allowed === ALLOWED_OPTION_WARN && params_err_buf.length) {
-          let warning = 'Warning:';
-          if (process.stdout.isTTY) {
-            // Write 'Warning:' in bold and in yellow
-            const SET_BOLD_YELLOW_TEXT = '\x1b[33;1m';
-            const RESET_ALL_ATTRIBUTES = '\x1b[0m';
-            warning = SET_BOLD_YELLOW_TEXT + warning + RESET_ALL_ATTRIBUTES;
-          }
-          output_function(warning + ' ' + params_err_buf);
-        } else if (options.allowed === ALLOWED_OPTION_STRICT) {
-          output_err_bufs.push(params_err_buf);
+          return err_buf
         }
 
-        let output = output_err_bufs
-          .filter(function(str) { return str.length; })
-          .join('\n');
+        const types_err_buf = fillErrorBuffer(errors.invalid_type)
+        const params_err_buf = fillErrorBuffer(errors.undeclared)
+        const missing_err_buf = fillErrorBuffer(errors.missing)
 
-        if(output.length) {
-          throw new Error(output);
+        const output_err_bufs = [types_err_buf, missing_err_buf]
+
+        if (options.allowed === ALLOWED_OPTION_WARN && params_err_buf.length) {
+          let warning = 'Warning:'
+          if (process.stdout.isTTY) {
+            // Write 'Warning:' in bold and in yellow
+            const SET_BOLD_YELLOW_TEXT = '\x1b[33;1m'
+            const RESET_ALL_ATTRIBUTES = '\x1b[0m'
+            warning = SET_BOLD_YELLOW_TEXT + warning + RESET_ALL_ATTRIBUTES
+          }
+          output_function(warning + ' ' + params_err_buf)
+        } else if (options.allowed === ALLOWED_OPTION_STRICT) {
+          output_err_bufs.push(params_err_buf)
+        }
+
+        const output = output_err_bufs
+          .filter(function(str) {
+            return str.length
+          })
+          .join('\n')
+
+        if (output.length) {
+          throw new Error(output)
         }
 
       }
-      return this;
+      return this
     }
-  };
+  }
 
   // If the definition is a string treat it as an external schema file
   if (typeof def === 'string') {
-    rv._def = loadFile(def);
+    rv._def = loadFile(def)
   } else {
-    rv._def = def;
+    rv._def = def
   }
 
   // build up current config from definition
   rv._schema = {
     _cvtProperties: {}
-  };
+  }
 
-  rv._env = {};
-  rv._argv = {};
-  rv._sensitive = new Set();
+  rv._env = {}
+  rv._argv = {}
+  rv._sensitive = new Set()
 
   Object.keys(rv._def).forEach(function(k) {
     normalizeSchema(k, rv._def[k], rv._schema._cvtProperties, k, rv._env, rv._argv,
-      rv._sensitive);
-  });
+      rv._sensitive)
+  })
 
-  rv._instance = {};
-  addDefaultValues(rv._schema, rv._instance, rv);
-  importEnvironment(rv);
-  importArguments(rv);
+  rv._instance = {}
+  addDefaultValues(rv._schema, rv._instance, rv)
+  importEnvironment(rv)
+  importArguments(rv)
 
-  return rv;
-};
+  return rv
+}
 
 /**
  * Adds a new custom format
  */
 convict.addFormat = function(name, validate, coerce) {
   if (typeof name === 'object') {
-    validate = name.validate;
-    coerce = name.coerce;
-    name = name.name;
+    validate = name.validate
+    coerce = name.coerce
+    name = name.name
   }
   if (typeof validate !== 'function') {
-    throw new Error('Validation function for ' + name + ' must be a function.');
+    throw new Error('Validation function for ' + name + ' must be a function.')
   }
   if (coerce && typeof coerce !== 'function') {
-    throw new Error('Coerce function for ' + name + ' must be a function.');
+    throw new Error('Coerce function for ' + name + ' must be a function.')
   }
-  types[name] = validate;
-  if (coerce) converters.set(name, coerce);
-};
+  types[name] = validate
+  if (coerce) {
+    converters.set(name, coerce)
+  }
+}
 
 /**
  * Adds new custom formats
  */
 convict.addFormats = function(formats) {
   Object.keys(formats).forEach(function(type) {
-    convict.addFormat(type, formats[type].validate, formats[type].coerce);
-  });
-};
+    convict.addFormat(type, formats[type].validate, formats[type].coerce)
+  })
+}
 
 /**
  * Adds a new custom file parser
  */
 convict.addParser = function(parsers) {
-  if (!Array.isArray(parsers)) parsers = [parsers];
+  if (!Array.isArray(parsers)) {
+    parsers = [parsers]
+  }
 
   parsers.forEach(function(parser) {
-    if (!parser) throw new Error('Invalid parser');
-    if (!parser.extension) throw new Error('Missing parser.extension');
-    if (!parser.parse) throw new Error('Missing parser.parse function');
+    if (!parser) {
+      throw new Error('Invalid parser')
+    }
+    if (!parser.extension) {
+      throw new Error('Missing parser.extension')
+    }
+    if (!parser.parse) {
+      throw new Error('Missing parser.parse function')
+    }
 
-    if (typeof parser.parse !== 'function') throw new Error('Invalid parser.parse function');
+    if (typeof parser.parse !== 'function') {
+      throw new Error('Invalid parser.parse function')
+    }
 
-    const extensions = !Array.isArray(parser.extension) ? [parser.extension] : parser.extension;
+    const extensions = !Array.isArray(parser.extension) ? [parser.extension] : parser.extension
     extensions.forEach(function(extension) {
-      if (typeof extension !== 'string') throw new Error('Invalid parser.extension');
-      parsers_registry[extension] = parser.parse;
-    });
-  });
-};
+      if (typeof extension !== 'string') {
+        throw new Error('Invalid parser.extension')
+      }
+      parsers_registry[extension] = parser.parse
+    })
+  })
+}
 
-module.exports = convict;
+module.exports = convict

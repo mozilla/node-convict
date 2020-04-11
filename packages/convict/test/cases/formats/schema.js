@@ -1,8 +1,8 @@
-'use strict';
+'use strict'
 
 module.exports = {
   data: {
     format: '*',
     default: undefined
   },
-};
+}

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   env: {
@@ -29,17 +29,19 @@ exports.conf = {
     default: '${configPath}/${env}.json',
     doc: 'Path to configuration file. Defaults to ${configPath}/${env}.json'
   }
-};
+}
 
 exports.env = {
   env: 'local'
-};
+}
 
 exports.formats = {
   placeholder: {
     validate: function() { },
     coerce: function(value, config) {
-      return value.replace(/\$\{([\w.]+)}/g, function(v,m) { return config.get(m); });
+      return value.replace(/\$\{([\w.]+)}/g, function(v, m) {
+        return config.get(m)
+      })
     }
   }
-};
+}

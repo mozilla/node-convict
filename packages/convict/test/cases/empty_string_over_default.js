@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   prefix: {
@@ -11,10 +11,10 @@ exports.conf = {
     format: String,
     arg: 'suffix'
   },
-};
+}
 
 exports.env = {
   PREFIX: '',
-};
+}
 
 exports.argv = ['node', 'index.js', '--suffix=']

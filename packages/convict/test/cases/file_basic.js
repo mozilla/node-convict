@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   foo: {
@@ -18,4 +18,4 @@ exports.conf = {
     env: 'MAX_COUNT',
     doc: 'Maximum number of elements allowed.'
   }
-};
+}

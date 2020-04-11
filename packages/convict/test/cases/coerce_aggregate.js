@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   nested: {
@@ -16,16 +16,16 @@ exports.formats = {
   map: {
     validate: function(value) {
       if (typeof value !== 'object') {
-        throw new Error('must be a map of key/value pairs');
+        throw new Error('must be a map of key/value pairs')
       }
     },
     coerce: function(value, config, path) {
-      const accum = config.get(path);
+      const accum = config.get(path)
       value.split(',').forEach(function(pair) {
-        const [k, v] = pair.split('=');
-        accum[k] = v;
+        const [k, v] = pair.split('=')
+        accum[k] = v
       })
-      return accum;
+      return accum
     }
   }
 }

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   foo: {
@@ -6,4 +6,4 @@ exports.conf = {
     format: String,
     arg: 'foo'
   },
-};
+}

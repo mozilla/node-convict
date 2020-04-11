@@ -13,10 +13,10 @@ introducing a configuration schema, convict gives project collaborators more
 when configuration goes wrong.
 
 :warning: Convict repository and NPM package are presently undergoing a big
-transition from single package (up to convict@5.x) to multi-package structure
-(beginning with convict@6).
+transition from single package (up to `convict@5.x`) to multi-package structure
+(beginning with `convict@6`).
 
-See https://www.npmjs.com/package/convict for convict@5.x documentation
+See https://www.npmjs.com/package/convict for `convict@5.x` documentation
 
 
 This repository is a collection of the following packages.

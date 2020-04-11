@@ -32,12 +32,12 @@
   ],
   "main": "lib/index.js",
   "dependencies": {
-    "moment": "2.24.0"
+    "moment": "~2.24.0"
   },
   "devDependencies": {
     "convict": "file:../convict",
-    "eslint": "6.5.1",
-    "mocha": "6.2.1",
-    "must": "0.13.4"
+    "eslint": "~6.5.1",
+    "mocha": "~6.2.1",
+    "must": "~0.13.4"
   }
 }

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   foo: {
@@ -11,6 +11,6 @@ exports.conf = {
     format: 'port',
     arg: 'port'
   }
-};
+}
 
-exports.argv = '--foo bar --port 8080';
+exports.argv = '--foo bar --port 8080'

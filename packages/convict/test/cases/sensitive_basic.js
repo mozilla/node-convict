@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   public: {
@@ -23,4 +23,4 @@ exports.conf = {
     doc: 'A sensitive value that defaults to null',
     sensitive: true
   }
-};
+}

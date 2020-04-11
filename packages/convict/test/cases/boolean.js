@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   true: {
@@ -29,4 +29,4 @@ exports.conf = {
       default: null
     }
   }
-};
+}

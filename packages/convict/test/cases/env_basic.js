@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   foo: {
@@ -11,9 +11,9 @@ exports.conf = {
     format: 'port',
     env: 'PORT'
   }
-};
+}
 
 exports.env = {
   FOO: 'Yoyodyne',
   PORT: 8080
-};
+}

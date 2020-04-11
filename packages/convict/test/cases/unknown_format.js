@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   unknownFormat: {
@@ -6,4 +6,4 @@ exports.conf = {
     default: 'unknownFormat',
     doc: 'A value with an unknown format'
   }
-};
+}

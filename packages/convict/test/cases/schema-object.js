@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   shorthand: 'value',
@@ -40,4 +40,4 @@ exports.conf = {
   nested: {
     child: 'ababa'
   }
-};
+}

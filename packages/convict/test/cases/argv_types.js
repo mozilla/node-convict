@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   boolTrue: {
@@ -56,7 +56,7 @@ exports.conf = {
     format: RegExp,
     arg: 'regexp'
   }
-};
+}
 
 exports.argv = [
   '--booltrue', 'true',

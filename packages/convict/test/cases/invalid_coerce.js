@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 exports.conf = {
   invalidCoercer: {
@@ -6,11 +6,11 @@ exports.conf = {
     default: 'invalidCoercer',
     doc: 'A value with an invalid coercer'
   }
-};
+}
 
 exports.formats = {
   invalidCoercer: {
     validate: function() {},
     coerce: true
   }
-};
+}

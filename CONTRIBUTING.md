@@ -22,16 +22,6 @@ code:
 npm run lint:fix
 ```
 
-Dependencies
-------------
-
-We only use exact/strict versions for all dependencies (`dependencies`,
-`devDependencies`, etc.). We don't use range versions (`~x.y.z`, `^x.y.z`).
-
-We're also being conservative here for stability reasons. But we're due to look
-over new versions though.
-
-
 Test
 ----
 

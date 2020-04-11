@@ -2,25 +2,25 @@
   "name": "node-convict",
   "private": true,
   "dependencies": {
-    "lodash.clonedeep": "~4.5.0",
-    "moment": "~2.24.0",
-    "validator": "~11.1.0",
-    "yargs-parser": "~18.1.1"
+    "lodash.clonedeep": "^4.5.0",
+    "moment": "^2.24.0",
+    "validator": "^11.1.0",
+    "yargs-parser": "^18.1.1"
   },
   "devDependencies": {
     "convict": "file:./packages/convict/",
     "convict-format-with-moment": "file:./packages/convict-format-with-moment/",
     "convict-format-with-validator": "file:./packages/convict-format-with-validator/",
-    "coveralls": "~3.0.7",
-    "deep-object-diff": "~1.1.0",
-    "eslint": "~6.5.1",
-    "js-yaml": "~3.13.1",
-    "json5": "~2.1.0",
-    "lerna": "~3.16.4",
-    "mocha": "~6.2.1",
-    "must": "~0.13.4",
-    "nyc": "~14.1.1",
-    "toml": "~3.0.0"
+    "coveralls": "^3.0.7",
+    "deep-object-diff": "^1.1.0",
+    "eslint": "^6.5.1",
+    "js-yaml": "^3.13.1",
+    "json5": "^2.1.0",
+    "lerna": "^3.16.4",
+    "mocha": "^6.2.1",
+    "must": "^0.13.4",
+    "nyc": "^14.1.1",
+    "toml": "^3.0.0"
   },
   "scripts": {
     "bootstrap:ci": "npm ci && npm ci packages/*",

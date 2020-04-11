@@ -33,18 +33,18 @@
   ],
   "main": "lib/convict.js",
   "dependencies": {
-    "lodash.clonedeep": "~4.5.0",
-    "yargs-parser": "~18.1.1"
+    "lodash.clonedeep": "^4.5.0",
+    "yargs-parser": "^18.1.1"
   },
   "devDependencies": {
     "convict-format-with-moment": "file:../convict-format-with-moment",
     "convict-format-with-validator": "file:../convict-format-with-validator",
-    "deep-object-diff": "~1.1.0",
-    "eslint": "~6.5.1",
-    "js-yaml": "~3.13.1",
-    "json5": "~2.1.0",
-    "mocha": "~6.2.1",
-    "must": "~0.13.4",
-    "toml": "~3.0.0"
+    "deep-object-diff": "^1.1.0",
+    "eslint": "^6.5.1",
+    "js-yaml": "^3.13.1",
+    "json5": "^2.1.0",
+    "mocha": "^6.2.1",
+    "must": "^0.13.4",
+    "toml": "^3.0.0"
   }
 }

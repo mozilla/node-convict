@@ -33,12 +33,12 @@
   ],
   "main": "lib/index.js",
   "dependencies": {
-    "validator": "~11.1.0"
+    "validator": "^11.1.0"
   },
   "devDependencies": {
     "convict": "file:../convict",
-    "eslint": "~6.5.1",
-    "mocha": "~6.2.1",
-    "must": "~0.13.4"
+    "eslint": "^6.5.1",
+    "mocha": "^6.2.1",
+    "must": "^0.13.4"
   }
 }

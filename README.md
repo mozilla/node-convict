@@ -31,3 +31,8 @@ This repository is a collection of the following packages.
 
  - [convict-format-with-validator](/packages/convict-format-with-validator/)
    the optional package providing the `email`, `ipaddress` and `url` formats
+
+
+## Contributing
+
+Read the [Contributing](./CONTRIBUTING.md) doc.

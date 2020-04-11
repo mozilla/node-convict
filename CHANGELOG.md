@@ -9,7 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - [BREAKING] Multi-packages split #327 (A-312)
-- [BREAKING] Remove json5 dependency and make it an optional parser #326 (A-312)
+- [BREAKING] Remove the *json5* dependency and make it an optional parser #326 (A-312)
+- Ease relying applications security fixes by using `^x.y.z` range versions for
+  Convict's `dependencies` and `devDependencies`, instead of exact/strict versions.
+  Nowadays all applications should lock their `dependencies` and
+  `devDependencies` using lock files such as `package-lock.json`. There is also
+  tools such as `npm audit fix` that very easily and effectively fix
+  vulnerabilites in version ranges. So, from now on, Convict will not put itself
+  in the way, by leveraging Semantic Versioning to its maximum for
+  `dependencies` and `devDependencies`.
 
 ## [5.2.0] - 2019-10-12
 ### Added

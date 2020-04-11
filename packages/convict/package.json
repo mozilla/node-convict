@@ -40,7 +40,7 @@
     "convict-format-with-moment": "file:../convict-format-with-moment",
     "convict-format-with-validator": "file:../convict-format-with-validator",
     "deep-object-diff": "^1.1.0",
-    "eslint": "^6.5.1",
+    "eslint": "^6.8.0",
     "js-yaml": "^3.13.1",
     "json5": "^2.1.0",
     "mocha": "^6.2.1",

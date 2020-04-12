@@ -19,7 +19,8 @@ transition from single package (up to `convict@5.x`) to multi-package structure
 See https://www.npmjs.com/package/convict for `convict@5.x` documentation
 
 
-This repository is a collection of the following packages.
+This repository is a monorepo for the following packages managed through
+[Lerna](https://lerna.js.org/).
 
 ## Packages
 

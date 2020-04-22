@@ -25,7 +25,7 @@
     "test": "jest",
     "posttest": "npm run lint",
     "pretest:ci": "npm run lint",
-    "test:ci": "npm run test:coverage | coveralls",
+    "test:ci": "npm run test:coverage -- --coverageReporters=text-lcov | coveralls",
     "test:coverage": "jest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."

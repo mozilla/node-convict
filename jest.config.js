@@ -2,7 +2,8 @@
 
 module.exports = {
   collectCoverageFrom: [
-    'lib/**',
+    '**/lib/**',
+    '!**/test/**',
   ],
   coverageDirectory: '/tmp/coverage-convict',
 }

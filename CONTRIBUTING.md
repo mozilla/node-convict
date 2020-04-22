@@ -13,21 +13,46 @@ Code style
 
 Coding style is described through the EditorConfig
 [.editorconfig](./.editorconfig) file and enforced by ESLint through the
-[.eslintrc](./.eslintrc) file.
+[.eslintrc](./.eslintrc.js) file.
 
 Running the following command line will help you to conform your newly written
 code:
 
-```bash
+```shellsession
 npm run lint:fix
 ```
+
+
+Project structure and management
+--------------------------------
+
+This repository is a monorepo for multiple packages managed through
+[Lerna](https://lerna.js.org/).
+
+Use the following commands to manage this repository and its packages.
+
+To install all the dependencies, devDependencies and links any cross-dependencies:
+
+```shellsession
+npx lerna bootstrap
+```
+
+<!--
+Not a good command:
+
+```shellsession
+npx lerna exec -- npm i
+```
+-->
 
 Test
 ----
 
 Check that your code passes the tests before submitting a PR:
 
-    npm test
+```shellsession
+npx lerna run test
+```
 
 
 Creating/Tagging new versions
@@ -47,7 +72,7 @@ This must be done so in order to:
 
 Example on how to create/tag new versions:
 
-```bash
+```shellsession
 npm version patch
 
 npm version minor

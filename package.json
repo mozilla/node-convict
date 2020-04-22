@@ -14,22 +14,19 @@
     "coveralls": "^3.0.7",
     "deep-object-diff": "^1.1.0",
     "eslint": "^6.8.0",
+    "jest": "25.4.0",
     "js-yaml": "^3.13.1",
     "json5": "^2.1.0",
     "lerna": "^3.20.2",
-    "mocha": "^6.2.1",
-    "must": "^0.13.4",
-    "nyc": "^14.1.1",
     "toml": "^3.0.0"
   },
   "scripts": {
     "bootstrap:ci": "npm ci && npm ci packages/*",
+    "test": "jest",
     "posttest": "npm run lint",
-    "test": "mocha --check-leaks packages/*/test/*-tests.js",
-    "posttest:coverage": "npm run lint",
-    "test:coverage": "nyc --nycrc-path=nycrc.json --cache-dir=/tmp/nyc_cache_convict mocha packages/*/test/*-tests.js",
     "pretest:ci": "npm run lint",
-    "test:ci": "npm run test:coverage && cat /tmp/nyc_report_convict/lcov.info | coveralls",
+    "test:ci": "npm run test:coverage -- --coverageReporters=text-lcov | coveralls",
+    "test:coverage": "jest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   }

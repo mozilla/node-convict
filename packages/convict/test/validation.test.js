@@ -1,10 +1,10 @@
 'use strict'
 
 const path = require('path')
-require('must')
+
+const convict = require('../')
 
 describe('configuration files contain properties not declared in the schema', function() {
-  const convict = require('../')
   const config = convict({
     foo: {
       doc: 'testing',
@@ -32,45 +32,49 @@ describe('configuration files contain properties not declared in the schema', fu
     }
   })
 
-  it('must not throw, if properties in config file match with the schema', function() {
-    config.loadFile(path.join(__dirname, 'cases/validation_correct.json'));
-    (function() {
+  test('must not throw, if properties in config file match with the schema', function() {
+    config.loadFile(path.join(__dirname, 'cases/validation_correct.json'))
+    expect(function() {
       config.validate({
         allowed: 'strict'
       })
-    }).must.not.throw()
+    }).not.toThrow()
   })
 
-  it('must not throw, if the option to check for non schema properties is set by default but must display warnings', function() {
-    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
-    (function() {
+  test('must not throw, if the option to check for non schema properties is set by default but must display warnings', function() {
+    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'))
+    expect(function() {
       config.validate()
-    }).must.not.throw()
+    }).not.toThrow()
   })
-  it('must not throw, if the option to check for non schema properties is not specified and must display warnings', function() {
-    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
-    (function() {
+
+  test('must not throw, if the option to check for non schema properties is not specified and must display warnings', function() {
+    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'))
+    expect(function() {
       config.validate()
-    }).must.not.throw()
+    }).not.toThrow()
   })
-  it('must throw, if properties in config file do not match the properties declared in the schema', function() {
-    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
-    (function() {
+
+  test('must throw, if properties in config file do not match the properties declared in the schema', function() {
+    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'))
+    expect(function() {
       config.validate({
         allowed: 'strict'
       })
-    }).must.throw(/not declared/)
+    }).toThrow(/not declared/)
   })
-  it('must display warning, if properties in config file do not match the properties declared in the schema', function() {
-    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
-    (function() {
+
+  test('must display warning, if properties in config file do not match the properties declared in the schema', function() {
+    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'))
+    expect(function() {
       config.validate({
         allowed: 'warn'
       })
-    }).must.not.throw()
+    }).not.toThrow()
   })
-  it('must throw, if properties in instance do not match the properties declared in the schema and there are incorrect values', function() {
-    (function() {
+
+  test('must throw, if properties in instance do not match the properties declared in the schema and there are incorrect values', function() {
+    expect(function() {
       config.load({
         foo: 58,
         bar: 98,
@@ -82,14 +86,15 @@ describe('configuration files contain properties not declared in the schema', fu
       config.validate({
         allowed: 'strict'
       })
-    }).must.throw()
+    }).toThrow()
   })
   let message = ''
   function myOutput(str) {
     message += str
   }
-  it('must not break when a failed validation follows an undeclared property and must display warnings, and call the user output function', function() {
-    (function() {
+
+  test('must not break when a failed validation follows an undeclared property and must display warnings, and call the user output function', function() {
+    expect(function() {
       convict.addFormat('foo', function(val) {
         if (val !== 0) {
           throw new Error('Validation error')
@@ -113,21 +118,24 @@ describe('configuration files contain properties not declared in the schema', fu
       config.validate({
         output: myOutput
       })
-    }).must.throw(/Validation error/)
+    }).toThrow(/Validation error/)
   })
-  it('must use the user output function when it was declared', function() {
-    message.must.eql("\u001b[33;1mWarning:\u001b[0m configuration param '0' not declared in the schema")
+
+  test('must use the user output function when it was declared', function() {
+    expect(message).toMatch(/Warning:.* configuration param '0' not declared in the schema/)
   })
-  it('must only accept function when user set an output function', function() {
-    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'));
-    (function() {
+
+  test('must only accept function when user set an output function', function() {
+    config.loadFile(path.join(__dirname, 'cases/validation_incorrect.json'))
+    expect(function() {
       config.validate({
         output: 312
       })
-    }).must.throw(/options\.output is optionnal and must be a function\./)
+    }).toThrow(/options\.output is optionnal and must be a function\./)
   })
-  it('must not break on consecutive overrides', function() {
-    (function() {
+
+  test('must not break on consecutive overrides', function() {
+    expect(function() {
       const config = convict({
         object: {
           doc: 'testing',
@@ -140,14 +148,14 @@ describe('configuration files contain properties not declared in the schema', fu
         path.join(__dirname, 'cases/object_override2.json')
       ])
       config.validate()
-    }).must.not.throw()
+    }).not.toThrow()
   })
 })
 
 describe('setting specific values', function() {
-  const convict = require('../')
-  it('must not show warning for undeclared nested object values', function() {
-    (function() {
+
+  test('must not show warning for undeclared nested object values', function() {
+    expect(function() {
       const config = convict({
         object: {
           doc: 'testing',
@@ -157,10 +165,11 @@ describe('setting specific values', function() {
       })
       config.set('object', {foo: 'bar'})
       config.validate({allowed: 'strict'})
-    }).must.not.throw()
+    }).not.toThrow()
   })
-  it('must show warning for undeclared property names similar to nested declared property name', function() {
-    (function() {
+
+  test('must show warning for undeclared property names similar to nested declared property name', function() {
+    expect(function() {
       const config = convict({
         parent: {
           object: {
@@ -173,10 +182,11 @@ describe('setting specific values', function() {
       config.set('parent.object', {foo: 'bar'})
       config.set('parent_object', {foo: 'bar'})
       config.validate({allowed: 'strict'})
-    }).must.throw()
+    }).toThrow()
   })
-  it('must show warning for undeclared property names starting with declared object properties', function() {
-    (function() {
+
+  test('must show warning for undeclared property names starting with declared object properties', function() {
+    expect(function() {
       const config = convict({
         object: {
           doc: 'testing',
@@ -187,14 +197,14 @@ describe('setting specific values', function() {
       config.set('object', {foo: 'bar'})
       config.set('objectfoo', {foo: 'bar'})
       config.validate({allowed: 'strict'})
-    }).must.throw()
+    }).toThrow()
   })
 })
 
 describe('schema contains an object property with a custom format', function() {
-  const convict = require('../')
-  it('must throw if a nested object property has an undeclared format', function() {
-    (function() {
+
+  test('must throw if a nested object property has an undeclared format', function() {
+    expect(function() {
       const config = convict({
         object: {
           doc: 'testing',
@@ -206,10 +216,11 @@ describe('schema contains an object property with a custom format', function() {
       })
 
       config.validate({allowed: 'strict'})
-    }).must.throw()
+    }).toThrow()
   })
-  it('must not throw if an object property has a nested value and a custom format', function() {
-    (function() {
+
+  test('must not throw if an object property has a nested value and a custom format', function() {
+    expect(function() {
       convict.addFormat('foo', function() {})
       const config = convict({
         object: {
@@ -222,10 +233,11 @@ describe('schema contains an object property with a custom format', function() {
       })
 
       config.validate({allowed: 'strict'})
-    }).must.not.throw()
+    }).not.toThrow()
   })
-  it('must not throw if a declared object property with a custom format and with nested values is set', function() {
-    (function() {
+
+  test('must not throw if a declared object property with a custom format and with nested values is set', function() {
+    expect(function() {
       convict.addFormat('foo', function() {})
       const config = convict({
         object: {
@@ -239,11 +251,11 @@ describe('schema contains an object property with a custom format', function() {
 
       config.set('object', {bar: '', baz: 'blah'})
       config.validate({allowed: 'strict'})
-    }).must.not.throw()
+    }).not.toThrow()
   })
 
   it.skip("must not throw if an object's default value property name contains a period", function() {
-    (function() {
+    expect(function() {
       const config = convict({
         object: {
           doc: 'default value contains property name that contains a period',
@@ -255,7 +267,7 @@ describe('schema contains an object property with a custom format', function() {
       })
 
       config.validate()
-    }).must.not.throw()
+    }).not.toThrow()
   })
 
 })

@@ -22,8 +22,8 @@
     "node": ">=6"
   },
   "scripts": {
+    "test": "jest",
     "posttest": "npm run lint",
-    "test": "mocha --check-leaks test/*-tests.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
@@ -37,7 +37,6 @@
   "devDependencies": {
     "convict": "file:../convict",
     "eslint": "^6.8.0",
-    "mocha": "^6.2.1",
-    "must": "^0.13.4"
+    "jest": "25.4.0"
   }
 }

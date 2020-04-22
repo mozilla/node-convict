@@ -28,9 +28,9 @@
     "lint:fix": "eslint --fix ."
   },
   "files": [
-    "lib"
+    "src"
   ],
-  "main": "lib/convict.js",
+  "main": "src/main.js",
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
     "yargs-parser": "^18.1.1"

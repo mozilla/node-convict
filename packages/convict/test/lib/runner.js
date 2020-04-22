@@ -1,7 +1,8 @@
 'use strict'
 
-const convict = require('../../lib/convict'),
-  path = require('path')
+const path = require('path')
+
+const convict = require('../../src/main.js')
 
 /*eslint no-process-exit: 0*/
 

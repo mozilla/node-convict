@@ -2,9 +2,11 @@
 
 const path = require('path')
 const http = require('http')
-const convict = require('../lib/convict.js')
 
-convict.addFormat(require('convict-format-with-validator').ipaddress)
+const convict = require('../packages/convict/src/main.js')
+const convict_format_with_validator = require('../packages/convict-format-with-validator/src/main.js')
+
+convict.addFormat(convict_format_with_validator.ipaddress)
 
 const conf = convict({
   ip: {
@@ -26,5 +28,5 @@ const server = http.createServer(function(req, res) {
   res.end('Hello World\n')
 }).listen(conf.get('port'), conf.get('ip'), function() {
   const addy = server.address()
-  console.log('running on http://%s:%d', addy.address, addy.port) // eslint-disable-line no-console
+  console.log('Running on http://%s:%d', addy.address, addy.port) // eslint-disable-line no-console
 })

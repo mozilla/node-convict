@@ -28,9 +28,9 @@
     "lint:fix": "eslint --fix ."
   },
   "files": [
-    "lib"
+    "src"
   ],
-  "main": "lib/index.js",
+  "main": "src/main.js",
   "dependencies": {
     "validator": "^11.1.0"
   },

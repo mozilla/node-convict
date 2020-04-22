@@ -27,9 +27,9 @@
     "lint:fix": "eslint --fix ."
   },
   "files": [
-    "lib"
+    "src"
   ],
-  "main": "lib/index.js",
+  "main": "src/main.js",
   "dependencies": {
     "moment": "^2.24.0"
   },

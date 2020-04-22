@@ -1,10 +1,11 @@
 'use strict'
 
 const path = require('path')
-require('must')
+
+const convict = require('../')
 
 describe('convict schema', function() {
-  const convict = require('../')
+
   let conf
   const conf2 = convict({
     foo: {
@@ -15,24 +16,24 @@ describe('convict schema', function() {
     }
   })
 
-  it('must parse a config specification from a file', function() {
+  test('must parse a config specification from a file', function() {
     conf = convict(path.join(__dirname, 'schema.json'))
   })
 
-  it('must parse a specification with built-in formats', function() {
+  test('must parse a specification with built-in formats', function() {
     conf = convict(path.join(__dirname, 'cases/schema-built-in-formats.json'))
   })
 
-  it('must throw when parsing a specification that reuses a command-line argument', function() {
-    (function() {
+  test('must throw when parsing a specification that reuses a command-line argument', function() {
+    expect(function() {
       convict({
         foo: {default: 'a', arg: 'BAZ'},
         bar: {default: 'a', arg: 'BAZ'}
       })
-    }).must.throw()
+    }).toThrow()
   })
 
-  it('must accept process arguments and environment variables as parameters', function() {
+  test('must accept process arguments and environment variables as parameters', function() {
     conf = convict({
       foo: {
         format: String,
@@ -47,10 +48,10 @@ describe('convict schema', function() {
         arg: 'bar'
       }
     }, {args: ['--bar', 'baz'], env: {FOO: 'foz'}})
-    conf.getArgs().must.eql(['--bar', 'baz'])
-    conf.getEnv().must.eql({FOO: 'foz'})
-    conf.get('bar').must.be('baz')
-    conf.get('foo').must.be('foz')
+    expect(conf.getArgs()).toEqual(['--bar', 'baz'])
+    expect(conf.getEnv()).toEqual({FOO: 'foz'})
+    expect(conf.get('bar')).toBe('baz')
+    expect(conf.get('foo')).toBe('foz')
   })
 
   describe('after being parsed', function() {
@@ -59,21 +60,21 @@ describe('convict schema', function() {
       conf = convict(path.join(__dirname, 'schema.json'))
     })
 
-    it('must be valid', function() {
-      (function() {
+    test('must be valid', function() {
+      expect(function() {
         conf.validate()
-      }).must.not.throw()
+      }).not.toThrow()
     })
 
-    it('must be valid again', function() {
-      (function() {
+    test('must be valid again', function() {
+      expect(function() {
         conf2.validate()
-      }).must.not.throw()
+      }).not.toThrow()
     })
 
-    it('must export all its properties as JSON', function() {
+    test('must export all its properties as JSON', function() {
       const res = conf.getProperties()
-      res.must.eql({
+      expect(res).toEqual({
         foo: {
           bar: 7,
           baz: {
@@ -86,9 +87,9 @@ describe('convict schema', function() {
       })
     })
 
-    it('must export all its properties as a string', function() {
+    test('must export all its properties as a string', function() {
       const res = conf.toString()
-      res.must.eql(JSON.stringify({
+      expect(res).toEqual(JSON.stringify({
         foo: {
           bar: 7,
           baz: {
@@ -101,20 +102,20 @@ describe('convict schema', function() {
       }, null, 2))
     })
 
-    it('must throw if `_cvtProperties` (reserved keyword) is used', function() {
-      (function() {
+    test('must throw if `_cvtProperties` (reserved keyword) is used', function() {
+      expect(function() {
         conf = convict({
           _cvtProperties: {
             format: String,
             default: 'DEFAULT'
           }
         })
-      }).must.throw()
+      }).toThrow()
     })
 
-    it('must export the schema as JSON', function() {
+    test('must export the schema as JSON', function() {
       const res = conf.getSchema()
-      res.must.eql({
+      expect(res).toEqual({
         _cvtProperties: {
           foo: {
             _cvtProperties: {
@@ -141,9 +142,9 @@ describe('convict schema', function() {
       })
     })
 
-    it('must export the schema as a JSON string', function() {
+    test('must export the schema as a JSON string', function() {
       const res = conf.getSchemaString()
-      res.must.eql(JSON.stringify({
+      expect(res).toEqual(JSON.stringify({
         _cvtProperties: {
           foo: {
             _cvtProperties: {
@@ -171,39 +172,43 @@ describe('convict schema', function() {
     })
 
     describe('.has()', function() {
-      it('must not have undefined properties', function() {
+
+      test('must not have undefined properties', function() {
         const val = conf.has('foo.bar.madeup')
-        val.must.be(false)
+        expect(val).toBe(false)
       })
 
-      it('must not have properties specified with a default of undefined', function() {
+      test('must not have properties specified with a default of undefined', function() {
         const val = conf2.has('foo.none')
-        val.must.be(false)
+        expect(val).toBe(false)
       })
+
     })
 
     describe('.get()', function() {
-      it('must find a nested value', function() {
+
+      test('must find a nested value', function() {
         const val = conf.get('foo.bar')
-        val.must.be(7)
+        expect(val).toBe(7)
       })
 
-      it('must handle three levels of nesting', function() {
-        conf.get('foo.baz.bing').must.be('foo')
+      test('must handle three levels of nesting', function() {
+        expect(conf.get('foo.baz.bing')).toBe('foo')
       })
 
-      it('must handle names with spaces and underscores', function() {
-        conf.get('foo.baz.name with spaces.name_with_underscores').must.be(true)
+      test('must handle names with spaces and underscores', function() {
+        expect(conf.get('foo.baz.name with spaces.name_with_underscores')).toBe(true)
       })
 
-      it('must throw if conf doesn\'t exist', function() {
-        (function() {
+      test('must throw if conf doesn\'t exist', function() {
+        expect(function() {
           conf.get('foo.no')
-        }).must.throw()
+        }).toThrow()
       })
     })
 
     describe('.default()', function() {
+
       // Temporarily modify a property while testing default()
       beforeEach(function() {
         conf.set('foo.bar', 8)
@@ -212,47 +217,50 @@ describe('convict schema', function() {
         conf.set('foo.bar', 7)
       })
 
-      it('must report the default value of a property', function() {
-        conf.get('foo.bar').must.be(8) // Modified
-        conf.default('foo.bar').must.be(7)
-        conf.get('foo.bar').must.be(8)
+      test('must report the default value of a property', function() {
+        expect(conf.get('foo.bar')).toBe(8) // Modified
+        expect(conf.default('foo.bar')).toBe(7)
+        expect(conf.get('foo.bar')).toBe(8)
       })
 
-      it('must throw if key doesn\'t exist', function() {
-        (function() {
+      test('must throw if key doesn\'t exist', function() {
+        expect(function() {
           conf.default('foo.no')
-        }).must.throw()
+        }).toThrow()
       })
 
       describe('when acting on an Object property', function() {
+
         beforeEach(function() {
           conf = convict(path.join(__dirname, 'cases/schema-built-in-formats.json'))
         })
 
-        it('must report the default value of the property', function() {
-          conf.get('someObject').must.eql({})
-          conf.default('someObject').must.eql({})
+        test('must report the default value of the property', function() {
+          expect(conf.get('someObject')).toEqual({})
+          expect(conf.default('someObject')).toEqual({})
         })
 
-        it('must not be altered by calls to .set()', function() {
+        test('must not be altered by calls to .set()', function() {
           conf.set('someObject.five', 5)
-          conf.default('someObject').must.eql({});
-          (function() {
+          expect(conf.default('someObject')).toEqual({})
+          expect(function() {
             conf.default('someObject.five')
-          }).must.throw()
+          }).toThrow()
         })
 
-        it('must not be altered by calls to .load()', function() {
+        test('must not be altered by calls to .load()', function() {
           conf.load({someObject: {five: 5}})
-          conf.default('someObject').must.eql({});
-          (function() {
+          expect(conf.default('someObject')).toEqual({})
+          expect(function() {
             conf.default('someObject.five')
-          }).must.throw()
+          }).toThrow()
         })
       })
+
     })
 
     describe('.reset()', function() {
+
       // Temporarily modify a property while testing default()
       beforeEach(function() {
         conf.set('foo.bar', 8)
@@ -261,33 +269,33 @@ describe('convict schema', function() {
         conf.set('foo.bar', 7)
       })
 
-      it('must reset the property to its default value', function() {
-        conf.get('foo.bar').must.be(8) // Modified
+      test('must reset the property to its default value', function() {
+        expect(conf.get('foo.bar')).toBe(8) // Modified
         conf.reset('foo.bar')
-        conf.get('foo.bar').must.be(7)
+        expect(conf.get('foo.bar')).toBe(7)
       })
 
-      it('must throw if key doesn\'t exist', function() {
-        (function() {
+      test('must throw if key doesn\'t exist', function() {
+        expect(function() {
           conf.reset('foo.no')
-        }).must.throw()
+        }).toThrow()
       })
     })
 
   })
+
 })
 
 describe('convict used multiple times on one schema', function() {
-  const convict = require('../')
   const schema = {
     publicServerAddress:  {
       doc: 'The public-facing server address',
       format: String,
       default: 'localhost:5000'
     }
-  };
-  (function() {
+  }
+  expect(function() {
     convict(schema)
     convict(schema)
-  }).must.not.throw()
+  }).not.toThrow()
 })

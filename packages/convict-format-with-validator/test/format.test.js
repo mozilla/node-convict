@@ -1,16 +1,14 @@
 'use strict'
 
-require('must')
-
 describe('convict formats', function() {
   const convict = require('convict')
   let conf
 
-  it('must add formats ("email", "ipaddress" and "url") with convict-format-with-validator', function() {
+  test('must add formats ("email", "ipaddress" and "url") with convict-format-with-validator', function() {
     convict.addFormats(require('../'))
   })
 
-  it('must parse a config specification', function() {
+  test('must parse a config specification', function() {
     conf = convict({
       foo: {
         host: {
@@ -29,16 +27,17 @@ describe('convict formats', function() {
     })
   })
 
-  it('validates default schema', function() {
-    (function() {
+  test('validates default schema', function() {
+    expect(function() {
       conf.validate()
-    }).must.not.throw()
+    }).not.toThrow()
   })
 
-  it('successfully fails to validate incorrect values', function() {
-    conf.set('foo.email', ';aaaa;');
-    (function() {
+  test('successfully fails to validate incorrect values', function() {
+    conf.set('foo.email', ';aaaa;')
+    expect(function() {
       conf.validate()
-    }).must.throw(Error, /must be an email address: value was ";aaaa;"/)
+    }).toThrow(/must be an email address: value was ";aaaa;"/)
   })
+
 })

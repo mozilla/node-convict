@@ -1,12 +1,10 @@
 'use strict'
 
-const expect = require('must')
-
 describe('convict formats', function() {
   const convict = require('../')
   let conf
 
-  it('must parse a config specification', function() {
+  test('must parse a config specification', function() {
 
     convict.addFormat({
       name: 'float-percent',
@@ -102,31 +100,31 @@ describe('convict formats', function() {
 
   })
 
-  it('validates default schema', function() {
-    (function() {
+  test('validates default schema', function() {
+    expect(function() {
       conf.validate()
-    }).must.not.throw()
+    }).not.toThrow()
   })
 
-  it('validates non-coerced correct values', function() {
-    conf.set('foo.primeNumber', 7);
-    (function() {
+  test('validates non-coerced correct values', function() {
+    conf.set('foo.primeNumber', 7)
+    expect(function() {
       conf.validate()
-    }).must.not.throw()
+    }).not.toThrow()
   })
 
-  it('validates coerced correct values', function() {
-    conf.set('foo.primeNumber', '11');
-    (function() {
+  test('validates coerced correct values', function() {
+    conf.set('foo.primeNumber', '11')
+    expect(function() {
       conf.validate()
-    }).must.not.throw()
+    }).not.toThrow()
   })
 
-  it('successfully fails to validate incorrect values', function() {
-    conf.set('foo.primeNumber', 16);
-    (function() {
+  test('successfully fails to validate incorrect values', function() {
+    conf.set('foo.primeNumber', 16)
+    expect(function() {
       conf.validate()
-    }).must.throw()
+    }).toThrow()
   })
 
   describe('predefined formats', function() {
@@ -150,67 +148,67 @@ describe('convict formats', function() {
         },
       })
 
-      it('must coerce ports to integers', function() {
-        conf.get('port').must.be(1234)
+      test('must coerce ports to integers', function() {
+        expect(conf.get('port')).toBe(1234)
       })
 
-      it('must not coerce pipes to integers', function() {
-        conf.get('pipe').must.be('\\\\.\\pipe\\test')
+      test('must not coerce pipes to integers', function() {
+        expect(conf.get('pipe')).toBe('\\\\.\\pipe\\test')
       })
 
-      it('must handle switching from port to pipe', function() {
+      test('must handle switching from port to pipe', function() {
         conf.set('to_pipe', '\\\\.\\pipe\\changed')
-        conf.get('to_pipe').must.be('\\\\.\\pipe\\changed')
+        expect(conf.get('to_pipe')).toBe('\\\\.\\pipe\\changed')
       })
 
-      it('must handle switching from pipe to port', function() {
+      test('must handle switching from pipe to port', function() {
         conf.set('to_port', '8080')
-        conf.get('to_port').must.be(8080)
+        expect(conf.get('to_port')).toBe(8080)
       })
 
-      it('must throw for invalid ports', function() {
+      test('must throw for invalid ports', function() {
         const conf = convict({
           invalid: {
             format: 'port_or_windows_named_pipe',
             default: '235235452355',
           },
-        });
+        })
 
-        (function() {
+        expect(function() {
           conf.validate()
-        }).must.throw(Error, /must be a windows named pipe or a number within range/)
+        }).toThrow(/must be a windows named pipe or a number within range/)
       })
 
-      it('must throw for invalid pipes', function() {
+      test('must throw for invalid pipes', function() {
 
         const conf = convict({
           invalid: {
             format: 'port_or_windows_named_pipe',
             default: '\\.pipe\\test',
           },
-        });
+        })
 
-        (function() {
+        expect(function() {
           conf.validate()
-        }).must.throw(Error, /must be a windows named pipe or a number within range/)
+        }).toThrow(/must be a windows named pipe or a number within range/)
       })
     })
   })
 
-  it('must throw with unknown format', function() {
-    (function() {
+  test('must throw with unknown format', function() {
+    expect(function() {
       convict({
         foo: {
           format: 'unknown',
           default: 'bar'
         }
       })
-    }).must.throw()
+    }).toThrow()
   })
 
-  it('must accept undefined as a default', function() {
+  test('must accept undefined as a default', function() {
     const val = conf.get('foo.optional')
-    expect(val).to.be(undefined)
+    expect(val).toBeUndefined()
   })
 
   describe('must return schema in second argument', function() {
@@ -270,7 +268,7 @@ describe('convict formats', function() {
       ]
     }
 
-    it('must parse a config specification', function() {
+    test('must parse a config specification', function() {
       convict.addFormat({
         name: 'source-array',
         validate: function(sources, schema) {
@@ -285,16 +283,17 @@ describe('convict formats', function() {
       })
     })
 
-    it('must validate children value without throw an Error', function() {
-      (function() {
+    test('must validate children value without throw an Error', function() {
+      expect(function() {
         convict(schema).load(configWithoutErrors).validate()
-      }).must.not.throw()
+      }).not.toThrow()
     })
 
-    it('successfully fails to validate incorrect children values', function() {
-      (function() {
+    test('successfully fails to validate incorrect children values', function() {
+      expect(function() {
         convict(schema).load(configWithErrors).validate()
-      }).must.throw(Error, /domains: bought: must be of type Boolean/)
+      }).toThrow(/domains: bought: must be of type Boolean/)
     })
   })
+
 })

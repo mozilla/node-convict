@@ -125,7 +125,7 @@ function run(name, done) {
 
 describe('CLI tests', function() {
   toRun.forEach(function(name) {
-    it(name, function(done) {
+    test(name, function(done) {
       run(name, done)
     })
   })

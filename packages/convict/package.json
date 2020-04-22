@@ -22,8 +22,8 @@
     "node": ">=6"
   },
   "scripts": {
+    "test": "jest",
     "posttest": "npm run lint",
-    "test": "mocha --check-leaks test/*-tests.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
@@ -38,10 +38,9 @@
   "devDependencies": {
     "deep-object-diff": "^1.1.0",
     "eslint": "^6.8.0",
+    "jest": "25.4.0",
     "js-yaml": "^3.13.1",
     "json5": "^2.1.0",
-    "mocha": "^6.2.1",
-    "must": "^0.13.4",
     "toml": "^3.0.0"
   }
 }

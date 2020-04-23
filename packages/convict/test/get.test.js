@@ -40,7 +40,7 @@ describe('convict get()', function() {
     expect(conf.get('foo.baz.name with spaces.name_with_underscores')).toBe(true)
   })
 
-  it("must throw if conf doesn't exist", function() {
+  test("must throw if conf doesn't exist", function() {
     expect(function() {
       conf.get('foo.no')
     }).toThrow()

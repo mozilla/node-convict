@@ -5,10 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [6.0.0] - 2019-XX-XX
+## [6.0.0] - 2020-05-02
 ### Changed
 
-- [BREAKING] Multi-packages split #327 (A-312)
+- [BREAKING] Multi-packages split #327 (A-312). There are 3 packages: convict,
+  convict-format-with-validator and convict-format-with-moment.
 - [BREAKING] Remove the *json5* dependency and make it an optional parser #326 (A-312)
 - Ease relying applications security fixes by using `^x.y.z` range versions for
   Convict's `dependencies` and `devDependencies`, instead of exact/strict versions.
@@ -17,7 +18,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   tools such as `npm audit fix` that very easily and effectively fix
   vulnerabilites in version ranges. So, from now on, Convict will not put itself
   in the way, by leveraging Semantic Versioning to its maximum for
-  `dependencies` and `devDependencies`.
+  `dependencies` and `devDependencies`. (Marc-Aurèle Darche @madarche)
+
+### Fixed
+
+- Fix multiple vulns by upgrading some deps
+  (Cyrille Verrier @cyrille-arundo, Marc-Aurèle Darche @madarche)
+
 
 ## [5.2.0] - 2019-10-12
 ### Added

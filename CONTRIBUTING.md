@@ -8,6 +8,21 @@ compromise those goals and follow the
 [Node aesthetic](https://github.com/substack/blog/blob/master/node_aesthetic.markdown).
 
 
+Project structure and management
+--------------------------------
+
+This repository is a monorepo for multiple packages managed through
+[Lerna](https://lerna.js.org/).
+
+Use the following commands to manage this repository and its packages.
+
+To install all the dependencies, devDependencies and links any cross-dependencies:
+
+```shellsession
+npx lerna bootstrap
+```
+
+
 Code style
 ----------
 
@@ -23,35 +38,14 @@ npm run lint:fix
 ```
 
 
-Project structure and management
---------------------------------
-
-This repository is a monorepo for multiple packages managed through
-[Lerna](https://lerna.js.org/).
-
-Use the following commands to manage this repository and its packages.
-
-To install all the dependencies, devDependencies and links any cross-dependencies:
-
-```shellsession
-npx lerna bootstrap
-```
-
-<!--
-Not a good command:
-
-```shellsession
-npx lerna exec -- npm i
-```
--->
-
 Test
 ----
 
-Check that your code passes the tests before submitting a PR:
+Before submitting a PR, check that the code, with your modifications, still
+passes the tests:
 
 ```shellsession
-npx lerna run test
+npm test
 ```
 
 
@@ -79,3 +73,4 @@ npm version minor
 
 npm version major
 ```
+

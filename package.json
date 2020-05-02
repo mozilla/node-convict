@@ -1,6 +1,16 @@
 {
   "name": "node-convict",
   "private": true,
+  "scripts": {
+    "bootstrap:ci": "npm ci && npm ci packages/*",
+    "test": "jest",
+    "posttest": "npm run lint",
+    "pretest:ci": "npm run lint",
+    "test:ci": "npm run test:coverage -- --coverageReporters=text-lcov | coveralls",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
+  },
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
     "moment": "^2.24.0",
@@ -19,15 +29,5 @@
     "json5": "^2.1.0",
     "lerna": "^3.20.2",
     "toml": "^3.0.0"
-  },
-  "scripts": {
-    "bootstrap:ci": "npm ci && npm ci packages/*",
-    "test": "jest",
-    "posttest": "npm run lint",
-    "pretest:ci": "npm run lint",
-    "test:ci": "npm run test:coverage -- --coverageReporters=text-lcov | coveralls",
-    "test:coverage": "jest --coverage",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
   }
 }

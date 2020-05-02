@@ -27,10 +27,10 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
+  "main": "src/main.js",
   "files": [
     "src"
   ],
-  "main": "src/main.js",
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
     "yargs-parser": "^18.1.1"

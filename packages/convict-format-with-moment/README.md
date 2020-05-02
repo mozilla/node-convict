@@ -1,14 +1,16 @@
-# Convict-moment
+# Convict-format-with-moment
 
 [![NPM version](http://img.shields.io/npm/v/convict-format-with-moment.svg)](https://www.npmjs.org/package/convict-format-with-moment)
 
-Format 'duration' and 'timestamp' for convict with momentjs.
+Formats `duration` and `timestamp` for convict with [Moment.js](http://momentjs.com/).
+
 
 ## Install
 
-```shell
+```shellsession
 npm install convict-format-with-moment
 ```
+
 
 ## Usage
 
@@ -31,13 +33,15 @@ var config = convict({
 });
 ```
 
+
 ### Validation
 
-Use [moment.js](http://momentjs.com/) to validate:
+Use Moment.js to validate:
 
 * `duration` - milliseconds or a human readable string (e.g. 3000, "5 days")
-* `timestamp` - Unix timestamps or date strings recognized by [moment.js](http://momentjs.com/)
+* `timestamp` - Unix timestamps or date strings recognized by Moment.js
+
 
 ### Coercion
 
-Convict will automatically coerce environmental variables from strings to their proper types when importing them. For instance, values with the format `int`, `nat`, `port`, or `Number` will become numbers after a straight forward `parseInt` or `parseFloat`. `duration` and `timestamp` are also parse and converted into numbers, though they utilize [moment.js](http://momentjs.com/) for date parsing.
+Convict will automatically coerce environmental variables from strings to their proper types when importing them. For instance, values with the format `int`, `nat`, `port`, or `Number` will become numbers after a straight forward `parseInt` or `parseFloat`. `duration` and `timestamp` are also parse and converted into numbers, though they utilize Moment.js for date parsing.

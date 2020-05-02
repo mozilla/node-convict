@@ -1,7 +1,7 @@
 {
   "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
   "name": "convict-format-with-validator",
-  "description": "Format 'email', 'ipaddress' and 'url' for convict",
+  "description": "Formats 'email', 'ipaddress' and 'url' for convict",
   "keywords": [
     "convict",
     "convict-format",
@@ -27,10 +27,10 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
+  "main": "src/main.js",
   "files": [
     "src"
   ],
-  "main": "src/main.js",
   "dependencies": {
     "validator": "^11.1.0"
   },

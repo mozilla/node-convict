@@ -4,11 +4,19 @@
 
 Format 'email', 'ipaddress' and 'url' for convict with validatorjs.
 
+# Convict-format-with-validator
+
+[![NPM version](http://img.shields.io/npm/v/convict-format-with-validator.svg)](https://www.npmjs.org/package/convict-format-with-validator)
+
+[validator.js](https://github.com/validatorjs/validator.js) formats for convict.
+
+
 ## Install
 
-```shell
+```shellsession
 npm install convict-format-with-validator
 ```
+
 
 ## Usage
 

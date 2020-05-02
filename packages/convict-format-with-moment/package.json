@@ -1,7 +1,7 @@
 {
   "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
   "name": "convict-format-with-moment",
-  "description": "Format 'duration' and 'timestamp' for convict",
+  "description": "Formats 'duration' and 'timestamp' for convict",
   "keywords": [
     "convict",
     "convict-format",
@@ -26,10 +26,10 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
+  "main": "src/main.js",
   "files": [
     "src"
   ],
-  "main": "src/main.js",
   "dependencies": {
     "moment": "^2.24.0"
   },

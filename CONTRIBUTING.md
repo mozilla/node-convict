@@ -27,6 +27,7 @@ done. Don't hesitate to propose better strategies, PR are welcomed!
 * "Fixed/Locked" mode (Lerna default mode) for now
 * All `devDependencies` in the root-level `package.json`. This is the sanest
   thing to do since all the packages are very very similar.
+* Only one `package-lock.json` file at the root
 
 
 Running tests
@@ -51,18 +52,21 @@ code:
 
 ```shellsession
 cd node-convict
-npm run lint:fix
 npm run setup
+npm run lint:fix
 ```
 
 
 Updating dependencies and devDependencies
 -----------------------------------------
 
-1. Update the version of the `dependencies` in the packages `package.json` files
-   and the `devDependencies` in the root-level `package.json`
+1. Modify the versions of the `dependencies` by editing the
+   `packages/*/package.json` files
 
-2. Fetch the packages and update the `package-lock.json`
+2. Modify the versions the `devDependencies` in the
+   root-level `package.json` file
+
+3. Fetch the packages and update the `package-lock.json`
 
 ```shellsession
 cd node-convict
@@ -89,6 +93,8 @@ Tagging should not be done manually, nor through the `npm version` command.
 Tagging should be done through `lerna`.
 
 ```shellsession
+cd node-convict
+npm run setup
 npx lerna version 6.0.0
 ```
 
@@ -100,5 +106,7 @@ Publishing should be done through `lerna`.
 This action can only be performed by a Mozilla employee with enough accesses.
 
 ```shellsession
+cd node-convict
+npm run setup
 npx lerna publish from-git
 ```

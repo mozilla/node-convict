@@ -28,7 +28,9 @@ done. Don't hesitate to propose better strategies, PR are welcomed!
 * All `devDependencies` in the root-level `package.json`. This is the sanest
   thing to do since all the packages are very very similar.
 
-### Running tests
+
+Running tests
+-------------
 
 ```shellsession
 cd node-convict
@@ -36,7 +38,26 @@ npm run setup
 npm test
 ```
 
-### Updating dependencies and devDependencies
+
+Code style
+----------
+
+Coding style is described through the EditorConfig
+[.editorconfig](./.editorconfig) file and enforced by ESLint through the
+[.eslintrc](./.eslintrc.js) file.
+
+Running the following command line will help you to conform your newly written
+code:
+
+```shellsession
+cd node-convict
+npm run lint:fix
+npm run setup
+```
+
+
+Updating dependencies and devDependencies
+-----------------------------------------
 
 1. Update the version of the `dependencies` in the packages `package.json` files
    and the `devDependencies` in the root-level `package.json`
@@ -53,42 +74,18 @@ npx lerna link
 Never run `lerna bootstrap`, cf. https://github.com/lerna/lerna/issues/1462#issuecomment-410536290
 
 
-Code style
-----------
+Creating/Tagging and publishing new versions
+--------------------------------------------
 
-Coding style is described through the EditorConfig
-[.editorconfig](./.editorconfig) file and enforced by ESLint through the
-[.eslintrc](./.eslintrc.js) file.
+This section is especially intended for the maintainers of the project.
 
-Running the following command line will help you to conform your newly written
-code:
+Before any new release the [CHANGELOG](./CHANGELOG.md) must be updated.
 
-```shellsession
-npm run lint:fix
-```
+**Everything tagging and publishing should be done throug Lerna**.
 
-
-Creating/Tagging new versions
------------------------------
-
-This section is intended for all the maintainers of the project.
-
-Tagging a new version *should not be done manually*,
-but through the `npm version` command, as the example shows below.
-
-This must be done so in order to:
-
-* never forget to create a Git tag
-* never create wrong tags and versions
-* never forget to add a corresponding entry in the [CHANGELOG](./CHANGELOG.md)
-  file
-
-Example on how to create/tag new versions:
+Tagging should not be done manually, nor through the `npm version` command.
 
 ```shellsession
-npm version patch
-
-npm version minor
-
-npm version major
+npx lerna version 6.0.0
+npx lerna publish from-git
 ```

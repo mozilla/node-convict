@@ -14,6 +14,9 @@ Project structure and management
 This repository is a monorepo for multiple packages managed through
 [Lerna](https://lerna.js.org/).
 
+This repository is managed by Lerna using the "Fixed/Locked" mode (Lerna default
+mode).
+
 Use the following commands to manage this repository and its packages.
 
 To install all the dependencies, devDependencies and links any cross-dependencies:

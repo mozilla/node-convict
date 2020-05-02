@@ -1,9 +1,9 @@
 'use strict'
 
 const moment = require('moment')
+const convict = require('convict')
 
 describe('convict formats', function() {
-  const convict = require('convict')
   let conf
 
   test('must add "duration" and "timestamp" format with convict-format-with-moment', function() {

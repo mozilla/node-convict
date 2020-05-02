@@ -1,7 +1,8 @@
 'use strict'
 
+const convict = require('convict')
+
 describe('convict formats', function() {
-  const convict = require('convict')
   let conf
 
   test('must add formats ("email", "ipaddress" and "url") with convict-format-with-validator', function() {

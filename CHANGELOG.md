@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [6.0.0] - 2020-05-02
 ### Changed
 
-- [BREAKING] Multi-packages split #327 (A-312). There are 3 packages: convict,
-  convict-format-with-validator and convict-format-with-moment.
+- [BREAKING] Multi-packages split #327 (A-312, Marc-Aurèle Darche @madarche).
+  There are now 3 packages: convict, convict-format-with-validator, convict-format-with-moment
 - [BREAKING] Remove the *json5* dependency and make it an optional parser #326 (A-312)
 - Ease relying applications security fixes by using `^x.y.z` range versions for
   Convict's `dependencies` and `devDependencies`, instead of exact/strict versions.

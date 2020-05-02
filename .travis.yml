@@ -9,7 +9,7 @@ node_js:
   - "lts/*"
 
 install:
-  - npm run bootstrap:ci
+  - npm run setup
 
 script:
   - npm run test:ci

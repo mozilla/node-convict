@@ -83,9 +83,22 @@ Before any new release the [CHANGELOG](./CHANGELOG.md) must be updated.
 
 **Everything tagging and publishing should be done throug Lerna**.
 
+### Tagging a new version
+
 Tagging should not be done manually, nor through the `npm version` command.
+Tagging should be done through `lerna`.
 
 ```shellsession
 npx lerna version 6.0.0
+```
+
+### Publishing a new version
+
+Publishing should not be done through the `npm publish` command.
+Publishing should be done through `lerna`.
+
+This action can only be performed by a Mozilla employee with enough accesses.
+
+```shellsession
 npx lerna publish from-git
 ```

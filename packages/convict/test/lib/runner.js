@@ -1,10 +1,10 @@
 'use strict'
 
+/* eslint-disable no-process-exit */
+
 const path = require('path')
 
 const convict = require('../../src/main.js')
-
-/*eslint no-process-exit: 0*/
 
 process.on('message', function(spec) {
   try {

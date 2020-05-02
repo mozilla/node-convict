@@ -1,5 +1,6 @@
 'use strict'
-/*eslint no-sync: 0*/
+
+/* eslint-disable no-sync */
 
 const fs = require('fs')
 const path = require('path')

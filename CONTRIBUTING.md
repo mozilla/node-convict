@@ -11,18 +11,31 @@ compromise those goals and follow the
 Project structure and management
 --------------------------------
 
-This repository is a monorepo for multiple packages managed through
-[Lerna](https://lerna.js.org/).
+This repository is a monorepo for multiple packages.
 
-This repository is managed by Lerna using the "Fixed/Locked" mode (Lerna default
-mode).
+At the moment this repository is managed through [Lerna](https://lerna.js.org/)
+with the following strategy below. This strategy is not perfect, as Lerna is not
+(at least at time of writing) a tool perfectly fit for all npm current uses and
+best practices cf. https://github.com/lerna/lerna/issues/1663,
+https://github.com/lerna/lerna/issues/1462. And Lerna is missing best practices
+for different use cases (at least at time of writing). So this strategy is
+subject to change as we get more knowledge of Lerna and as new releases will be
+done. Don't hesitate to propose better strategies, PR are welcomed!
 
-Use the following commands to manage this repository and its packages.
+### Strategy
 
-To install all the dependencies, devDependencies and links any cross-dependencies:
+* "Fixed/Locked" mode (Lerna default mode) for now
+* All `devDependencies` in the root-level `package.json`. This is the sanest
+  thing to do since all the packages are very very similar.
+
+
+Running tests
+-------------
 
 ```shellsession
-npx lerna bootstrap
+cd node-convict
+npm run setup
+npm test
 ```
 
 
@@ -37,43 +50,42 @@ Running the following command line will help you to conform your newly written
 code:
 
 ```shellsession
+cd node-convict
 npm run lint:fix
+npm run setup
 ```
 
 
-Test
-----
+Updating dependencies and devDependencies
+-----------------------------------------
 
-Before submitting a PR, check that the code, with your modifications, still
-passes the tests:
+1. Update the version of the `dependencies` in the packages `package.json` files
+   and the `devDependencies` in the root-level `package.json`
+
+2. Fetch the packages and update the `package-lock.json`
 
 ```shellsession
-npm test
+cd node-convict
+npm install
+npm install packages/*
+npx lerna link
 ```
 
+Never run `lerna bootstrap`, cf. https://github.com/lerna/lerna/issues/1462#issuecomment-410536290
 
-Creating/Tagging new versions
------------------------------
 
-This section is intended for all the maintainers of the project.
+Creating/Tagging and publishing new versions
+--------------------------------------------
 
-Tagging a new version *should not be done manually*,
-but through the `npm version` command, as the example shows below.
+This section is especially intended for the maintainers of the project.
 
-This must be done so in order to:
+Before any new release the [CHANGELOG](./CHANGELOG.md) must be updated.
 
-* never forget to create a Git tag
-* never create wrong tags and versions
-* never forget to add a corresponding entry in the [CHANGELOG](./CHANGELOG.md)
-  file
+**Everything tagging and publishing should be done throug Lerna**.
 
-Example on how to create/tag new versions:
+Tagging should not be done manually, nor through the `npm version` command.
 
 ```shellsession
-npm version patch
-
-npm version minor
-
-npm version major
+npx lerna version 6.0.0
+npx lerna publish from-git
 ```
-

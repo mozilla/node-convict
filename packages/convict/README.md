@@ -1,6 +1,10 @@
 # Convict
 
 [![NPM version](http://img.shields.io/npm/v/convict.svg)](https://www.npmjs.org/package/convict)
+[![Dependency Status](https://david-dm.org/mozilla/node-convict.svg)](https://david-dm.org/mozilla/node-convict)
+[![devDependency Status](https://david-dm.org/mozilla/node-convict/dev-status.svg)](https://david-dm.org/mozilla/node-convict#info=devDependencies)
+[![Build Status](https://travis-ci.org/mozilla/node-convict.svg?branch=master)](https://travis-ci.org/mozilla/node-convict)
+[![Coverage Status](https://coveralls.io/repos/github/mozilla/node-convict/badge.svg?branch=master)](https://coveralls.io/github/mozilla/node-convict?branch=master)
 
 Convict expands on the standard pattern of configuring node.js applications in a
 way that is more robust and accessible to collaborators, who may have less
@@ -608,3 +612,8 @@ Thanks to [browserify](http://browserify.org/), `convict` can be used for web ap
 
 * Use [`brfs`](https://www.npmjs.com/package/brfs) to ensure the `fs.loadFileSync` schema-loading calls are inlined at build time rather than resolved at runtime (in Gulp, add `.transform(brfs)` to your browserify pipe).
 * To support *"loading configuration from a `http://foo.bar/some.json` URL"*, build a thin wrapper around convict using your favorite http package (e.g. [`superagent`](https://visionmedia.github.io/superagent/)). Typically, in the success callback, call convict's `load()` on the body of the response.
+
+
+## Migrating
+
+* [Migrating from Convict 5 to 6](MIGRATING_FROM_CONVICT_5_TO_6.md)

@@ -15,16 +15,22 @@ when configuration goes wrong.
 This repository is a monorepo for the following packages managed through
 [Lerna](https://lerna.js.org/).
 
+
 ## Packages
 
- - [convict](/packages/convict/) :
-   the main package
+* [convict](/packages/convict/) :
+  the main package
 
- - [convict-format-with-moment](/packages/convict-format-with-moment/) :
-   the optional package providing the `duration` and `timestamp` formats
+* [convict-format-with-validator](/packages/convict-format-with-validator/)
+  the optional package providing the `email`, `ipaddress` and `url` formats
 
- - [convict-format-with-validator](/packages/convict-format-with-validator/)
-   the optional package providing the `email`, `ipaddress` and `url` formats
+* [convict-format-with-moment](/packages/convict-format-with-moment/) :
+  the optional package providing the `duration` and `timestamp` formats
+
+
+## Migrating
+
+* [Migrating from Convict 5 to 6](/packages/convict/MIGRATING_FROM_CONVICT_5_TO_6.md)
 
 
 ## Contributing

@@ -1,14 +1,8 @@
-# Convict-validator
-
-[![NPM version](http://img.shields.io/npm/v/convict-format-with-validator.svg)](https://www.npmjs.org/package/convict-format-with-validator)
-
-Format 'email', 'ipaddress' and 'url' for convict with validatorjs.
-
 # Convict-format-with-validator
 
 [![NPM version](http://img.shields.io/npm/v/convict-format-with-validator.svg)](https://www.npmjs.org/package/convict-format-with-validator)
 
-[validator.js](https://github.com/validatorjs/validator.js) formats for convict.
+Formats `email`, `ipaddress` and `url` for convict with [validator.js](https://github.com/validatorjs/validator.js).
 
 
 ## Install
@@ -24,12 +18,14 @@ An example `config.js` file:
 
 ```javascript
 const convict = require('convict');
+const convict_format_with_validator = require('convict-format-with-validator');
 
-convict.addFormat(require('convict-format-with-validator').ipaddress);
-convict.addFormat(require('convict-format-with-validator').port);
+// Add all formats
+convict.addFormats(convict_format_with_validator);
 
-// or :
-// convict.addFormats(require('convict-format-with-validator'));
+// Or add only specific formats:
+// convict.addFormat(convict_format_with_validator.ipaddress);
+// etc.
 
 // Define a schema
 var config = convict({
@@ -51,7 +47,7 @@ var config = convict({
 
 ### Validation
 
-Use [validator.js](https://github.com/chriso/node-validator#list-of-validation-methods) to validate:
+Validation done through validator.js:
 
 * `email`
 * `ipaddress` - IPv4 and IPv6 addresses

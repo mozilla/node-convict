@@ -2,11 +2,11 @@
 
 The main goal of `convict@6.0.0` was to make it have less dependencies by
 default, so to make it less impacted by security vulnerabilites in those
-dependencies. This release introduced the following BREAKING changes:
+dependencies. So this release introduced the following BREAKING changes:
 
-* Multi-packages split. There are now 3 packages: convict,
-  convict-format-with-validator, convict-format-with-moment
-* Removal of the *json5* dependency to make it an optional
+* Multi-packages split. There are now 3 packages: `convict`,
+  `convict-format-with-validator`, `convict-format-with-moment`
+* Removal of the `json5` dependency to make it an optional
 
 Old pre-`convict@6.0.0` code:
 

@@ -35,9 +35,12 @@ Running tests
 
 ```shellsession
 cd node-convict
-npm run setup
+npm ci
 npm test
 ```
+
+PS: `npm ci` will take care of all the needed Lerna setup through the
+`postinstall` script.
 
 
 Code style
@@ -52,9 +55,12 @@ code:
 
 ```shellsession
 cd node-convict
-npm run setup
+npm ci
 npm run lint:fix
 ```
+
+PS: `npm ci` will take care of all the needed Lerna setup through the
+`postinstall` script.
 
 
 Updating dependencies and devDependencies
@@ -72,10 +78,11 @@ Updating dependencies and devDependencies
 cd node-convict
 npm install
 npm install packages/*
-npx lerna link
 ```
 
-Never run `lerna bootstrap`, cf. https://github.com/lerna/lerna/issues/1462#issuecomment-410536290
+PS: `npm ci` will take care of all the needed Lerna setup through the
+`postinstall` script. Never run `lerna bootstrap`,
+cf. https://github.com/lerna/lerna/issues/1462#issuecomment-410536290
 
 
 Creating/Tagging and publishing new versions
@@ -94,9 +101,12 @@ Tagging should be done through `lerna`.
 
 ```shellsession
 cd node-convict
-npm run setup
+npm ci
 npx lerna version 6.0.0
 ```
+
+PS: `npm ci` will take care of all the needed Lerna setup through the
+`postinstall` script.
 
 ### Publishing a new version
 
@@ -107,6 +117,9 @@ This action can only be performed by a Mozilla employee with enough accesses.
 
 ```shellsession
 cd node-convict
-npm run setup
+npm ci
 npx lerna publish from-git
 ```
+
+PS: `npm ci` will take care of all the needed Lerna setup through the
+`postinstall` script.

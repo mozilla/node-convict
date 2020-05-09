@@ -41,7 +41,7 @@ var config = convict({
 
 ### Validation
 
-Use Moment.js to validate:
+Validation done through Moment.js:
 
 * `duration` - milliseconds or a human readable string (e.g. 3000, "5 days")
 * `timestamp` - Unix timestamps or date strings recognized by Moment.js

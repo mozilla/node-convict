@@ -47,7 +47,7 @@ var config = convict({
 
 ### Validation
 
-Use [validator.js](https://github.com/chriso/node-validator#list-of-validation-methods) to validate:
+Validation done through validator.js:
 
 * `email`
 * `ipaddress` - IPv4 and IPv6 addresses

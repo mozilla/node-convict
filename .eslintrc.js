@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   root: true,
@@ -106,4 +106,4 @@ module.exports = {
 
     'no-new-require': 'error',
   },
-};
+}

@@ -12,11 +12,6 @@ introducing a configuration schema, convict gives project collaborators more
 **context** on each setting and enables **validation and early failures** for
 when configuration goes wrong.
 
-:warning: The new version, `convict@6`, is ready for publishing but has not been
-published yet!
-For the documentation of the previous version, `convict@5.x`, read
-https://www.npmjs.com/package/convict
-
 This repository is a monorepo for the following packages managed through
 [Lerna](https://lerna.js.org/).
 

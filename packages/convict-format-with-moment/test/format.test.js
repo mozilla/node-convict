@@ -2,13 +2,13 @@
 
 const moment = require('moment')
 const convict = require('convict')
+const convict_format_with_moment = require('../')
 
 describe('convict formats', function() {
   let conf
 
   test('must add "duration" and "timestamp" format with convict-format-with-moment', function() {
-    convict.addFormat(require('../').duration)
-    convict.addFormat(require('../').timestamp)
+    convict.addFormats(convict_format_with_moment)
   })
 
   test('must parse a config specification', function() {

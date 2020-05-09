@@ -608,3 +608,8 @@ Thanks to [browserify](http://browserify.org/), `convict` can be used for web ap
 
 * Use [`brfs`](https://www.npmjs.com/package/brfs) to ensure the `fs.loadFileSync` schema-loading calls are inlined at build time rather than resolved at runtime (in Gulp, add `.transform(brfs)` to your browserify pipe).
 * To support *"loading configuration from a `http://foo.bar/some.json` URL"*, build a thin wrapper around convict using your favorite http package (e.g. [`superagent`](https://visionmedia.github.io/superagent/)). Typically, in the success callback, call convict's `load()` on the body of the response.
+
+
+## Migrating
+
+* [Migrating from Convict 5 to 6](MIGRATING_FROM_CONVICT_5_TO_6.md)

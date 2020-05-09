@@ -18,9 +18,14 @@ An example `config.js` file:
 
 ```javascript
 const convict = require('convict');
+const convict_format_with_moment = require('convict-format-with-moment');
 
-convict.addFormat(require('convict-format-with-moment').duration);
-convict.addFormat(require('convict-format-with-moment').timestamp);
+// Add all formats
+convict.addFormats(convict_format_with_moment);
+
+// Or add only specific formats:
+// convict.addFormat(convict_format_with_moment.duration);
+// etc.
 
 // Define a schema
 var config = convict({

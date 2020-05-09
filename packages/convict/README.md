@@ -1,6 +1,10 @@
 # Convict
 
 [![NPM version](http://img.shields.io/npm/v/convict.svg)](https://www.npmjs.org/package/convict)
+[![Dependency Status](https://david-dm.org/mozilla/node-convict.svg)](https://david-dm.org/mozilla/node-convict)
+[![devDependency Status](https://david-dm.org/mozilla/node-convict/dev-status.svg)](https://david-dm.org/mozilla/node-convict#info=devDependencies)
+[![Build Status](https://travis-ci.org/mozilla/node-convict.svg?branch=master)](https://travis-ci.org/mozilla/node-convict)
+[![Coverage Status](https://coveralls.io/repos/github/mozilla/node-convict/badge.svg?branch=master)](https://coveralls.io/github/mozilla/node-convict?branch=master)
 
 Convict expands on the standard pattern of configuring node.js applications in a
 way that is more robust and accessible to collaborators, who may have less

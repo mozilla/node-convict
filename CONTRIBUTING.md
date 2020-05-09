@@ -81,7 +81,8 @@ npm install packages/*
 ```
 
 PS: `npm ci` will take care of all the needed Lerna setup through the
-`postinstall` script. Never run `lerna bootstrap`,
+`postinstall` script.
+Never run `lerna bootstrap`,
 cf. https://github.com/lerna/lerna/issues/1462#issuecomment-410536290
 
 

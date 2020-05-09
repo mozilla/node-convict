@@ -2,7 +2,7 @@
   "name": "node-convict",
   "private": true,
   "scripts": {
-    "setup": "npm ci && lerna link",
+    "postinstall": "lerna link",
     "test": "jest",
     "posttest": "npm run lint",
     "pretest:ci": "npm run lint",

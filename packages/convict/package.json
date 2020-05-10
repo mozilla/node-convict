@@ -5,10 +5,17 @@
   "keywords": [
     "configuration",
     "config",
+    "conf",
     "key value store",
     "schema",
     "nested",
-    "validation"
+    "validation",
+    "customize",
+    "env",
+    "environment",
+    "json",
+    "yaml",
+    "toml"
   ],
   "version": "6.0.0",
   "license": "Apache-2.0",

@@ -22,7 +22,7 @@ New  post-`convict@6.0.0` code:
 const convict = require('convict')
 const convict_format_with_validator = require('convict-format-with-validator')
 const convict_format_with_moment = require('convict-format-with-moment')
-const JSON5 = require('json5')
+const json5 = require('json5')
 
 // Use this only if you use the "email", "ipaddress" or "url" format
 convict.addFormats(convict_format_with_validator)
@@ -32,7 +32,7 @@ convict.addFormats(convict_format_with_moment)
 
 // Use this only if you have a .json configuration file in JSON5 format
 // (i.e. with comments, etc.).
-convict.addParser({extension: 'json', parse: JSON5.parse})
+convict.addParser({extension: 'json', parse: json5.parse})
 
 const config = convict(config_schema)
 ```

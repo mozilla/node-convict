@@ -563,7 +563,7 @@ const convict = function convict(def, opts) {
       const parentKey = path.join('.')
       if (!(parentKey == '__proto__' || parentKey == 'constructor' || parentKey == 'prototype')) {
         const parent = walk(this._instance, parentKey, true)
-        parent[childKey] = v 
+        parent[childKey] = v
       }
       return this
     },

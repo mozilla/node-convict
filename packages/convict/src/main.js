@@ -294,6 +294,11 @@ function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
   }
 
   o._format = function(x) {
+    // accept null if allowed before calling any format function
+    if (this.nullable && x === null) {
+      return
+    }
+
     try {
       newFormat(x, this)
     } catch (e) {

@@ -78,6 +78,12 @@ var config = convict({
       format: String,
       default: 'users'
     }
+  },
+  admins: {
+    doc: 'Users with write access, or null to grant full access without login.',
+    format: Array,
+    nullable: true,
+    default: null
   }
 });
 
@@ -161,6 +167,7 @@ convict's goal of being more robust and collaborator friendly.
 * **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
 * **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `config.getSchemaString()` and have it displayed in the output.
 * **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `config.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
+* **Null values**: If `nullable` is set to `true`, the value counts as valid not only if it matches the specified `format`, but also when it is `null`.
 
 
 ### Validation
@@ -179,6 +186,8 @@ convict provides several predefined formats for validation that you can use. Mos
 You can find other format [here](https://www.npmjs.com/search?q=keywords:convict-format).
 
 If `format` is set to one of the built-in JavaScript constructors, `Object`, `Array`, `String`, `Number`, `RegExp`, or `Boolean`, validation will use Object.prototype.toString.call to check that the setting is the proper type.
+
+If `nullable` is set to true, `null` will be a valid value as well.
 
 #### Custom format checking
 

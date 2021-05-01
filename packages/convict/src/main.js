@@ -294,6 +294,11 @@ function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
   }
 
   o._format = function(x) {
+    // accept null if allowed before calling any format function
+    if (this.nullable && x === null) {
+      return
+    }
+
     try {
       newFormat(x, this)
     } catch (e) {
@@ -563,7 +568,7 @@ const convict = function convict(def, opts) {
       const parentKey = path.join('.')
       if (!(parentKey == '__proto__' || parentKey == 'constructor' || parentKey == 'prototype')) {
         const parent = walk(this._instance, parentKey, true)
-        parent[childKey] = v 
+        parent[childKey] = v
       }
       return this
     },

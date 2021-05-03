@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.0.1] - 2021-03-11
+
+### Fixed
+
+- Fix prototype pollution vulnerability #384 (arjunshibu, Jamie Slome)
+
+
 ## [6.0.0] - 2020-05-02
 ### Changed
 

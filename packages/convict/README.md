@@ -373,11 +373,11 @@ For this specify the corresponding parsers with the associated file extensions.
 
 ```javascript
 convict.addParser({ extension: 'toml', parse: toml.parse });
-convict.addParser({ extension: ['yml', 'yaml'], parse: yaml.safeLoad });
+convict.addParser({ extension: ['yml', 'yaml'], parse: yaml.load });
 convict.addParser([
   { extension: 'json', parse: JSON.parse },
   { extension: 'json5', parse: json5.parse },
-  { extension: ['yml', 'yaml'], parse: yaml.safeLoad },
+  { extension: ['yml', 'yaml'], parse: yaml.load },
   { extension: 'toml', parse: toml.parse }
 ]);
 

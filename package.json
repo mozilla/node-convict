@@ -17,11 +17,11 @@
     "convict-format-with-validator": "file:packages/convict-format-with-validator",
     "coveralls": "^3.1.0",
     "deep-object-diff": "^1.1.0",
-    "eslint": "^7.0.0",
-    "jest": "^26.0.1",
-    "js-yaml": "^3.13.1",
-    "json5": "^2.1.3",
-    "lerna": "^3.20.2",
+    "eslint": "^7.26.0",
+    "jest": "^26.6.3",
+    "js-yaml": "^4.1.0",
+    "json5": "^2.2.0",
+    "lerna": "^4.0.0",
     "toml": "^3.0.0"
   }
 }

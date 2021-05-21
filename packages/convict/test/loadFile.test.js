@@ -17,7 +17,7 @@ describe('convict', function() {
         convict.addParser({extension: 'json', parse: JSON.parse})
       }).not.toThrow()
       expect(function() {
-        convict.addParser({extension: ['yml', 'yaml'], parse: yaml.safeLoad})
+        convict.addParser({extension: ['yml', 'yaml'], parse: yaml.load})
       }).not.toThrow()
     })
 
@@ -25,7 +25,7 @@ describe('convict', function() {
       expect(function() {
         convict.addParser([
           {extension: 'json', parse: JSON.parse},
-          {extension: ['yml', 'yaml'], parse: yaml.safeLoad}
+          {extension: ['yml', 'yaml'], parse: yaml.load}
         ])
       }).not.toThrow()
     })
@@ -117,7 +117,7 @@ describe('convict', function() {
     })
 
     test('must work with custom yaml parser', function() {
-      convict.addParser({extension: ['yml', 'yaml'], parse: yaml.safeLoad})
+      convict.addParser({extension: ['yml', 'yaml'], parse: yaml.load})
 
       const conf = convict(schema)
       conf.loadFile(path.join(__dirname, 'cases/formats/data.yaml'))
@@ -153,7 +153,7 @@ describe('convict', function() {
     })
 
     test('must not break when parsing an empty file', function() {
-      convict.addParser({extension: ['yml', 'yaml'], parse: yaml.safeLoad})
+      convict.addParser({extension: ['yml', 'yaml'], parse: yaml.load})
 
       const conf = convict(schema)
       conf.loadFile(path.join(__dirname, 'cases/formats/data.empty.yaml'))

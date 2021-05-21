@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [6.2.0] - 2021-05-21
+
+### Changed
+
+- Update dependency: validator `^11.1.0` → `^13.6.0` (#390)
+- Update dependency: parser `^18.1.3` → `^20.2.7` (#390)
+- Update dependency: moment `^2.24.0` → `^2.29.1` (#390)
+
+
 ## [6.1.0] - 2021-05-03
 
 ### Added

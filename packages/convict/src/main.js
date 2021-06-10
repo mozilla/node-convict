@@ -356,7 +356,7 @@ function isObj(o) {
 function overlay(from, to, schema) {
   Object.keys(from).forEach(function(k) {
     // leaf
-    if (Array.isArray(from[k]) || !isObj(from[k]) || !schema || schema.format === 'object') {
+    if (Array.isArray(from[k]) || !isObj(from[k]) || !schema || schema.format === 'object' || schema.children != null) {
       to[k] = coerce(k, from[k], schema)
     } else {
       if (!isObj(to[k])) {

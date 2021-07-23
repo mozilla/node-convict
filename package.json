@@ -41,7 +41,7 @@
     "lodash.clonedeep": "4.5.0",
     "moment": "2.24.0",
     "validator": "11.1.0",
-    "yargs-parser": "13.0.0"
+    "yargs-parser": "13.1.2"
   },
   "devDependencies": {
     "coveralls": "3.0.7",

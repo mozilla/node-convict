@@ -21,7 +21,7 @@ do
     else
         echo "KO: Entry $entry MISSING in the CHANGELOG.md"
 
-        rollbackPackage
-        exit 1
+        #rollbackPackage
+        #exit 1
     fi
 done

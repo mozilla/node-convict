@@ -131,7 +131,7 @@ describe('configuration files contain properties not declared in the schema', fu
       config.validate({
         output: 312
       })
-    }).toThrow(/options\.output is optionnal and must be a function\./)
+    }).toThrow(/options\.output is optional and must be a function\./)
   })
 
   test('must not break on consecutive overrides', function() {

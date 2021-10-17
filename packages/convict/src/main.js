@@ -614,7 +614,7 @@ const convict = function convict(def, opts) {
       options.allowed = options.allowed || ALLOWED_OPTION_WARN
 
       if (options.output && typeof options.output !== 'function') {
-        throw new Error('options.output is optionnal and must be a function.')
+        throw new Error('options.output is optional and must be a function.')
       }
 
       const output_function = options.output || global.console.log

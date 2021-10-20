@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [6.2.1] - 2021-10-20
+
+### Fixed
+
+- Fix misspelling of the word optional in the error message #397 (Dan Allen @mojavelinux))
+
+
 ## [6.2.0] - 2021-05-21
 
 ### Changed

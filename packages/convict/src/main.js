@@ -65,7 +65,7 @@ const types = {
 // alias
 types.integer = types.int
 
-const converters = new Map()
+const custom_converters = new Map()
 
 const parsers_registry = {'*': JSON.parse}
 
@@ -398,12 +398,11 @@ function getFormat(schema, path) {
 }
 
 function coerce(k, v, schema, instance) {
-  // magic coerceing
   const format = getFormat(schema, k)
 
   if (typeof v === 'string') {
-    if (converters.has(format)) {
-      return converters.get(format)(v, instance, k)
+    if (custom_converters.has(format)) {
+      return custom_converters.get(format)(v, instance, k)
     }
     switch (format) {
     case 'port':
@@ -727,7 +726,7 @@ convict.addFormat = function(name, validate, coerce) {
   }
   types[name] = validate
   if (coerce) {
-    converters.set(name, coerce)
+    custom_converters.set(name, coerce)
   }
 }
 

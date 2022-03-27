@@ -17,7 +17,7 @@
     "yaml",
     "toml"
   ],
-  "version": "6.2.1",
+  "version": "6.2.2",
   "license": "Apache-2.0",
   "homepage": "https://github.com/mozilla/node-convict",
   "repository": {

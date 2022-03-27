@@ -9,6 +9,15 @@ const fs = require('fs')
 const parseArgs = require('yargs-parser')
 const cloneDeep = require('lodash.clonedeep')
 
+// Forbidden key paths, for protection against prototype pollution
+const FORBIDDEN_KEY_PATHS = [
+  '__proto__',
+  'this.constructor.prototype',
+]
+
+const ALLOWED_OPTION_STRICT = 'strict'
+const ALLOWED_OPTION_WARN = 'warn'
+
 function assert(assertion, err_msg) {
   if (!assertion) {
     throw new Error(err_msg)
@@ -68,9 +77,6 @@ types.integer = types.int
 const custom_converters = new Map()
 
 const parsers_registry = {'*': JSON.parse}
-
-const ALLOWED_OPTION_STRICT = 'strict'
-const ALLOWED_OPTION_WARN = 'warn'
 
 function flatten(obj, useProperties) {
   const stack = Object.keys(obj)
@@ -561,14 +567,18 @@ const convict = function convict(def, opts) {
      * exist, they will be initialized to empty objects
      */
     set: function(k, v) {
+      for (const path of FORBIDDEN_KEY_PATHS) {
+        if (k.startsWith(`${path}.`)) {
+          return this
+        }
+      }
+
       v = coerce(k, v, this._schema, this)
       const path = k.split('.')
       const childKey = path.pop()
       const parentKey = path.join('.')
-      if (!(parentKey == '__proto__' || parentKey == 'constructor' || parentKey == 'prototype')) {
-        const parent = walk(this._instance, parentKey, true)
-        parent[childKey] = v
-      }
+      const parent = walk(this._instance, parentKey, true)
+      parent[childKey] = v
       return this
     },
 

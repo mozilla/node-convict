@@ -114,12 +114,15 @@ PS: `npm ci` will take care of all the needed Lerna setup through the
 Publishing should not be done through the `npm publish` command.
 Publishing should be done through `lerna`.
 
-This action can only be performed by a Mozilla employee with enough accesses.
+This action can only be performed by a Mozilla employee or a trusted contributor
+with enough accesses.
 
 ```shellsession
 cd node-convict
 npm ci
+npm login
 npx lerna publish from-git
+npm logout
 ```
 
 PS: `npm ci` will take care of all the needed Lerna setup through the

@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [6.2.2] - 2022-03-27
+
+### Fixed
+
+- More complete fix for prototype pollution vulnerability first addressed in
+  #384 (Marc-Aurèle Darche @madarche)
+
+
 ## [6.2.1] - 2021-10-20
 
 ### Fixed

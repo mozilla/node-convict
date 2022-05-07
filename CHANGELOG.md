@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [6.2.3] - 2022-05-07
+
+### Fixed
+
+- More more complete fix for prototype pollution vulnerability first addressed
+  in #384 (Marc-Aurèle Darche @madarche, Snyk Security team)
+
+
 ## [6.2.2] - 2022-03-27
 
 ### Fixed

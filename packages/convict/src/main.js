@@ -11,8 +11,8 @@ const cloneDeep = require('lodash.clonedeep')
 
 // Forbidden key paths, for protection against prototype pollution
 const FORBIDDEN_KEY_PATHS = [
-  '__proto__',
-  'this.constructor.prototype',
+  '__proto__.',
+  'this.constructor.prototype.',
 ]
 
 const ALLOWED_OPTION_STRICT = 'strict'
@@ -567,8 +567,9 @@ const convict = function convict(def, opts) {
      * exist, they will be initialized to empty objects
      */
     set: function(k, v) {
-      for (const path of FORBIDDEN_KEY_PATHS) {
-        if (k.startsWith(`${path}.`)) {
+      for (const forbidden_key_path of FORBIDDEN_KEY_PATHS) {
+        if (k.startsWith(forbidden_key_path) ||
+            k.includes(`.${forbidden_key_path}`)) {
           return this
         }
       }

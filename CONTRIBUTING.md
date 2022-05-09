@@ -78,7 +78,9 @@ be done through Lerna-Lite**.
 ### Tagging a new version
 
 Tagging should not be done manually, nor through the `npm version` command.
-Tagging should be done through the `lerna` command like this:
+
+Tagging should be done through the `lerna` command, which will automatically
+update all the `CHANGELOG.md` files as needed, like this:
 
 ```shellsession
 cd node-convict

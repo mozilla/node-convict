@@ -11,7 +11,7 @@ introducing a configuration schema, convict gives project collaborators more
 when configuration goes wrong.
 
 This repository is a monorepo for the following packages managed through
-[Lerna](https://lerna.js.org/).
+[Lerna-Lite](https://github.com/ghiscoding/lerna-lite).
 
 
 ## Packages
@@ -31,6 +31,6 @@ This repository is a monorepo for the following packages managed through
 * [Migrating from Convict 5 to 6](/packages/convict/MIGRATING_FROM_CONVICT_5_TO_6.md)
 
 
-## Contributing
+## Contributing, maintenance
 
-Read the [Contributing](./CONTRIBUTING.md) doc.
+For contributors and maintainers, read the [Contributing](./CONTRIBUTING.md) doc.

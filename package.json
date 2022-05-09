@@ -2,7 +2,6 @@
   "name": "node-convict",
   "private": true,
   "scripts": {
-    "postinstall": "lerna link",
     "test": "jest",
     "posttest": "npm run lint",
     "pretest:ci": "npm run lint",
@@ -11,17 +10,19 @@
     "lint": "eslint --ignore-pattern='!.*.js' .",
     "lint:fix": "eslint --fix --ignore-pattern='!.*.js' ."
   },
+  "workspaces": [
+    "packages/convict",
+    "packages/convict-format-with-validator",
+    "packages/convict-format-with-moment"
+  ],
   "devDependencies": {
-    "convict": "file:packages/convict",
-    "convict-format-with-moment": "file:packages/convict-format-with-moment",
-    "convict-format-with-validator": "file:packages/convict-format-with-validator",
+    "@lerna-lite/cli": "1.1.1",
     "coveralls": "^3.1.0",
     "deep-object-diff": "^1.1.0",
     "eslint": "^7.26.0",
     "jest": "^26.6.3",
     "js-yaml": "^4.1.0",
     "json5": "^2.2.0",
-    "lerna": "^4.0.0",
     "toml": "^3.0.0"
   }
 }

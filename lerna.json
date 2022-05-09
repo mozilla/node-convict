@@ -1,6 +1,18 @@
 {
-  "packages": [
-    "packages/*"
-  ],
   "version": "6.2.3"
+  "loglevel": "info",
+  "npmClient": "npm",
+  "useWorkspaces": true,
+  "command": {
+    "publish": {
+      "conventionalCommits": true
+    },
+    "version": {
+      "push": false,
+      "conventionalCommits": true,
+      "noPrivate": true,
+      "message": "chore(release): publish new version %v",
+      "changelogHeaderMessage": "### Automate your Workspace Versions, Changelogs & Publish with [Lerna-Lite](https://github.com/ghiscoding/lerna-lite) 🚀"
+    }
+  }
 }

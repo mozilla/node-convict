@@ -91,7 +91,7 @@ function flatten(obj, useProperties) {
       if (useProperties) {
         if ('_cvtProperties' in val) {
           val = val._cvtProperties
-          key = key + '._cvtProperties'
+          key = `${key}._cvtProperties`
         } else {
           entries.push([key, val])
           continue
@@ -102,7 +102,7 @@ function flatten(obj, useProperties) {
       // Don't filter out empty objects
       if (subkeys.length > 0) {
         subkeys.forEach(function(subkey) {
-          stack.push(key + '.' + subkey)
+          stack.push(`${key}.${subkey}`)
         })
         continue
       }
@@ -147,8 +147,7 @@ function validate(instance, schema, strictValidation) {
           throw new Error('missing')
         }
       } catch (e) {
-        const err = new Error("configuration param '" + name
-          + "' missing from config, did you override its parent?")
+        const err = new Error(`configuration param '${name}' missing from config, did you override its parent?`)
         errors.missing.push(err)
         return
       }
@@ -159,7 +158,7 @@ function validate(instance, schema, strictValidation) {
     if (schemaItem.format === 'object' || typeof schemaItem.default === 'object') {
       Object.keys(flatInstance)
         .filter(function(key) {
-          return key.lastIndexOf(name + '.', 0) === 0
+          return key.lastIndexOf(`${name}.`, 0) === 0
         }).forEach(function(key) {
           delete flatInstance[key]
         })
@@ -179,8 +178,7 @@ function validate(instance, schema, strictValidation) {
 
   if (strictValidation) {
     Object.keys(flatInstance).forEach(function(name) {
-      const err = new Error("configuration param '" + name
-        + "' not declared in the schema")
+      const err = new Error(`configuration param '${name}' not declared in the schema`)
       errors.undeclared.push(err)
     })
   }
@@ -190,8 +188,8 @@ function validate(instance, schema, strictValidation) {
 
 // helper for asserting that a value is in the list of valid options
 function contains(options, x) {
-  assert(options.indexOf(x) !== -1, 'must be one of the possible values: ' +
-         JSON.stringify(options))
+  assert(options.indexOf(x) !== -1,
+    `must be one of the possible values: ${JSON.stringify(options)}`)
 }
 
 const BUILT_INS_BY_NAME = {
@@ -209,7 +207,7 @@ const BUILT_INS = BUILT_IN_NAMES.map(function(name) {
 
 function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
   if (name === '_cvtProperties') {
-    throw new Error("'" + fullName + "': '_cvtProperties' is reserved word of convict.")
+    throw new Error(`'${fullName}': '_cvtProperties' is reserved word of convict.`)
   }
 
   // If the current schema node is not a config property (has no "default"), recursively normalize it.
@@ -219,8 +217,7 @@ function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
       _cvtProperties: {}
     }
     Object.keys(node).forEach(function(k) {
-      normalizeSchema(k, node[k], props[name]._cvtProperties, fullName + '.' +
-                      k, env, argv, sensitive)
+      normalizeSchema(k, node[k], props[name]._cvtProperties, `${fullName}.${k}`, env, argv, sensitive)
     })
     return
   } else if (typeof node !== 'object' || Array.isArray(node) ||
@@ -242,8 +239,7 @@ function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
   // associate this property with a command-line argument
   if (o.arg) {
     if (argv[o.arg]) {
-      throw new Error("'" + fullName + "' reuses a command-line argument: " +
-        o.arg)
+      throw new Error(`'${fullName}' reuses a command-line argument: ${o.arg}`)
     }
     argv[o.arg] = fullName
   }
@@ -263,16 +259,14 @@ function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
     const Format = typeof format === 'string' ? BUILT_INS_BY_NAME[format] : format
     newFormat = function(x) {
       assert(Object.prototype.toString.call(x) ==
-        Object.prototype.toString.call(new Format()),
-      'must be of type ' + Format.name)
+        Object.prototype.toString.call(new Format()), `must be of type ${Format.name}`)
     }
     o.format = Format.name.toLowerCase()
 
   } else if (typeof format === 'string') {
     // store declared type
     if (!types[format]) {
-      throw new Error("'" + fullName + "' uses an unknown format type: " +
-        format)
+      throw new Error(`'${fullName}' uses an unknown format type: ${format}`)
     }
 
     // use a predefined type
@@ -286,8 +280,7 @@ function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
     newFormat = format
 
   } else if (format && typeof format !== 'function') {
-    throw new Error("'" + fullName +
-      "': `format` must be a function or a known format type.")
+    throw new Error(`'${fullName}': "format" must be a function or a known format type.`)
   }
 
   if (!newFormat && !format) {
@@ -450,7 +443,7 @@ function walk(obj, path, initializeMissing) {
       } else if (k in obj) {
         obj = obj[k]
       } else {
-        throw new Error("cannot find configuration param '" + path + "'")
+        throw new Error(`cannot find configuration param '${path}'`)
       }
     }
   }
@@ -730,10 +723,10 @@ convict.addFormat = function(name, validate, coerce) {
     name = name.name
   }
   if (typeof validate !== 'function') {
-    throw new Error('Validation function for ' + name + ' must be a function.')
+    throw new Error(`Validation function for '${name}' must be a function.`)
   }
   if (coerce && typeof coerce !== 'function') {
-    throw new Error('Coerce function for ' + name + ' must be a function.')
+    throw new Error(`Coerce function for '${name}' must be a function.`)
   }
   types[name] = validate
   if (coerce) {

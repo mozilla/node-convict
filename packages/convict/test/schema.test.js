@@ -102,6 +102,21 @@ describe('convict schema', function() {
       }, null, 2))
     })
 
+    test('must export all its properties as a json object', function() {
+      const res = conf.toJson()
+      expect(res).toEqual({
+        foo: {
+          bar: 7,
+          baz: {
+            bing: 'foo',
+            'name with spaces': {
+              name_with_underscores: true
+            }
+          }
+        }
+      })
+    })
+
     test('must throw if `_cvtProperties` (reserved keyword) is used', function() {
       expect(function() {
         conf = convict({

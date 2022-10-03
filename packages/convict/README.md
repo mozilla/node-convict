@@ -166,7 +166,7 @@ convict's goal of being more robust and collaborator friendly.
 * **Environmental variables**: If the variable specified by `env` has a value, it will overwrite the setting's default value. An environment variable may not be mapped to more than one setting.
 * **Command-line arguments**: If the command-line argument specified by `arg` is supplied, it will overwrite the setting's default value or the value derived from `env`.
 * **Documentation**: The `doc` property is pretty self-explanatory. The nice part about having it in the schema rather than as a comment is that we can call `config.getSchemaString()` and have it displayed in the output.
-* **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `config.toString()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
+* **Sensitive values and secrets**: If `sensitive` is set to `true`, this value will be masked to `"[Sensitive]"` when `config.toString()` or `config.toJson()` is called. This helps avoid disclosing secret keys when printing configuration at application start for debugging purposes.
 * **Null values**: If `nullable` is set to `true`, the value counts as valid not only if it matches the specified `format`, but also when it is `null`.
 
 
@@ -584,6 +584,12 @@ collected and thrown or displayed at once.
 ### config.getProperties()
 
 Exports all the properties (that is the keys and their current values) as JSON.
+
+### config.toJson()
+
+Exports all the properties (that is the keys and their current values) as a JSON
+object, with sensitive values masked. Sensitive values are masked even if they
+aren't set, to avoid revealing any information.
 
 ### config.toString()
 

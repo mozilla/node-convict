@@ -12,7 +12,7 @@ const cloneDeep = require('lodash.clonedeep')
 // Forbidden key paths, for protection against prototype pollution
 const FORBIDDEN_KEY_PATHS = [
   '__proto__.',
-  'this.constructor.prototype.',
+  'constructor.prototype.',
 ]
 
 const ALLOWED_OPTION_STRICT = 'strict'

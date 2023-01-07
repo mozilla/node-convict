@@ -51,6 +51,24 @@ function isWindowsNamedPipe(x) {
   return String(x).includes('\\\\.\\pipe\\')
 }
 
+/**
+ * Checks if x is a number
+ *
+ * @param {*} x
+ * @returns {Boolean}
+ */
+function isNumber(x) {
+  if (typeof x === 'number') {
+    return true
+  } else if (parseFloat(x)) {
+    return true
+  } else if (typeof x === 'string' && x === 'NaN') {
+    return true
+  }
+
+  return false
+}
+
 const types = {
   '*': function() { },
   int: function(x) {
@@ -409,7 +427,7 @@ function coerce(k, v, schema, instance) {
     case 'integer':
     case 'int': v = parseInt(v, 10); break
     case 'port_or_windows_named_pipe': v = isWindowsNamedPipe(v) ? v : parseInt(v, 10); break
-    case 'number': v = parseFloat(v); break
+    case 'number': v = isNumber(v) ? parseFloat(v) : v; break
     case 'boolean': v = String(v).toLowerCase() !== 'false'; break
     case 'array': v = v.split(','); break
     case 'object': v = JSON.parse(v); break

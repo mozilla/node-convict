@@ -296,4 +296,62 @@ describe('convict formats', function() {
     })
   })
 
+  describe('map like object support - must return schema in second argument', function() {
+    const schema = {
+      myMap: {
+        doc: 'this is a key value map, where the value object can be validated by a child schema',
+        default: {},
+        format: 'map',
+        children: {
+          prop: {
+            doc: 'a property of the value object',
+            default: null,
+            format: String
+          }
+        }
+      }
+    }
+
+    const configWithoutErrors = {
+      myMap: {
+        someKey: {prop: 'this belongs to the someKey value object'},
+        someOtherKey: {prop: 'this belongs to the someOtherKey value object'}
+      }
+    }
+
+    const configWithErrors = {
+      myMap: {
+        someKey: {notDefinedInChildSchema: 'this belongs to the someKey value object'}
+      }
+    }
+
+    test('must parse a config specification', function() {
+      convict.addFormat({
+        name: 'map',
+        validate: function(theMap, schema) {
+          if (typeof theMap !== 'object' || theMap == null) {
+            throw new Error('must be an non-empty (map like) object')
+          }
+          // iterate each key in the map
+          for (const key of Object.keys(theMap)) {
+            // perform validation on the key's value against the child schema
+            convict(schema.children).load(theMap[key]).validate()
+          }
+        }
+      })
+    })
+
+    test('must validate children (map) value without throwing an Error', function() {
+      expect(function() {
+        convict(schema).load(configWithoutErrors).validate()
+      }).not.toThrow()
+    })
+
+    test('fails to validate incorrect children (map) values', function() {
+      expect(function() {
+        convict(schema).load(configWithErrors).validate()
+      }).toThrow('myMap: prop: must be of type String: value was {"someKey":{"notDefinedInChildSchema":"this belongs to the someKey value object"}}')
+    })
+  })
+
 })

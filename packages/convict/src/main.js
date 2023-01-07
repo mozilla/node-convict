@@ -484,10 +484,10 @@ const convict = function convict(def, opts) {
 
     /**
      * Exports all the properties (that is the keys and their current values) as
-     * a JSON string, with sensitive values masked. Sensitive values are masked
+     * a JSON object, with sensitive values masked. Sensitive values are masked
      * even if they aren't set, to avoid revealing any information.
      */
-    toString: function() {
+    toJson: function() {
       const clone = cloneDeep(this._instance)
       this._sensitive.forEach(function(key) {
         const path = key.split('.')
@@ -496,7 +496,16 @@ const convict = function convict(def, opts) {
         const parent = walk(clone, parentKey)
         parent[childKey] = '[Sensitive]'
       })
-      return JSON.stringify(clone, null, 2)
+      return clone
+    },
+
+    /**
+     * Exports all the properties (that is the keys and their current values) as
+     * a JSON string, with sensitive values masked. Sensitive values are masked
+     * even if they aren't set, to avoid revealing any information.
+     */
+    toString: function() {
+      return JSON.stringify(this.toJson(), null, 2)
     },
 
     /**

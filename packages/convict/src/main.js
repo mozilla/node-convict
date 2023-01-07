@@ -361,7 +361,11 @@ function overlay(from, to, schema) {
       if (!isObj(to[k])) {
         to[k] = {}
       }
-      overlay(from[k], to[k], schema._cvtProperties[k])
+      let overlaySchema;
+      if (schema.hasOwnProperty('_cvtProperties'))
+        overlaySchema= schema._cvtProperties[k]
+      else overlaySchema= schema.default[k]
+      overlay(from[k], to[k], overlaySchema)
     }
   })
 }

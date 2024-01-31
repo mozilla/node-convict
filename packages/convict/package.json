@@ -35,5 +35,9 @@
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
     "yargs-parser": "^20.2.7"
+  },
+  "browser": {
+    "fs": false,
+    "yargs-parser": "./node_modules/yargs-parser/browser.js"
   }
 }

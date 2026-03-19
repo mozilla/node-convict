@@ -63,6 +63,11 @@ describe('Convict prototype pollution resistance', function() {
     expect({}).not.toHaveProperty('nested.polluted_constructor_prototype_nested')
   })
 
+  test('against prototype pollution via schema initialization', function() {
+    expect(() => convict({constructor: {prototype: {polluted: 'yes'}}})).toThrow()
+    expect({}).not.toHaveProperty('polluted')
+  })
+
   test('against prototype pollution via load()', function() {
     const config = convict({})
 

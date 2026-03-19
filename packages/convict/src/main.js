@@ -209,6 +209,10 @@ function normalizeSchema(name, node, props, fullName, env, argv, sensitive) {
   if (name === '_cvtProperties') {
     throw new Error(`'${fullName}': '_cvtProperties' is reserved word of convict.`)
   }
+  const hasPrototypeKey = isObj(node) && Object.prototype.hasOwnProperty.call(node, 'prototype')
+  if (name === 'constructor' && hasPrototypeKey || name === '__proto__') {
+    throw new Error(`'${fullName}': '${name}' is a reserved schema key`)
+  }
 
   // If the current schema node is not a config property (has no "default"), recursively normalize it.
   if (typeof node === 'object' && node !== null && !Array.isArray(node) &&

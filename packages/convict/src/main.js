@@ -10,11 +10,6 @@ const parseArgs = require('yargs-parser')
 const cloneDeep = require('lodash.clonedeep')
 
 // Forbidden key paths, for protection against prototype pollution
-const FORBIDDEN_KEY_PATHS = [
-  '__proto__.',
-  'constructor.prototype.',
-]
-
 const ALLOWED_OPTION_STRICT = 'strict'
 const ALLOWED_OPTION_WARN = 'warn'
 
@@ -560,15 +555,14 @@ const convict = function convict(def, opts) {
      * exist, they will be initialized to empty objects
      */
     set: function(k, v) {
-      for (const forbidden_key_path of FORBIDDEN_KEY_PATHS) {
-        if (k.startsWith(forbidden_key_path) ||
-            k.includes(`.${forbidden_key_path}`)) {
+      const path = k.split('.')
+      for (let i = 0; i < path.length; i++) {
+        if (path[i] === 'constructor' && path[i + 1] === 'prototype' || path[i] === '__proto__') {
           return this
         }
       }
 
       v = coerce(k, v, this._schema, this)
-      const path = k.split('.')
       const childKey = path.pop()
       const parentKey = path.join('.')
       const parent = walk(this._instance, parentKey, true)

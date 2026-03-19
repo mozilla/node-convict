@@ -77,5 +77,18 @@ describe('Convict prototype pollution resistance', function() {
     config.load(JSON.parse('{"constructor": {"prototype": {"polluted": "yes"}}}'))
     expect({}).not.toHaveProperty('polluted')
   })
+  
+  test('bypass via String.prototype.startsWith override', function() {
+    const originalStartsWith = String.prototype.startsWith
+    String.prototype.startsWith = () => false
+    try {
+      const obj = {}
+      const config = convict(obj)
+      config.set('constructor.prototype.polluted', 'yes')
+      expect({}).not.toHaveProperty('polluted')
+    } finally {
+      String.prototype.startsWith = originalStartsWith
+    }
+  })
 
 })

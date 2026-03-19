@@ -63,4 +63,14 @@ describe('Convict prototype pollution resistance', function() {
     expect({}).not.toHaveProperty('nested.polluted_constructor_prototype_nested')
   })
 
+  test('against prototype pollution via load()', function() {
+    const config = convict({})
+
+    config.load(JSON.parse('{"__proto__": {"polluted": "yes"}}'))
+    expect({}).not.toHaveProperty('polluted')
+
+    config.load(JSON.parse('{"constructor": {"prototype": {"polluted": "yes"}}}'))
+    expect({}).not.toHaveProperty('polluted')
+  })
+
 })

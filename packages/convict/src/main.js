@@ -354,6 +354,10 @@ function isObj(o) {
 
 function overlay(from, to, schema) {
   Object.keys(from).forEach(function(k) {
+    const hasPrototypeKey = isObj(from[k]) && Object.prototype.hasOwnProperty.call(from[k], 'prototype')
+    if (k === 'constructor' && hasPrototypeKey || k === '__proto__') {
+      return
+    }
     // leaf
     if (Array.isArray(from[k]) || !isObj(from[k]) || !schema || schema.format === 'object') {
       to[k] = coerce(k, from[k], schema)

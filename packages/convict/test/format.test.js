@@ -94,10 +94,20 @@ describe('convict formats', function() {
         optional: {
           format: '*',
           default: undefined
+        },
+        boolean: {
+          format: Boolean,
+          default: false
         }
       }
     })
 
+  })
+
+  test('validates empty string boolean', function() {
+    conf.set('foo.boolean', '')
+    const val = conf.get('foo.boolean')
+    expect(val).toBe(false)
   })
 
   test('validates default schema', function() {

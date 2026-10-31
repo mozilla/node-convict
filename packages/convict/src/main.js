@@ -74,19 +74,25 @@ const custom_converters = new Map()
 const parsers_registry = {'*': JSON.parse}
 
 function flatten(obj, useProperties) {
-  const stack = Object.keys(obj)
+  // Paths are kept as lists of property names: a property name may itself
+  // contain dots, so an accumulated path must not be re-split on '.'.
+  const stack = Object.keys(obj).map(function(key) {
+    return [key]
+  })
   let key
 
   const entries = []
 
   while (stack.length) {
     key = stack.shift()
-    let val = walk(obj, key)
+    let val = key.reduce(function(o, k) {
+      return o[k]
+    }, obj)
     if (typeof val === 'object' && !Array.isArray(val) && val != null) {
       if (useProperties) {
         if ('_cvtProperties' in val) {
           val = val._cvtProperties
-          key = `${key}._cvtProperties`
+          key.push('_cvtProperties')
         } else {
           entries.push([key, val])
           continue
@@ -97,7 +103,7 @@ function flatten(obj, useProperties) {
       // Don't filter out empty objects
       if (subkeys.length > 0) {
         subkeys.forEach(function(subkey) {
-          stack.push(`${key}.${subkey}`)
+          stack.push(key.concat([subkey]))
         })
         continue
       }
@@ -109,10 +115,12 @@ function flatten(obj, useProperties) {
   entries.forEach(function(entry) {
     let key = entry[0]
     if (useProperties) {
-      key = key.replace(/\._cvtProperties/g, '')
+      key = key.filter(function(part) {
+        return part !== '_cvtProperties'
+      })
     }
     const val = entry[1]
-    flattened[key] = val
+    flattened[key.join('.')] = val
   })
 
   return flattened

@@ -254,7 +254,7 @@ describe('schema contains an object property with a custom format', function() {
     }).not.toThrow()
   })
 
-  it.skip("must not throw if an object's default value property name contains a period", function() {
+  it("must not throw if an object's default value property name contains a period", function() {
     expect(function() {
       const config = convict({
         object: {
@@ -268,6 +268,72 @@ describe('schema contains an object property with a custom format', function() {
 
       config.validate()
     }).not.toThrow()
+  })
+
+})
+
+describe('properties whose own name contains a period', function() {
+  test('must warn, not throw, for an undeclared dotted property name in warn mode', function() {
+    const config = convict({
+      test: {
+        param: {
+          doc: 'testing',
+          format: String,
+          default: 'testing'
+        }
+      }
+    })
+
+    config.load({'someOther.param': 'baz'})
+
+    const output = []
+    expect(function() {
+      config.validate({
+        allowed: 'warn',
+        output: function(message) {
+          output.push(message)
+        }
+      })
+    }).not.toThrow()
+    expect(output.join('')).toMatch(/someOther\.param/)
+  })
+
+  test('must accept dotted property names nested in a declared object', function() {
+    const config = convict({
+      dynamic: {
+        doc: 'testing',
+        format: Object,
+        default: null
+      }
+    })
+
+    config.load({dynamic: {'dot.path': {a: 1}}})
+
+    expect(function() {
+      config.validate({allowed: 'strict'})
+    }).not.toThrow()
+    expect(config.get('dynamic')['dot.path']).toEqual({a: 1})
+  })
+
+  test('must still reject undeclared dotted property names in strict mode', function() {
+    const config = convict({
+      test: {
+        param: {
+          doc: 'testing',
+          format: String,
+          default: 'testing'
+        }
+      }
+    })
+
+    config.load({'someOther.param': 'baz'})
+
+    expect(function() {
+      config.validate({
+        allowed: 'strict',
+        output: function() {}
+      })
+    }).toThrow(/someOther\.param/)
   })
 
 })
